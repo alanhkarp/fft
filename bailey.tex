@@ -1,0 +1,275 @@
+\documentstyle[12pt,fleqn]{article}
+\setlength{\oddsidemargin}{0cm}
+\setlength{\textwidth}{16.2cm}
+\setlength{\columnwidth}{16.2cm}
+\setlength{\topmargin}{0cm}
+\setlength{\textheight}{21.5cm}
+
+\begin{document}
+
+\vspace*{2.7cm}
+\begin{large} \begin{center}
+A Fast Method for the Numerical Evaluation of Fourier Transforms \\ 
+David H. Bailey and Paul N. Swarztrauber \\ 
+RNR Technical Report RNR-XX-XXX \\
+June 30, 1992
+\end{center} \end{large}
+
+\vspace{3ex} \noindent
+{\bf Abstract}
+
+The fast Fourier transform (FFT) is often used to compute numerical
+approximations to the continuous Fourier transform.  However, a
+straightforward application of the FFT to this problem typically
+requires a large FFT to be performed, even though most of the input
+data to this FFT are zero and only a small fraction of the output data
+are of interest.  In this note, the ``fractional Fourier transform'',
+previously developed by the authors, is applied to this problem with a
+substantial savings in computation.
+
+\vfill{
+Bailey is with the Numerical Aerodynamic Simulation (NAS) Systems
+Division at NASA Ames Research Center, Moffett Field, CA 94035.
+Swarztrauber is with the National Center for Atmospheric Research,
+Boulder, CO 80307, which is sponsored by National Science Foundation.}
+
+\newpage
+\noindent {\bf 1. Introduction}
+
+The continuous Fourier transform (CFT) of a function $f(t)$ (which may
+have real or complex values) and its inverse will be defined here as
+\begin{eqnarray}
+F[f](x) &=& \int _{-\infty} ^\infty f(t) e^{-2 \pi i t x} dt \\
+F^{-1}[f](x) &=& \int _{-\infty} ^\infty f(t) e^{2 \pi i t x} dt
+\end{eqnarray}
+
+\noindent
+where $i$ is the imaginary unit.  The discrete Fourier transform (DFT)
+and the inverse DFT of an $n$-long sequence $z$ (which may have real
+or complex values) will be defined here as
+\begin{eqnarray}
+D_k (z) &=& \sum _{j = 0} ^{n - 1} z_j e^{-2 \pi i j k / n} \\
+D_k^{-1} (z) &=& \frac{1}{n} \sum _{j = 0} ^{n - 1} z_j e^{2 \pi i j k / n}
+\end{eqnarray}
+
+Straightforward evaluation of the DFT using these formulas is expensive,
+even when the exponential factors are precomputed.  This cost can be
+greatly reduced by employing one of the variants of the fast Fourier
+transform (FFT) algorithm \cite{dhb-fft1,dhb-fft2,swarz-fft,vanloan}.
+
+\vspace{2ex}
+\noindent {\bf 2. A Conventional Scheme for Evaluating CFTs with FFTs}
+
+There are of course a number of advanced techniques for the
+approximate numerical evaluation of definite integrals \cite{davis}.
+Unfortunately, most of these techniques deal with evaluating only one
+integral, rather than a large number of integrals, each with a
+different integrand.  Evaluating the CFT falls in this latter
+category, since one usually requires the values of this integral for
+large range of $x$.
+
+The FFT can be effectively applied to this problem as follows.  Let us
+assume that the function $f(t)$ is zero outside of an interval $[-b/2,
+b/2]$, an assumption that is often made in practical applications.
+For a large positive integer $n$ divisible by four, define $h = b /
+n$, and for integers $j$ and $k$, let $t_j = (j - n / 2) h$ and $x_k =
+(k - n / 2)/ b$.  Then we can write
+\begin{eqnarray}
+F(x_k) &=& \int _{-\infty} ^\infty f(t) e^{-2 \pi i t x_k} dt \\
+     &=& \int _{-b/2} ^{b/2} f(t) e^{-2 \pi i t x_k} dt \\
+     &\approx& \sum _{j = 0} ^{n - 1} f(t_j) e^{-2 \pi i t_j x_k} h \\
+     &=& h \sum _{j = 0} ^{n - 1} f(t_j) e^{-2 \pi i (j - n / 2) 
+       (k - n / 2) / n} \\
+     &=& \frac{b}{n} e^{\pi i (k - n / 2)} \sum _{j = 0} ^{n - 1} 
+       f(t_j) e^{\pi i j} e^{-2 \pi i j k / n} \\
+     &=& (-1)^k \frac{b}{n} D_k [\{ (-1)^j f(t_j) \}] \hspace{20mm} 
+       0 \leq k < n
+\end{eqnarray}
+
+The DFT indicated in (10) can of course be rapidly evaluated using an
+FFT.  If one wishes to obtain accurate, high-resolution results from
+this computation, then $b$ must be large, and $n$ must be very large.
+To be precise, note that results are produced at an interval in $x$ of
+$1 / b$.  Presuming that a comparable interval is required in $t$ in
+order to obtain accurate results, this means that $h \approx 1 / b$,
+or in other words that $n \approx b^2$.
+
+This scheme is reasonable straightforward and relatively efficient.
+However, one is struck by the fact that to meet a given accuracy and
+resolution requirement, $b$ may have to be set substantially greater
+than the length the interval where $f(t)$ is nonzero.  Thus
+potentially a large fraction of the input data to the FFT used to
+evaluate (15) may be zero.  Also, only a small fraction (the central
+values) of the output of this FFT may be of interest.
+
+\vspace{2ex}
+\noindent {\bf 3. The Fractional Fourier Transform}
+
+We will employ here a generalization of the DFT that has been termed
+the fractional Fourier transform (FRFT) \cite{frft}.  It is defined on
+the $m$-long complex sequence $x$ as
+\begin{eqnarray}
+G_k (x, \alpha) &=& \sum_{j=0}^{m-1} x_j e^{-2 \pi i j k \alpha}
+\end{eqnarray}
+
+\noindent
+The parameter $\alpha$ is not restricted to rational numbers and in
+fact may be any complex number.  Note that the ordinary DFT and its
+inverse are special cases of the fractional Fourier transform.
+
+A fortunate fact is that the FRFT admits computation by means of a
+fast algorithm, one with complexity comparable to the FFT.  In fact, it
+employs the FFT in a crucial step.  This algorithm can be stated as
+follows.  Define the $2 m$-long sequences $y$ and $z$ as
+\begin{eqnarray}
+y_j &=& x_j e^{-\pi i j^2 \alpha} \hspace{23mm} 0 \leq j < m \\
+y_j &=& 0 \hspace{36mm} m \leq j < 2 m \\
+z_j &=& e^{\pi i j^2 \alpha} \hspace{29mm} 0 \leq j < m \\
+z_j &=& e^{\pi i (j - 2 m)^2 \alpha} \hspace{20mm} m \leq j < 2 m
+\end{eqnarray}
+
+\noindent
+It is then shown in \cite{frft} that
+\begin{eqnarray}
+G_k (x, \alpha) &=& e^{- \pi i k^2 \alpha} E_k^{-1} [\{ E_j (y) 
+     E_j (z) \}] 
+   \hspace{2cm} 0 \leq k < m
+\end{eqnarray}
+
+\noindent
+The remaining $m$ results of the final inverse DFT are discarded.
+Element-wise complex multiplication is implied in the expression $E_j
+(y) E_j (z)$.  These three aliased DFTs can of course be efficiently
+computed using $2 m$-point FFTs.
+
+To compute a different $m$-long segment $G_{k+s} (x, \alpha), \; 0
+\leq k < m$, it is necessary to slightly modify the above
+procedure.  In this case $z$ is as follows:
+\begin{eqnarray}
+z_j &=& e^{\pi i (j + s)^2 \alpha}  \hspace{27mm} 0 \leq j < m \\
+z_j &=& e^{\pi i (j + s - 2 m)^2 \alpha} \hspace{20mm}
+    m \leq j < 2 m
+\end{eqnarray}
+
+\noindent
+Then we have
+\begin{eqnarray}
+G_{k+s} &=& e^{- \pi i (k + s)^2 \alpha} E_k^{-1} [\{ E_j (y) E_j (z) \}] 
+   \hspace{20mm} 0 \leq k < m
+\end{eqnarray}
+
+Note that the exponential factors in (12) through (19) can be
+precomputed.  Furthermore, the DFT of the $z$ sequence can also be
+precomputed.  Thus the cost of an $m$-point FRFT is only about four
+times the cost of an $m$-point FFT.
+
+\vspace{2ex}
+\noindent {\bf 4. Computing CFTs with FRFTs}
+
+One of the applications of FRFTs mentioned in \cite{frft} is computing
+DFTs of sparse sequences, i.e. sequences that are mostly zero.  It is
+particularly effective when only a small portion of the input data
+values are nonzero, and only a small portion of the output values are
+required.  Thus, the FRFT is very well suited for the problem at hand.
+
+Let us now suppose that $f(t)$ is nonzero for $[-a / 2, a / 2]$, where
+$a$ is smaller than the $b$ used in the previous section.  In
+particular, let us assume that $b = q a$ and $n = q m$ for integers
+$q$ and $m$.  We now set $h = b / n$ as before, but define $t_j = (j -
+m / 2) h$ and $x_k = (k - m / 2)/ b$ for integers $j$ and $k$.  Then
+we can write
+\begin{eqnarray}
+F(x_k) &=& \int _{-\infty} ^\infty f(t) e^{-2 \pi i t x_k} dt \\
+     &=& \int _{-a/2} ^{a/2} f(t) e^{-2 \pi i t x_k} dt \\
+     &\approx& \sum _{j = 0} ^{m - 1} f(t_j) e^{-2 \pi i t_j x_k} h \\
+     &=& h \sum _{j = 0} ^{m - 1} f(t_j) e^{-2 \pi i (j - m / 2) 
+       (k - m / 2) / n} \\
+     &=& \frac{b}{n} e^{\pi i (k - m / 2) m / n} \sum _{j = 0} ^{m - 1} 
+       f(t_j) e^{\pi i j m / n} e^{-2 \pi i j k / n} \\
+     &=& \frac{b}{n} e^{\pi i (k - m / 2) / q} G_k [\{f(t_j) 
+       e^{\pi i j / q} \}, 1 / n] \hspace{20mm} 0 \leq k < m
+\end{eqnarray}
+
+We now have an economical means of computing the central $m$ results
+of this transform.  Additional $m$-long segments of results can be
+obtained by applying the more general from of the FRFT given at the
+end of the previous section.
+
+\vspace{2ex}
+\noindent {\bf 5. Implementation Example}
+
+Collecting the results we have obtained so far, we have
+\begin{eqnarray}
+F(x_k) &=& \int _{-\infty} ^\infty f(t) e^{-2 \pi i t x_k} dt \\
+       &\approx& \frac{b}{n} e^{\pi i (k - m / 2) / q} 
+       G_k [\{f(t_j) e^{\pi i j / q} \}, 1 / n] \\
+       &=& \frac{b}{n} e^{\pi i [(k - m / 2) / q - k^2 / n]}
+         D_k^{-1} [\{ D_j (y) D_j (z) \}] \hspace{20mm} 0 \leq k < m
+\end{eqnarray}
+
+\noindent
+where the $2m$-long sequences $y$ and $z$ are given by
+\begin{eqnarray}
+y_j &=& f(t_j) e^{\pi i (j / q - j^2 / n)} \hspace{20mm} 0 \leq j < m \\
+y_j &=& 0 \hspace{47mm} m \leq j < 2 m \\
+z_j &=& e^{\pi i j^2 / n}  \hspace{38mm} 0 \leq j < m \\
+z_j &=& e^{\pi i (j - 2m)^2 / n} \hspace{29mm}
+    m \leq j < 2 m
+\end{eqnarray}
+
+Let us now consider the problem of numerically computing the Fourier
+transform of the Gaussian probability density function
+\begin{eqnarray}
+f(t) &=& \frac{1}{\sqrt{2 \pi}} e^{-t^2/2}
+\end{eqnarray}
+
+\noindent
+It is well known that the Fourier transform of this function is
+\begin{eqnarray}
+F(t) &=& e^{-2 \pi^2 x^2}
+\end{eqnarray}
+
+\noindent
+Outside the interval $[-8, 8]$, the function $f(t) < 5.1 \times
+10^{-15}$ and thus can be considered to be zero to high accuracy.
+Suppose that we desire a resolution of $1 / 256$ in both the $t$ and
+$x$ variables.  Then in terms of the notation we have been using, we
+have $a = 16, \; b = 256, \; n = 65536, \; m = 4096$, and $q = 16$.
+
+The computation defined in (26) through (32) was completed on a
+Silicon Graphics Personal Iris workstation in 0.89 seconds, as
+compared with 4.43 seconds using the conventional FFT scheme given in
+(5) through (10).  Comparing the results of the FRFT scheme with the
+exact formula given in (34), the root-mean-square (RMS) error is $4.47
+\times 10^{-16}$.  The RMS error of the central $m$ results obtained
+with conventional FFT scheme is $4.67 \times 10^{-17}$.  Both of these
+errors are virtually at the limit of machine precision for 64-bit
+data.
+
+\begin{thebibliography}{5}
+
+\bibitem{dhb-fft1} D. H. Bailey, ``FFTs in External or Hierarchical
+Memory'', {\sl Journal of Supercomputing}, vol. 4 (1990), p. 23 - 35.
+
+\bibitem{dhb-fft2} D. H. Bailey, ``A High-Performance FFT Algorithm for
+Vector Supercomputers'', {\sl International Journal of Supercomputer
+Applications} vol. 2 (1988), p. 82 - 87.
+
+\bibitem{frft} D. H. Bailey and P. N. Swarztrauber, ``The Fractional
+Fourier Transform and Applications'', {\sl SIAM Review}, vol. 33, no.
+3 (Sept.  1991), p. 389 - 404.
+
+\bibitem{davis} P. Davis and P. Rabinowitz, ``Methods of Numerical
+Integration'', Wiley, New York, 1975.
+
+\bibitem{swarz-fft} P. N. Swarztrauber, ``Multiprocessor FFTs'', {\sl
+Parallel Computing}, vol. 5 (1987), p. 197 - 210.
+
+\bibitem{vanloan} C. Van Loan, {\sl Computational Frameworks for the
+Fast Fourier Transform}, SIAM, Philadelphia, 1992.
+
+\end{thebibliography}
+
+\end{document}
+
+

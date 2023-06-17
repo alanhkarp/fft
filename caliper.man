@@ -1,0 +1,1123 @@
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+ NAME
+      caliper - measure and report program performance data
+
+ SYNOPSIS
+      caliper config_file [collect_opts] [report_opts] program [program_args]
+
+      caliper report -d datafile [report_opts]
+
+      caliper info [info_opts]
+
+ DESCRIPTION
+      The caliper command measures and reports performance data for native
+      Itanium and Itanium 2 programs. To obtain performance data, caliper
+      measures some metrics using the Itanium's Performance Monitoring Unit
+      (PMU) and measures other metrics by inserting probe code into the
+      running program. No special preparation of the measured program is
+      necessary.
+
+      caliper can measure programs which are built 32-bit or 64-bit, shared
+      bound or minshared bound, optimized or debug.  Applications can be
+      written in C, C++, Fortran 9x, assembly (if standard runtime
+      conventions are followed) or a mixture of these languages.
+
+      You can specify the program to be measured using an absolute path, a
+      relative path or a simple file name.  caliper searches $PATH when you
+      specify a simple file name and looks in the current directory only if
+      $PATH includes it.
+
+      caliper can both collect data and optionally generate reports (in
+      ASCII, HTML, or both) and/or binary data files in a single run (using
+      the syntax, "caliper configfile ..."). It can also generate a report
+      from a previously created binary data file ("caliper report ...") or
+      generate descriptions of reports and CPU events ("caliper info ...").
+
+      caliper can measure many different performance metrics that can help
+      you find performance "hot spots." Configuration files (the config_file
+      argument to the caliper command) determine what measurements to make
+      and how to make them. You can use configuration files supplied with
+      caliper or you can create your own.  You can also override
+      configuration file settings on the command line or in a caliper
+      initialization file (.caliperinit).
+
+      One example of a configuration file is cgprof, which tells caliper to
+      collect the data needed to produce an extended gprof-like report.
+      Unlike gprof, caliper's cgprof requires no special compilation of the
+      measured program.
+
+      Another example of a configuration file is pbo, which produces a
+      performance feedback file instead of a report. The feedback file can
+      be fed to the compiler in a subsequent build to aid complier
+      optimizations. See the EXAMPLES section for examples of using cgprof,
+
+
+
+ Hewlett-Packard Company            - 1 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+      pbo, and other configuration files.
+
+      By default, caliper measures all (measurable) shared libraries used by
+      a program. You can limit which shared libraries are measured by using
+      the --module-default, --module-exclude and --module-include options.
+      By limiting the number of shared libraries measured you can speed
+      caliper's measurements (less instrumentation needed) and reduce the
+      data to be analyzed.
+
+      There are some situations where caliper cannot measure a program or
+      portions of a program due to non-standard or unusual conditions, such
+      as when an assembly routine violates standard runtime conventions. In
+      such situations, caliper will issue warning messages and proceed to
+      measure as much of the program as it can.  Note that if an executable
+      has been stripped of local symbols, caliper can only report names for
+      global functions.
+
+      In addition to command line invocations, caliper can be invoked
+      automatically by the dynamic loader. Compilers use this mechanism to
+      to implement the +Oprofile=collect option. Auto-invocation of caliper
+      is triggered by a runtime flag which can be viewed and set or cleared
+      using the chatr(1) command's +I switch. When a program with the auto-
+      invoke flag set is run, caliper automatically measures the program. By
+      default, the auto-invoked caliper uses the pbo configuration file.
+      You can override the default using the CALIPER_OPTS environment
+      variable.
+
+      Like all performance measurement tools, caliper can affect the runtime
+      performance characteristics of the program under test. Some
+      measurements, such as total_cpu , have negligible impact while cgprof
+      can have a large effect. Take this "Heisenberg" effect into
+      consideration when interpreting any performance data.
+
+    Configuration Files
+      What measurement(s) caliper makes is determined by a configuration
+      file.  There are several standard configuration files available and
+      the user is free to create their own.  The config_file parameter in
+      the command line can be either a simple filename, a relative filename
+      or an absolute filename.  If a simple filename is given, then caliper
+      first looks in the current working directory for the file.  If not
+      found, then caliper looks in the <caliper_root>/config directory.  By
+      default, caliper is installed in /opt/caliper.  Many of the settings
+      in the configfile can be overriden by appropriate options on the
+      command line.
+
+      Note that when making your own configuration file, the first line of
+      the file must be a comment which begins with "# caliper" to pass a
+      caliper validity check.
+
+      The following standard configuration files are supplied with caliper:
+
+
+
+
+ Hewlett-Packard Company            - 2 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+      alat_miss           Measures and reports failed ALAT checks.
+
+      arc_count           Measures and reports basic block arc counts.
+
+      branch_prediction   Measures and reports branch (mis-)predictions.
+
+      cgprof              Measures and reports call graph profile.  (This is
+                          an enhanced version of the gprof command.)
+
+      dcache_miss         Measures and reports data cache misses.
+
+      dtlb_miss           Measures and reports data tlb misses.
+
+      fprof               Measures and reports a flat profile of sampled
+                          instruction addresses.
+
+      func_count          Measures and reports function counts.
+
+      icache_miss         Measures and reports instruction cache misses.
+
+      itlb_miss           Measures and reports instruction tlb misses.
+
+      pbo                 Measures performance and generates compiler
+                          feedback file.
+
+      pmu_trace           Reports per-(kernel)thread traces of sampled cache
+                          misses, TLB misses, ALAT misses, branch
+                          mispredictions, instruction addresses, and CPU
+                          events.
+
+      total_cpu           Measures and reports total cpu event counts.
+
+    Options
+      There are a number of command line options available which alter
+      caliper's operation.  Option names and literal arguments can be
+      abbreviated to their shortest, non-ambiguous spelling.  Although the
+      command line synopsis above shows caliper options following
+      config_file, in reality they can precede and/or follow it.  In the
+      option descriptions below, lower-case text is a literal which is typed
+      as shown and upper-case text is descriptive and must be replaced with
+      real values.
+
+      The following general options can always be used:
+
+      -help         Prints the quick help text.  (Can also be specified
+                     with the -h or -???? options.)
+
+      -version      Prints the caliper version identification.  (Can also
+                     be specified with the -v option.)
+
+
+
+
+
+ Hewlett-Packard Company            - 3 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+    Data Collection Options
+      The command line options which affect data collection are:
+
+      -attach=PID   Specifies that caliper is to attach to a running
+                     process with the process identifier, PID.  When
+                     attaching to a process to perform "cgprof",
+                     "funccount", "pbo", and "arccount" runs, the
+                     dependent shared libraries of the program must be
+                     mapped as private before you can attach to the process.
+                     You can enable private mapping of the shared libraries
+                     by using the chatr(1) command with the ++++dbg enable
+                     option on the program file. When attaching to a process
+                     for "cgprof", "funccount", "pbo", and "arccount"
+                     runs, the caliper will remain attached to the target
+                     process until it exits (See also -duration=SECONDS).
+
+      -call-types=[virtual][:inline]
+                     The -call-types option specifies that caliper should
+                     record and report the call type of functions.  Specify
+                     "virtual" to have virtual functions reported, "inline"
+                     to have inline functions reported.  Call types are
+                     reported only for funccount and cgprof.
+
+      -duration=SECONDS
+                     Specifies how long the measured application should run
+                     (in seconds) before caliper stops measuring it. When
+                     caliper stops measuring, the application is resumed and
+                     runs freely. This option is not supported for "cgprof",
+                     "funccount", "pbo" and "arccount" runs.
+
+      -global-counters=CPU_CNTR[:PRIV_LEVEL][,CPU_CNTR[:PRIV_LEVEL][,...]]
+                     Specifies the cpu counters (CPUCNTR) to measure.
+                     PRIVLEVEL determins the privilege level setting for a
+                     given counter. By default, counters are measured when
+                     your application runs in user space
+                     ("userprivlevel"). The privilege levels available
+                     are: "userprivlevel", "kernelprivlevel", and
+                     "allprivlevel".  This option overrides the
+                     "globalcounters" setting in the total_cpu
+                     configuration file.  See the configuration file for
+                     more information.
+
+      -module-default=all|none
+                     Specifies the default setting for load module inclusion
+                     in the measurement.
+
+      -module-exclude=MODULE[:MODULE[:...]]
+                     Specifies explicitly the load modules to be excluded
+                     from measurement.  Module names can be given as a
+                     simple filename (libapplib1.so) which matches libraries
+                     of this name in any directory; a full-path filename
+
+
+
+ Hewlett-Packard Company            - 4 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+                     (/home/dev/libs/libapplib1.so) which matches only this
+                     one specific library; or a full-path directory name
+                     (/usr/lib/) which matches all libraries within this
+                     directory or any lower sub-directories.
+
+      -module-include=MODULE[:MODULE[:...]]
+                     Specifies explicitly the load modules to be included in
+                     the measurement.  Module names can be given as a simple
+                     filename (libapplib1.so) which matches libraries of
+                     this name in any directory; a full-path filename
+                     (/home/dev/libs/libapplib1.so) which matches only this
+                     one specific library; or a full-path directory name
+                     (/usr/lib/) which matches all libraries within this
+                     directory or any lower sub-directories.
+
+      -module-search-path=DIRECTORY[:DIRECTORY[:...]]
+                     Specifies a list of directories to be searched when a
+                     load module file (executable or shared library) cannot
+                     be found. During data collection, a load module may not
+                     be found if the measured process uses chroot(2) or
+                     chdir(2) and then loads libraries or executes other
+                     binaries using relative paths.  During reporting from a
+                     data file, a load module file may not be found if the
+                     load module is not available from the location recorded
+                     at data collection time.
+
+      -process=default|all|root|root-forks|[some:][(OPT1,...)]PATTERN
+                     Specifies which processes in the process tree should be
+                     measured.  "root" measures only the root process.
+                     "root-forks" measures the root process and processes
+                     forked from it. "all" measures all processes. The
+                     default setting (which can be explicitely requested
+                     with "default") is "root " for all configuration files
+                     except pbo for which the default is "root-forks".  For
+                     more information, see "Process Selection" below.
+
+      -sampled-counters=CPU_CNTR[:PRIV_LEVEL][,CPU_CNTR[:PRIV_LEVEL][,...]]
+                     Specifies the cpu counters (CPUCNTR) to measure.  This
+                     option overrides the "sampledcounters" setting in the
+                     pmu_trace configuration file.  See the configuration
+                     file for more information.
+
+      -sampling-counter=CPU_COUNTER[:PRIV_LEVEL][,COUNT[,VARIATION]]
+                     Specifies the cpu counter used to control the
+                     measurement.  This option overrides the
+                     "samplingcounter" setting in the pmu_trace
+                     configuration file.  See the configuration file for
+                     more information.
+
+      -thread=sum-all|all
+                     specifies how thread data should be collected and
+
+
+
+ Hewlett-Packard Company            - 5 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+                     reported.  Specify "all" to collect and report data per
+                     thread.  Specify "sumall" to collect and report data
+                     summed across threads.  Default: "sumall".  Note that
+                     this option is currently only supported for the
+                     following configuration files: alatmiss,
+                     branchprediction, dcachemiss, dtlbmiss, fprof,
+                     icachemiss, and itlbmiss.
+
+      -user-regions=default|rum-sum
+                     For runs involving the Itanium PMU, specifies whether
+                     the data should be collected for the entire run
+                     ("default"), or only in regions delimited by the PMU
+                     enable/disable instructions ("rum-sum"). For more
+                     information, see "Limiting PMU Measurements" below.
+
+    Reporting Options
+      The command line options which affect reporting are:
+
+      -context-lines=COUNT_SOURCE[,COUNT_DISASSEMBLY]
+                     Specifies that function details should show at least
+                     count_source source lines (default: 0) before and after
+                     reporting a source line entry with associated
+                     performance data.  Set count_source to "all" to report
+                     all source lines for reported functions.  As with
+                     count_source, set count_disassembly to show context
+                     disassembly lines (default: 0).  Applies to PMU
+                     histogram reports only.
+
+      -datafile=DATAFILE[,per-process|shared][,unique]
+                     In collect mode, saves measurement results to a data
+                     file. In report mode, specifies the data file used to
+                     generate a report. (Can also be specified with the -d
+                     option.) Allows you to regenerate reports with
+                     different report settings without having to rerun your
+                     application under Caliper. Multi-process data can be
+                     saved "per-process" (exec name is appended to each
+                     file) or to a single, "shared" data file (default:
+                     "shared"). Specify "unique" to have the process ID
+                     appended to the data file name.
+
+      -detail-cutoff=PERC_CUTOFF[,CUM_PERC_CUTOFF[,MIN_COUNT]]
+                     Specifies a cutoff value that limits functions reported
+                     (in function details sections) to those responsible for
+                     at least perc_cutoff (default: 1.0) of the sort metric
+                     and no more than cum_perc_cutoff (default: 100.0) of
+                     the sort metric. The min_count argument sets the
+                     minimum number of functions to be displayed for each
+                     shared library and the main executable (default: 0).
+                     Applies to PMU histogram reports only.
+
+
+
+
+
+ Hewlett-Packard Company            - 6 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+      -flow-data=FLOW_DATA_FILE[,per-process|shared]
+                     Specifies the filename used to store data collected
+                     when using the pbo configuration file (default:
+                     "flow.data").  The FLOWDATA environment variable
+                     overrides this option.  Multi-process flow data files
+                     can be generated "per-process" (exec name is appended
+                     to each file) or to a single, "shared" file (default:
+                     "shared").
+
+      -flow-log=FLOW_LOG_FILE[,per-process|shared]
+                     Specifies the filename used to log diagnostic messages
+                     when using the pbo configuration file (default:
+                     "flow.log").  The FLOWLOG environment variable
+                     overrides this option.  Multi-process flow log files
+                     can be generated "per-process" (exec name is appended
+                     to each file) or to a single, "shared" file (default:
+                     "shared").
+
+      -html=[OUTPUT_DIR[,STYLE[,ENTRIES_PER_PAGE]]]
+                     Writes performance data as an HTML-formatted report in
+                     directory output_dir (default: ./Caliper_HTML).  The
+                     report style can be black, gold, or white (default:
+                     white).  The number of entries on each web page can
+                     also be given (default: 20).  The -html option is
+                     supported for the following reports: alatmiss,
+                     branchprediction, cgprof, dcachemiss, dtlbmiss,
+                     fprof, icachemiss, and itlbmiss.
+
+      -info         Causes HP Caliper to append help information to the end
+                     of textual reports.
+
+      -output-file=OUTFILE[,append|create][,per-process|shared][,unique]
+                     Specifies the file in which to write caliper
+                     performance report (default is stdout).  (Can also be
+                     specified with the -o option.)  The file can be opened
+                     in "append" or "create" mode (default: "create").
+                     Multi-process reports can be generated "per-process"
+                     (exec name is appended to each file) or to a single,
+                     "shared" file (default: "shared"). Specify "unique" to
+                     have the process ID appended to the report file name.
+
+      -per-module-data=TRUE|FALSE
+                     Specifies whether or not caliper should report function
+                     data in one list (-per-module-data=FALSE, the
+                     default), or report functions grouped by load module
+                     (-per-module-data=TRUE).  -per-module-data=TRUE is
+                     supported for the following configuration files:
+                     alat_miss, branch_prediction, dcache_miss, dtlb_miss,
+                     fprof, icache_miss, and itlb_miss.
+
+
+
+
+
+ Hewlett-Packard Company            - 7 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+      -percent-columns=total|cumulative|total:cumulative
+                     Specifies the percentage of sample hits columns in the
+                     report.  Specify "total" to have a column showing
+                     percentage of samples with respect to total number of
+                     samples taken.  Specify "cumulative" to have a column
+                     showing cumulative percentage of samples.  Applies to
+                     PMU histogram reports only.
+
+      -read-init-file=TRUE|FALSE
+                     Specifies whether or not caliper should look for and
+                     read .caliperinit, the caliper initialization file
+                     (default: TRUE). Caliper looks for a .caliperinit file
+                     in the current directory; if not found, caliper then
+                     looks in your home directory. Settings in an
+                     initialization file take precedence over configuration
+                     file settings. Command-line options take precedence
+                     over settings in an initialization file.
+
+      -report-details=[statement][:instruction]
+                     Specifies level of program detail reported (default:
+                     statement:instruction).  Specify "statement" to have
+                     data aggregated by source statement.  Specify
+                     "instruction" to obtain reports at the lowest level of
+                     granularity available.  Applies to PMU histogram
+                     reports only.
+
+      -sort-by=METRIC
+                     Specifies that performance data is to be sorted by
+                     values of given metric.  (Default: See "Metrics for
+                     Sorts/Cutoffs" below.)
+
+      -source-path-map=PATHMAP[:PATHMAP:...]
+                     Specifies the pathmap used in finding source files
+                     (used for reporting source statements).  pathmap
+                     entries are separated by a colon (:) and applied in
+                     order until a file match is found.  Simple entries are
+                     prepended to filenames; comma-separated entries specify
+                     to substitute the path to the left of the comma with
+                     the path to the right of the comma.  Applies to PMU
+                     histogram reports only.
+
+      -summary-cutoff=PERC_CUTOFF[,CUM_PERC_CUTOFF[,MIN_COUNT]]
+                     Specifies a cutoff value that limits functions reported
+                     (in function summaries) to those responsible for at
+                     least perc_cutoff (default: 0.1) of the sort metric and
+                     no more than cum_perc_cutoff (default: 100.0) of the
+                     sort metric. The min_count argument sets the minimum
+                     number of functions to be displayed for each shared
+                     library and the main executable (default: 5).  Applies
+                     to PMU histogram reports only.
+
+
+
+
+ Hewlett-Packard Company            - 8 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+    Information Options
+      The command line options which affect information-only runs are:
+
+      -cpu-counter=PARTIAL_COUNTER_NAME|KEYWORD|all
+                     Specifies that information about the cpu counters which
+                     match the given (partial) name or keyword be output.
+                     The information fields to search are given with the -
+                     search option.  The information fields to output are
+                     given with the -report option.  Use "all" to report on
+                     all cpu counters.  The -cpu-counter and -report
+                     options are mutually exclusive.  If neither is given,
+                     then -cpu-counter is assumed.  (Can also be specified
+                     with the -c option.)
+
+      -detail=all|[category][:name][:title][:description]
+                     Specifies which information fields to include in cpu
+                     counter reports.  It can be any combination of
+                     "category", "name", "title", or "description" separated
+                     by colons or "all" (default: "name:title").  (Can also
+                     be specified with the -d option.)
+
+      -output-file=OUTFILE[,append|create]
+                     Specifies the file in which to write the caliper
+                     information report (default is stdout).  (Can also be
+                     specified with the -o option.)  The file can be opened
+                     in "append" or "create" mode (default: "create").
+
+      -report=all|REPORT_TYPE
+                     Specifies that information about the report types which
+                     match the given (partial) reporttype name be output.
+                     This is the same information which is include in
+                     measurement reports when the -info option is used.
+                     Report types are "alatmiss", "arccount",
+                     "branchprediction", "cgprof", "dcachemiss",
+                     "dtlbmiss", "fprof", "funccount", "icachemiss",
+                     "itlbmiss", "pmutrace", or "totalcpu".  Use "all" to
+                     report on all report types.  The -cpu-counter and -
+                     report options are mutually exclusive.  (Can also be
+                     specified with the -r option.)
+
+      -search=all|[category][:name][:title][:description]
+                     Specifies which information fields are to be searched
+                     for cpu counter reports.  It can be any combination of
+                     "category", "name", "title", or "description" separated
+                     by colons or "all" (default: "name").  (Can also be
+                     specified with the -s option.)
+
+
+    Specifying Settings with an Initialization File
+      You can save settings in a file that HP Caliper automatically uses at
+      start-up for data collection or data reporting runs. Putting the
+
+
+
+ Hewlett-Packard Company            - 9 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+      options in an initialization file simplifies the command line you use
+      to launch HP Caliper.
+
+      For example, you specify your preferred sorting options for each type
+      of report as well as global settings for all of your reports, such as
+      system libraries to exclude and output file locations. With your
+      preferences in the initialization file, you can then simply type:
+
+           $ caliper arccount
+
+      The resulting report would use your predefined preferences. Using this
+      approach, you could change your preferences without having to change
+      the HP Caliper command line in a Makefile.
+
+      Note: Any option you specify on the command line override the
+      corresponding settings in an initialization file.
+
+      The initialization file, named .caliperinit, can be in the current
+      working directory, your home directory, or in both locations.
+
+      When you start HP Caliper, it searches for the presence of an
+      initialization in this order:
+
+              ".caliperinit" in the current working directory
+              ".caliperinit" in your home directory
+
+      and when it finds one, it executes based on that initialization file.
+
+      An initialization file is a Python script, similar to Caliper
+      configuration file. Here is a sample .caliperinit file:
+
+              application="ls"
+              if caliperconfigfile == 'branchprediction':
+                  sortby = 'taken'
+                  process='all'
+              elif caliperconfigfile == 'mycount':
+                  application="/opt/mpi/bin/mpirun"
+                  arguments = "-np 2 /proj/dynopt/testfe/mpihelloworld"
+              elif caliperconfigfile == 'arccount':
+                  application="/opt/mpi/bin/mpirun"
+                  arguments = "-np 2 /proj/dynopt/testfe/mpihelloworld"
+                  sortby = "arccount"
+              elif caliperconfigfile == 'pbo':
+                  application="/opt/mpi/bin/mpirun"
+                  arguments = "-np 2 /proj/dynopt/testfe/mpihelloworld"
+                  moduleexclude="/usr/bin/sh"
+
+      The syntax inside the initialization file is the same as in
+      configuration files. In particular most long options that are
+      specified in the command line could be specified in the initialization
+      file, replacing the "-" in the option long name with "" to form the
+
+
+
+ Hewlett-Packard Company           - 10 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+      variable name.
+
+
+
+    Process Selection
+      When dealing with multi-process applications, it is important to be
+      able to select processes to be measured in a process tree. This
+      section explains how to do this selection by using the -process
+      option.
+
+      Caliper has a choice between three behaviors when considering what to
+      do with a process:
+
+      measure   The process is measured. Caliper is informed of new
+                processes generated via fork, exec or vfork+exec.
+
+      track     The process is not measured. Caliper is informed of new
+                processes generated via fork, exec or vfork+exec.
+
+      ignore    The process is measured. Caliper is not informed of new
+                processes generated via fork, vfork or exec.
+
+      Caliper will pick which behavior is chosen depending on the process
+      option.
+
+      This section uses the term root process. The root process is the
+      process at the root of the process tree. It is either the process
+      started by Caliper, the process to which Caliper attached (-attach
+      option) or the process that caused Caliper to be automatically invoked
+      (chatr +I binary or +Oprofile=collect binaries).
+
+      The simple options are:
+
+           -process=root
+                Only the root process is measured. This is the default for
+                all configuration files except for pbo.
+
+           -process=root-forks
+                Only the root process and processes forked from the root
+                process are measured. This is the default behavior for pbo.
+
+           -process=all
+                Every process in the process tree is measured.
+
+           -process=default
+                This option is available to be able to explicitely request
+                the default behavior. This is equivalent to specifying root
+                for all configuration files except for pbo for which it is
+                equivalent to specifying root-forks .
+
+      The complex options are:
+
+
+
+ Hewlett-Packard Company           - 11 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+           -process=[some:][(OPT1,...)]PATTERN
+                Each -process=some:... argument provided to Caliper is
+                interpreted as an additional filter. Those filters are
+                applied in order to each new process.  If a filter matches
+                the process, the behavior (measure,track, ignore) associated
+                with the process is memorized. Caliper will use the behavior
+                of the last matching filter to determine what to do with the
+                process.
+
+                When no (OPT1,...) component is provided, the default
+                interpretation is as follow: the PATTERN component is
+                interpreted as a list of glob patterns separated by colons
+                (':'); if the basename of the executable matches any of
+                those patterns, the process is measured, otherwise it is
+                tracked.
+
+                The presence of keywords in (OPT1,...) modifies those
+                semantics as follow:
+
+                measure
+                     Processes matching this filter will be measured.
+
+                track
+                     Processes matching this filter will be tracked.
+
+                ignore
+                     Processes matching this filter will be ignored.
+
+                glob The PATTERN is interpreted as a list of ':'-separated
+                     glob patterns.
+
+                regexp
+                     The PATTERN is interpreted as a Python/Perl regular
+                     expression that is tested using the search() function
+                     (i.e. any non-empty match will be considered a positive
+                     match).
+
+                file The string used against the PATTERN is the basename of
+                     the main executable of the process.
+
+                arg0 | argv0
+                     The string used against the PATTERN is the argument 0
+                     of the process.
+
+                arg1 | argv1
+                     The string used against the PATTERN is the argument 1
+                     of the process.
+
+                root The filter only matches the root process.
+
+
+
+
+
+ Hewlett-Packard Company           - 12 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+                fork The filter only matches processes created via fork.
+
+                vfork-exec
+                     The filter only matches processes created via vfork
+                     followed by exec.
+
+                exec The filter only matches processes created by exec.
+
+                For keyword families measure|track|ignore, glob|regexp and
+                file|arg0|arg1, only the last keyword used in each family is
+                considered. For the keyword family root|fork|vfork-
+                exec|exec, multiple keywords will be considered as
+                specifying a logical OR operation between the keywords.
+
+                The prefix some: is only necessary when no option is
+                provided and the PATTERN could be mistaken for one of the
+                simple options (root,root-forks,all,default).
+
+           -process=custom:FUNCTION
+                Allows to specify a Python function to be used as a filter
+                for processes.
+
+
+    Limiting PMU Measurement
+      For measurements that involve the Itanium PMU, you can restrict
+      measurements to specific parts of your application.  The supported
+      measurements are:
+
+           o+    alatmiss
+           o+    branchprediction
+           o+    dcachemiss
+           o+    dtlbmiss
+           o+    fprof
+           o+    icachemiss
+           o+    itlbmiss
+           o+    pmutrace
+           o+    totalcpu
+
+      By default, HP Caliper measures PMU events for your entire program.
+      However using -user-regions=rum-sum allows you to restrict
+      measurements to performance-sensitive regions of code.
+
+      To use this feature:
+
+      o+ Modify the application source code to use the header file provided
+      with HP Caliper. The default location of the header file is
+      /opt/caliper/include/calipercontrol.h .
+
+      o+ In your source code, add the HP Caliper macros to enable and disable
+      the Itanium PMU.
+
+
+
+
+ Hewlett-Packard Company           - 13 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+           o+ To enable the PMU, insert:
+                CALIPERPMUENABLE();
+
+           Using CALIPERPMUENABLE() enables the PMU for the current thread
+           until the next CALIPERPMUDISABLE(). When the PMU is already
+           enabled, CALIPERPMUENABLE() does not have any effect.
+
+           o+ To disable the PMU insert:
+                CALIPERPMUDISABLE();
+
+           When the PMU is already disabled, CALIPERPMUDISABLE()does not
+           have any effect.
+
+      o+ Use the command-line option -user-regions=rum-sum or place
+      userregions="rum-sum" in a configuration file.  This option causes HP
+      Caliper to allow the measured applications to control the PMU. When
+      specified, the PMU is initially disabled and HP Caliper will not
+      measure the application until the first CALIPERPMUENABLE() is
+      executed.
+
+      If you do not specify the -user-regions=rum-sum option,
+      CALIPERPMUENABLE() and CALIPERPMUDISABLE() do not have any effect
+      and the instructions behave as no-ops.
+
+
+    Metrics for Sorts/Cutoffs
+      The following report types support the use of the following metrics
+      for sorting and applying cutoffs, where the default metric for sorting
+      is enclosed in "[]":
+
+      alat_miss           [sampled-misses]
+
+      arc_count           arc-count, [taken-count]
+
+      branch_prediction   target, taken, not-taken, [taken-mispredict],
+                          not-taken-mispredict
+
+      cgprof              [samples], seconds, call-count, msecs-per-call
+
+      dcache_miss         sampled-misses, [latency], avg-latency
+
+      dtlb_miss           [sampled-misses], l2-fills, hpw-fills, soft-fills
+
+      fprof               [samples]
+
+      func_count          [call-count]
+
+      icache_miss         sampled-misses, [latency], avg-latency
+
+      itlb_miss           [sampled-misses], hpw-fills, soft-fills
+
+
+
+
+ Hewlett-Packard Company           - 14 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+      Cutoff settings apply to PMU reports only (alatmiss,
+      branchprediction, dcachemiss, dtlbmiss, fprof, icachemiss,
+      itlbmiss).  By default, cutoff settings are based on the same metric
+      as the sort.  "address" is not a valid argument to -summary-cutoff or
+      -detail-cutoff.
+
+    Environment Variables
+      caliper recognizes the following environment variables:
+
+      CALIPER_HOME        Specifies the (non-default) <caliper_root>
+                          location when caliper is automatically invoked.
+                          This is only needed when caliper is not installed
+                          in its default location (/opt/caliper) and a
+                          program compiled with the +Oprofile=collect option
+                          (profile based optimization) is run.
+
+      CALIPER_OPTS        Specifies a set of caliper options which are used
+                          for every measurement run.  The contents of
+                          CALIPER_OPTS is prepended to the command line
+                          before it is processed.  It is possible, although
+                          not recommended, that the entire caliper command
+                          line can be put into CALIPER_OPTS.
+
+ EXAMPLES
+      Here are some examples of common uses of caliper:
+
+      caliper total_cpu <program>
+           This will run <program>, measuring and reporting the total number
+           of Itanium instructions executed (IA64INSTRETIRED), the total
+           number of nops executed (NOPSRETIRED) and the total number of
+           cpu cycles expended (CPUCYCLES).
+
+      caliper cgprof <program>
+           This will run <program>, measuring and reporting an extended
+           gprof-like call graph profile.
+
+      caliper cgprof -html====HTML <program>
+           This performs the same cgprof performance measurement as the
+           previous example but produces an HTML-formatted report in
+           directory HTML for browsing.
+
+      caliper pbo <program>
+           This will run <program>, measuring performance and producing a
+           flow.data feedback file.  This file can be fed to the compiler in
+           later builds using the +Oprofile=use option to enhance
+           optimization of the program.
+
+      caliper pmu_trace -sampling-counter=CPU_CYCLES,10000 <program>
+           This will run <program>, measuring and reporting the number of
+           Itanium instructions executed (IA64INSTRETIRED), the number of
+           nops executed (NOPSRETIRED) and the number of cpu cycles
+
+
+
+ Hewlett-Packard Company           - 15 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+           (CPUCYCLES) every 10,000 cpu cycles.  (The pmutrace
+           configuration file default is to sample every 50,000,000 cpu
+           cycles.)
+
+      export CALIPER_OPTS="-module-exclude=/usr/lib/"
+
+      caliper fprof <program>
+           This will run <program>, measuring and reporting a flat profile
+           of sampled instruction addresses, excluding all system libraries.
+
+      caliper info -detail=all L2
+           This will produce an information report including all details on
+           all cpu events with "L2" in name.
+
+      caliper info -r itlb
+           This will produce an information report on the itlbmiss
+           measurement report.
+
+      caliper total_cpu -process=all \
+               sh -c '/usr/bin/ls; /usr/bin/echo done'
+           This will measure /usr/bin/sh, /usr/bin/sl and /usr/bin/echo
+           executions.
+
+      caliper total_cpu -process=ls:echo \
+               sh -c '/usr/bin/ls; /usr/bin/echo done'
+           This will measure both /usr/bin/ls and /usr/bin/echo processes.
+
+      caliper total_cpu -process=*[[[[ho]]]] \
+               sh -c '/usr/bin/ls; /usr/bin/echo done'
+           This will measure both /usr/bin/sh and /usr/bin/echo processes.
+
+      caliper total_cpu -process='(arg1,regexp)tmp$' \
+               sh -c '/usr/bin/ls /var/tmp; /usr/bin/echo tmp listed'
+           This will measure measure both the /usr/bin/ls and /usr/bin/echo
+           processes, since the regular expression 'tmp$' matches their
+           argument 1.
+
+
+ LIMITATIONS
+      The current version of caliper has the following limitations:
+
+           o+  Only aggregrated results can be produced for multi-threaded
+              programs by the arccount, cgprof, funccount, pbo and
+              totalcpu configuration files.
+
+           o+  Handwritten assembly functions which do not follow the
+              standard language runtime conventions may not be properly
+              measured.
+
+           o+  Only native Itanium programs produced by the HP C, C++ and
+              Fortran 9x compilers can be measured.  PA-RISC programs,
+
+
+
+ Hewlett-Packard Company           - 16 -                HP-UX 11i Version 2
+
+
+
+
+
+
+ caliper(1)                                                       caliper(1)
+
+
+
+
+              although they can run on Itanium systems, cannot be measured.
+
+ AUTHOR
+      HP Caliper was developed by the Hewlett-Packard Company.
+
+ FILES
+      <caliper_root>                  Anchor location of caliper
+                                      installation, default /opt/caliper.
+
+      <caliper_root>/bin/caliper      caliper executable.
+
+      <caliper_root>/config/          Directory containing standard
+                                      configuration files.
+
+      <caliper_root>/doc/             Online documentation directory.
+
+      <caliper_root>/lib/python1.5/   Python support directory.
+
+      <caliper_root>/man/             Manpage directory.
+
+ SEE ALSO
+      aCC(1), cc(1), f90(1), ld(1), chatr(1).
+
+      Online help is available at <caliper_root>/doc/index.html (HTML
+      format).
+
+      The online HP Caliper User Guide is located at
+      <caliper_root>/doc/caliperug.pdf (PDF version) and
+      <caliper_root>/doc/html/caliper/C/caliperug.hmtl (HTML version).
+
+      There are detailed information files describing each HP Caliper
+      measurement report at <caliper_root>/doc/text/*.help
+
+      There are complete lists of cpu_counter values with full descriptions
+      in <caliper_root>/doc/text/itanium_cpu_counters.txt and
+      <caliper_root>/doc/text/itanium2_cpu_counters.txt
+
+      cpu_counter values (aka PMU events) are also described in the Intel(R)
+      Itanium(tm) Processor Reference Manual for Software Development
+      document.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ Hewlett-Packard Company           - 17 -                HP-UX 11i Version 2
+
+
+
+

@@ -1,0 +1,248 @@
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  09:40:36                                           PAGE:    1
+0REQUESTED OPTIONS (EXECUTE): ignore sdump opt(3) ad(none) gostmt flag(w) source vector(report(xlist))
+0REQUESTED OPTIONS (PROCESS): DIRECTIVE(' DIR:')
+0OPTIONS IN EFFECT: NOLIST NOMAP NOXREF GOSTMT NODECK SOURCE NOTERM OBJECT FIXED TRMFLG NOSRCFLG NOSYM RENT SDUMP
+                    NOSXM VECTOR IL(DIM) NOTEST NODC NOICA DIRECTIVE NODBCS NOSAA NOPARALLEL NOSAVE NOPROF TABS
+                    OPT(3) LANGLVL(77) NOFIPS FLAG(W) AUTODBL(00000) LINECOUNT(60) CHARLEN(500)
+              TABS: 1 9 17 25 33 41 49 57 65 73
+            VECTOR: NOIVA INTRINSIC REDUCTION SIZE(ANY) REPORT(XLIST)
+0 IF DO   ISN  LINE INC *....*...1.........2.........3.........4.........5.........6.........7.*.......8
+0                     [BEGIN INPUT FILE "fftb.f"
+                  2     c fftb => Like ffta but use shifts to compute coeffs index
+                  3     c
+            1     4           subroutine fftb ( d, lens, ndim, coeff, irev )
+                  5     c
+                  6     c d       = array to be transformed of length product lens
+                  7     c lens    = log2 length of each dimension
+                  8     c ndim    = number of dimensions
+                  9     c coeff   = array of length at least (max 2**lens)/2
+                 10     c irev    = integer work array of length at least max 2**lens
+                 11     c
+            2    12           complex d(0:*), temp
+            3    13           complex coeff(0:*)
+            4    14           dimension lens(ndim), irev(0:*)
+                 15     c
+                 16     c Find total length, max length, sum of log of dimension,
+                 17     c and largest log dimension
+                 18     c
+            5    19           lentotl = 0
+            6    20           maxlenl = 0
+            7    21           do i = 1, ndim
+      1     8    22              lentotl = lentotl + lens(i)
+      1     9    23              maxlenl = max(maxlenl,lens(i))
+      1    10    24           enddo
+           11    25           maxlen = 2**maxlenl
+           12    26           lentot = 2**lentotl
+           13    27           lopfac = lentot/2
+                 28     c
+                 29     c Main loop over dimensions
+                 30     c
+           14    31           lip = 0
+           15    32           lop = lentot
+           16    33           do idim = 1, ndim
+      1    17    34              lensidim = 2**lens(idim)
+      1    18    35              ls = lip
+      1    19    36              lip = lop
+      1    20    37              lop = ls
+                 38     c
+                 39     c Build bit reversal index vector and array of coefficients
+                 40     c
+      1    21    41              call reorder ( lensidim, irev )
+      1    22    42              call coeffs ( lensidim, coeff )
+                 43     c
+                 44     c Copy d with bit reversal for first stage of FFT
+                 45     c
+      1    23    46              mask1 = lensidim - 1
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  09:40:36  NAME:FFTB                                PAGE:    2
+0 IF DO   ISN  LINE INC *....*...1.........2.........3.........4.........5.........6.........7.*.......8
+0     1    24    47              mask2 = not(lensidim-1)
+                 48     c dir: ignore recrdeps(d)
+      1    25    49              do i = 0, lentot - 1
+      2    26    50                 iseg = iand(i,mask2)
+      2    27    51                 ir = irev(iand(i,mask1))
+      2    28    52                 d(i+lip) = d(ir+lop+iseg)
+      2    29    53              enddo
+                 54     c
+                 55     c Loop over array doing FFT for rest of stages
+                 56     c
+      1    30    57              if1 = lens(idim)
+      1    31    58              if2 = lentotl
+      1    32    59              do ibfly = 1, lens(idim)
+      2    33    60                 ls = lip
+      2    34    61                 lip = lop
+      2    35    62                 lop = ls
+                 63     c
+                 64     c Now compute this butterfly
+                 65     c
+      2    36    66                 if1 = if1 - 1
+      2    37    67                 if2 = if2 - 1
+                 68     c dir: ignore recrdeps(d)
+      2    38    69                 do i = 0, lopfac - 1
+      3    39    70                    iw = ishft(ishft(i,-if2),if1)
+      3    40    71                    temp = coeff(iw)*d(2*i+lop+1)
+      3    41    72                    d(i+lip       ) = d(2*i+lop)+temp
+      3    42    73                    d(i+lip+lopfac) = d(2*i+lop)-temp
+      3    43    74                 enddo
+      2    44    75              enddo
+      1    45    76           enddo
+                 77     c
+                 78     c If result is in bottom half of array, copy to top half
+                 79     c
+           46    80           if ( lip .ne. 0 ) then
+                 81     c dir: ignore recrdeps(d)
+   1       47    82              do i = 0, lentot - 1
+   1  1    48    83                 d(i) = d(i+lip)
+   1  1    49    84              enddo
+   1       50    85           endif
+                 86     c
+                 87     c Done
+                 88     c
+           51    89           end
+                      ]END INPUT FILE "fftb.f"
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  09:40:36  NAME:FFTB                                PAGE:    3
+0                                        REPORT(XLIST)  VECTORIZATION ANALYSIS
++                                        _____________  _____________ ________
+0 ISN FLAG NESTING *....*...1.........2.........3.........4.........5.........6.........7.*.......8 MESSAGES
++ ___ ____ _______                                                                                  ________
+0                  c fftb => Like ffta but use shifts to compute coeffs index
+                   c
+ 0001                    subroutine fftb ( d, lens, ndim, coeff, irev )
+                   c
+                   c d       = array to be transformed of length product lens
+                   c lens    = log2 length of each dimension
+                   c ndim    = number of dimensions
+                   c coeff   = array of length at least (max 2**lens)/2
+                   c irev    = integer work array of length at least max 2**lens
+                   c
+ 0002                    complex d(0:*), temp
+ 0003                    complex coeff(0:*)
+ 0004                    dimension lens(ndim), irev(0:*)
+                   c
+                   c Find total length, max length, sum of log of dimension,
+                   c and largest log dimension
+                   c
+ 0005                    lentotl = 0
+ 0006                    maxlenl = 0
+ 0007 VECT +-------      do i = 1, ndim
+ 0008      |_______         lentotl = lentotl + lens(i)                                             VECTOR SUM REDUCTION        -50
+
+ 0007 RECR +-------      do i = 1, ndim                                                             DEFINITE RECURRENCE         -22
+ 0009      |_______         maxlenl = max(maxlenl,lens(i))                                          SCALAR DEFINED BEFORE LOOP  -26
+ 0011                    maxlen = 2**maxlenl
+ 0012                    lentot = 2**lentotl
+ 0013                    lopfac = lentot/2
+                   c
+                   c Main loop over dimensions
+                   c
+ 0014                    lip = 0
+ 0015                    lop = lentot
+ 0016 UNAN               do idim = 1, ndim                                                          USER FUNCTION OR SUBROUTINE -14
+ 0017                       lensidim = 2**lens(idim)
+ 0018                       ls = lip
+ 0019                       lip = lop
+ 0020                       lop = ls
+                   c
+                   c Build bit reversal index vector and array of coefficients
+                   c
+ 0021                       call reorder ( lensidim, irev )
+ 0022                       call coeffs ( lensidim, coeff )
+                   c
+                   c Copy d with bit reversal for first stage of FFT
+                   c
+ 0023                       mask1 = lensidim - 1
+ 0024                       mask2 = not(lensidim-1)
+                   c dir: ignore recrdeps(d)
+ 0025 VECT +-------         do i = 0, lentot - 1                                                    "IGNORE RECRDEPS" USED      -72
+ 0026      |                   iseg = iand(i,mask2)
+ 0027      |                   ir = irev(iand(i,mask1))
+ 0028      |_______            d(i+lip) = d(ir+lop+iseg)                                            POTENTIAL RECRDEP ELIMINATED-77
+                   c
+                   c Loop over array doing FFT for rest of stages
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  09:40:36  NAME:FFTB                                PAGE:    4
+0                                        REPORT(XLIST)  VECTORIZATION ANALYSIS
++                                        _____________  _____________ ________
+0 ISN FLAG NESTING *....*...1.........2.........3.........4.........5.........6.........7.*.......8 MESSAGES
++ ___ ____ _______                                                                                  ________
+0                  c
+ 0030                       if1 = lens(idim)
+ 0031                       if2 = lentotl
+ 0032 RECR +-------         do ibfly = 1, lens(idim)                                                NESTED NONCONSTANT INDUCTION-29
+ 0033      |                   ls = lip
+ 0034      |                   lip = lop                                                            SCALAR DEFINED BEFORE LOOP  -26
+ 0035      |                   lop = ls                                                             SCALAR DEFINED BEFORE LOOP  -26
+           |       c dir: ignore recrdeps(d)
+ 0038 VECT |+------            do i = 0, lopfac - 1                                                 "IGNORE RECRDEPS" USED      -72
+ 0039      ||                     iw = ishft(ishft(i,-if2),if1)                                     VECTOR INTRINSIC FUNCTION   -51
+ 0040      ||                     temp = coeff(iw)*d(2*i+lop+1)                                     INTERCHANGE PREVENTING DEP  -23
+           ||                                                                                       SUBSCRIPT TOO COMPLEX       -25
+           ||                                                                                       POTENTIAL RECRDEP ELIMINATED-77
+ 0041      ||                     d(i+lip       ) = d(2*i+lop)+temp                                 INTERCHANGE PREVENTING DEP  -23
+           ||                                                                                       SUBSCRIPT TOO COMPLEX       -25
+           ||                                                                                       POTENTIAL RECRDEP ELIMINATED-77
+ 0042      ||______               d(i+lip+lopfac) = d(2*i+lop)-temp                                 INTERCHANGE PREVENTING DEP  -23
+           |_______                                                                                 SUBSCRIPT TOO COMPLEX       -25
+                                                                                                    POTENTIAL RECRDEP ELIMINATED-77
+ 0045                    enddo
+                   c
+                   c If result is in bottom half of array, copy to top half
+                   c
+ 0046                    if ( lip .ne. 0 ) then
+                   c dir: ignore recrdeps(d)
+ 0047 VECT +-------         do i = 0, lentot - 1                                                    "IGNORE RECRDEPS" USED      -72
+ 0048      |_______            d(i) = d(i+lip)                                                      POTENTIAL RECRDEP ELIMINATED-77
+ 0050                    endif
+                   c
+                   c Done
+                   c
+ 0051                    end
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  09:40:36  NAME:FFTB                                PAGE:    5
+0NUMBER    ISN        FLAG  VS FORTRAN VECTOR REPORT MESSAGES
++______    ___        ____  __ _______ ______ ______ ________
+0ILX0122I  0007       RECR  THIS LOOP COULD NOT BE VECTORIZED BECAUSE OF A DEFINITE RECURRENCE INVOLVING THE VARIABLE(S) "MAXLENL".
+
+0ILX0150W  0008       VECT  VECTORIZATION WAS DONE USING SUM OR PRODUCT REDUCTION ON THE VARIABLE(S) "LENTOTL". RESULTS MAY DIFFER
+                            FROM SCALAR CODE.
+0ILX0126I  0009       RECR  THE SCALAR VARIABLE(S) "MAXLENL" ARE NOT ELIGIBLE FOR EXPANSION BECAUSE THEY MAY USE VALUES THAT WERE
+                            SET BEFORE THE EXECUTION OF THE CONTAINING LOOP AND THEIR VALUES MAY BE USED AFTER THE EXECUTION OF THE
+                            CONTAINING LOOP.
+0ILX0114I  0016       UNAN  THE USER FUNCTION(S) OR SUBROUTINE(S) "COEFFS" AT ISN "22" AND "REORDER" AT ISN "21" ARE NOT
+                            ANALYZABLE.
+0ILX0172I  0025       VDIR  AN "IGNORE RECRDEPS" DIRECTIVE HAS BEEN SPECIFIED FOR THIS LOOP.
+0ILX0177W  0028       VDIR  POTENTIAL BACKWARD DEPENDENCE(S) INVOLVING THE ARRAY(S) "D" HAVE BEEN IGNORED BECAUSE OF AN "IGNORE
+                            RECRDEPS" DIRECTIVE APPLIED TO THE LOOP(S) AT NESTING LEVEL(S) "2".
+0ILX0129I  0032       RECR  THE LOOP VARIABLE OF THIS LOOP OR OF SOME NESTED LOOP AFFECTS THE LOOP VARIABLE OR AN AUXILIARY
+                            INDUCTION VARIABLE USED BY SOME OTHER NESTED LOOP.
+0ILX0126I  0034-0035  RECR  THE SCALAR VARIABLE(S) "LIP" AND "LOP" ARE NOT ELIGIBLE FOR EXPANSION BECAUSE THEY MAY USE VALUES THAT
+                            WERE SET BEFORE THE EXECUTION OF THE CONTAINING LOOP AND THEIR VALUES MAY BE USED AFTER THE EXECUTION
+                            OF THE CONTAINING LOOP.
+0ILX0172I  0038       VDIR  AN "IGNORE RECRDEPS" DIRECTIVE HAS BEEN SPECIFIED FOR THIS LOOP.
+0ILX0151W  0039       VECT  THE INTRINSIC FUNCTION(S) "ISHFT" HAVE BEEN VECTORIZED.
+0ILX0123I  0040-0042  RECR  THE ARRAY(S) "D" CARRY FORWARD DEPENDENCES AT NESTING LEVEL(S) "1" THAT MAY BE INTERCHANGE PREVENTING.
+0ILX0125I  0040-0042  RECR  THE ARRAY(S) "D" USE SUBSCRIPT COMPUTATIONS THAT COULD NOT BE ANALYZED. THEY MAY INVOLVE INDIRECT
+                            ADDRESSING, DATA CONVERSIONS, UNKNOWN STRIDES, OR AUXILIARY INDUCTION VARIABLES. THE COMPILER HAS
+                            ASSUMED THAT THESE ARRAYS CARRY DEPENDENCES IN LOOP(S) AT NESTING LEVEL(S) "1".
+0ILX0177W  0040-0042  VDIR  POTENTIAL BACKWARD DEPENDENCE(S) INVOLVING THE ARRAY(S) "D" HAVE BEEN IGNORED BECAUSE OF AN "IGNORE
+                            RECRDEPS" DIRECTIVE APPLIED TO THE LOOP(S) AT NESTING LEVEL(S) "3".
+0ILX0172I  0047       VDIR  AN "IGNORE RECRDEPS" DIRECTIVE HAS BEEN SPECIFIED FOR THIS LOOP.
+0ILX0177W  0048       VDIR  POTENTIAL BACKWARD DEPENDENCE(S) INVOLVING THE ARRAY(S) "D" HAVE BEEN IGNORED BECAUSE OF AN "IGNORE
+                            RECRDEPS" DIRECTIVE APPLIED TO THE LOOP(S) AT NESTING LEVEL(S) "1".
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  09:40:36  NAME:FFTB                                PAGE:    6
+0              TABLE OF DEPENDENCES ELIMINATED BY IGNORE DIRECTIVES
++              _____ __ ___________ __________ __ ______ __________
+0DIRECTIVE    ARRAY NAME   FROM   TO     DEP     AFFECTED        LOOP
+   TYPE      (EQUIV NAME)  ISN    ISN    TYPE    DIMENSIONS      VARIABLES
++_________   ____________  _____  _____  ______  ______________  _________
+0BACKDEP      D               28     28  TRUE    1               I
+0BACKDEP      D               41     41  TRUE    1               I
+ BACKDEP      D               41     40  TRUE    1               I
+ BACKDEP      D               42     42  TRUE    1               I
+ BACKDEP      D               42     41  OUTPUT  1               I
+ BACKDEP      D               42     41  TRUE    1               I
+ BACKDEP      D               42     40  TRUE    1               I
+ BACKDEP      D               42     41  ANTI    1               I
+0BACKDEP      D               48     48  TRUE    1               I
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  09:40:36  NAME:FFTB                                PAGE:    7
+0*STATISTICS*   SOURCE STATEMENTS: 51, PROGRAM SIZE: 1832 BYTES, PROGRAM NAME: FFTB,   PAGE:    1
+ *STATISTICS*   PROGRAM SIZE DETAIL: 1832 = (T.1648  D.184  B.0), S.416
+ *STATISTICS*   3 DIAGNOSTICS GENERATED. HIGHEST SEVERITY CODE IS 0.
+0**FFTB** END OF COMPILATION 1 ******

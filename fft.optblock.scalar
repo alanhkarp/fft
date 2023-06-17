@@ -1,0 +1,1341 @@
+ Enter number of dimensions and power of 2 for each
+Version  CPU sec   Mflops  Error     Comments
+Bit reversal  0.411042
+fourn      2.767    4.026  0.00E+00  Correct answer from Numerical Recipes   
+ib, icl    2    2
+Set-up  0.000106
+Fixed stride  0.935200
+Gather        0.037616
+Bit reversal  0.972984
+factor  0.000046
+Butterfly 1, factor   16  0.060970    22.573
+Butterfly n, factor   16  0.080465    26.267
+Butterfly n, factor   16  0.084796    24.925
+Butterfly n, factor   16  0.084670    24.962
+Butterfly n, factor    2  0.033589    19.511
+fft        1.319    8.447  3.80E-06  Best result for 3090/VF                 
+ib, icl    2    3
+Set-up  0.000114
+Fixed stride  0.777803
+Gather        0.037531
+Bit reversal  0.815503
+factor  0.000048
+Butterfly 1, factor   16  0.060886    22.604
+Butterfly n, factor   16  0.080476    26.263
+Butterfly n, factor   16  0.084222    25.095
+Butterfly n, factor   16  0.085138    24.825
+Butterfly n, factor    2  0.033422    19.608
+fft        1.161    9.597  3.80E-06  Best result for 3090/VF                 
+ib, icl    2    4
+Set-up  0.000112
+Fixed stride  0.800013
+Gather        0.036349
+Bit reversal  0.836518
+factor  0.000061
+Butterfly 1, factor   16  0.060458    22.764
+Butterfly n, factor   16  0.080659    26.203
+Butterfly n, factor   16  0.084615    24.978
+Butterfly n, factor   16  0.084553    24.997
+Butterfly n, factor    2  0.033401    19.621
+fft        1.181    9.431  3.80E-06  Best result for 3090/VF                 
+ib, icl    2    5
+Set-up  0.000125
+Fixed stride  0.661524
+Gather        0.035122
+Bit reversal  0.696833
+factor  0.000051
+Butterfly 1, factor   16  0.061309    22.448
+Butterfly n, factor   16  0.079943    26.438
+Butterfly n, factor   16  0.084901    24.894
+Butterfly n, factor   16  0.083912    25.188
+Butterfly n, factor    2  0.033374    19.637
+fft        1.041   10.698  3.80E-06  Best result for 3090/VF                 
+ib, icl    2    6
+Set-up  0.000179
+Fixed stride  0.685204
+Gather        0.036907
+Bit reversal  0.722316
+factor  0.000048
+Butterfly 1, factor   16  0.060662    22.687
+Butterfly n, factor   16  0.080552    26.238
+Butterfly n, factor   16  0.076697    27.557
+Butterfly n, factor   16  0.084771    24.932
+Butterfly n, factor    2  0.033123    19.786
+fft        1.059   10.517  3.80E-06  Best result for 3090/VF                 
+ib, icl    2    7
+Set-up  0.000126
+Fixed stride  0.551341
+Gather        0.036458
+Bit reversal  0.587961
+factor  0.000053
+Butterfly 1, factor   16  0.061017    22.555
+Butterfly n, factor   16  0.080264    26.332
+Butterfly n, factor   16  0.084514    25.008
+Butterfly n, factor   16  0.085300    24.778
+Butterfly n, factor    2  0.032607    20.099
+fft        0.933   11.943  3.80E-06  Best result for 3090/VF                 
+ib, icl    2    8
+Set-up  0.000115
+Fixed stride  0.573779
+Gather        0.037050
+Bit reversal  0.610998
+factor  0.000057
+Butterfly 1, factor   16  0.060290    22.827
+Butterfly n, factor   16  0.080044    26.405
+Butterfly n, factor   16  0.083871    25.200
+Butterfly n, factor   16  0.083882    25.197
+Butterfly n, factor    2  0.033335    19.660
+fft        0.954   11.683  3.80E-06  Best result for 3090/VF                 
+ib, icl    2    9
+Set-up  0.000115
+Fixed stride  0.442059
+Gather        0.037212
+Bit reversal  0.479426
+factor  0.000056
+Butterfly 1, factor   16  0.060713    22.668
+Butterfly n, factor   16  0.080102    26.386
+Butterfly n, factor   16  0.084467    25.022
+Butterfly n, factor   16  0.084959    24.877
+Butterfly n, factor    2  0.032439    20.203
+fft        0.823   13.533  3.80E-06  Best result for 3090/VF                 
+ib, icl    2   10
+Set-up  0.000136
+Fixed stride  0.465592
+Gather        0.037491
+Bit reversal  0.503232
+factor  0.000057
+Butterfly 1, factor   16  0.060995    22.563
+Butterfly n, factor   16  0.080169    26.364
+Butterfly n, factor   16  0.085312    24.774
+Butterfly n, factor   16  0.085254    24.791
+Butterfly n, factor    2  0.034072    19.234
+fft        0.850   13.103  3.80E-06  Best result for 3090/VF                 
+ib, icl    2   11
+Set-up  0.000120
+Fixed stride  0.333491
+Gather        0.037350
+Bit reversal  0.371047
+factor  0.000055
+Butterfly 1, factor   16  0.060823    22.627
+Butterfly n, factor   16  0.079536    26.573
+Butterfly n, factor   16  0.084299    25.072
+Butterfly n, factor   16  0.085191    24.809
+Butterfly n, factor    2  0.032747    20.013
+fft        0.715   15.585  3.80E-06  Best result for 3090/VF                 
+ib, icl    2   12
+Set-up  0.000117
+Fixed stride  0.355444
+Gather        0.037290
+Bit reversal  0.392896
+factor  0.000059
+Butterfly 1, factor   16  0.060235    22.848
+Butterfly n, factor   16  0.080086    26.391
+Butterfly n, factor   16  0.084579    24.989
+Butterfly n, factor   16  0.081862    25.818
+Butterfly n, factor    2  0.033153    19.768
+fft        0.734   15.178  3.80E-06  Best result for 3090/VF                 
+ib, icl    2   13
+Set-up  0.000119
+Fixed stride  0.228264
+Gather        0.039730
+Bit reversal  0.268153
+factor  0.000057
+Butterfly 1, factor   16  0.060453    22.766
+Butterfly n, factor   16  0.079834    26.474
+Butterfly n, factor   16  0.084643    24.970
+Butterfly n, factor   16  0.085243    24.794
+Butterfly n, factor    2  0.033148    19.771
+fft        0.613   18.184  3.80E-06  Best result for 3090/VF                 
+ib, icl    2   14
+Set-up  0.000031
+Fixed stride  0.240956
+Gather        0.073040
+Bit reversal  0.314156
+factor  0.000053
+Butterfly 1, factor   16  0.060202    22.861
+Butterfly n, factor   16  0.079939    26.439
+Butterfly n, factor   16  0.084012    25.158
+Butterfly n, factor   16  0.084630    24.974
+Butterfly n, factor    2  0.033378    19.635
+fft        0.657   16.947  3.80E-06  Best result for 3090/VF                 
+ib, icl    2   15
+Set-up  0.000133
+Fixed stride  0.114363
+Gather        0.191353
+Bit reversal  0.305870
+factor  0.000053
+Butterfly 1, factor   16  0.059948    22.958
+Butterfly n, factor   16  0.079519    26.579
+Butterfly n, factor   16  0.084366    25.052
+Butterfly n, factor   16  0.083693    25.254
+Butterfly n, factor    2  0.032777    19.995
+fft        0.647   17.209  3.80E-06  Best result for 3090/VF                 
+ib, icl    2   16
+Set-up  0.000119
+Fixed stride  0.127155
+Gather        0.188787
+Bit reversal  0.316192
+factor  0.000051
+Butterfly 1, factor   16  0.061132    22.513
+Butterfly n, factor   16  0.080944    26.111
+Butterfly n, factor   16  0.085017    24.860
+Butterfly n, factor   16  0.086115    24.543
+Butterfly n, factor    2  0.032613    20.095
+fft        0.663   16.799  3.80E-06  Best result for 3090/VF                 
+ib, icl    2   17
+Set-up  0.000121
+Gather        0.199038
+Bit reversal  0.199148
+factor  0.000055
+Butterfly 1, factor   16  0.060772    22.646
+Butterfly n, factor   16  0.080302    26.320
+Butterfly n, factor   16  0.085209    24.804
+Butterfly n, factor   16  0.085080    24.842
+Butterfly n, factor    2  0.033698    19.448
+fft        0.545   20.425  3.80E-06  Best result for 3090/VF                 
+ib, icl    3    2
+Set-up  0.000107
+Fixed stride  0.615690
+Gather        0.037859
+Bit reversal  0.653711
+factor  0.000059
+Butterfly 1, factor   16  0.060942    22.583
+Butterfly n, factor   16  0.080806    26.156
+Butterfly n, factor   16  0.085509    24.717
+Butterfly n, factor   16  0.085719    24.657
+Butterfly n, factor    2  0.032419    20.216
+fft        1.000   11.137  3.80E-06  Best result for 3090/VF                 
+ib, icl    3    3
+Set-up  0.000127
+Fixed stride  0.628322
+Gather        0.037618
+Bit reversal  0.666098
+factor  0.000053
+Butterfly 1, factor   16  0.060798    22.636
+Butterfly n, factor   16  0.080210    26.350
+Butterfly n, factor   16  0.084857    24.907
+Butterfly n, factor   16  0.084309    25.069
+Butterfly n, factor    2  0.033514    19.555
+fft        1.011   11.020  3.80E-06  Best result for 3090/VF                 
+ib, icl    3    4
+Set-up  0.000138
+Fixed stride  0.653186
+Gather        0.036305
+Bit reversal  0.689699
+factor  0.000060
+Butterfly 1, factor   16  0.061272    22.461
+Butterfly n, factor   16  0.080418    26.282
+Butterfly n, factor   16  0.085073    24.844
+Butterfly n, factor   16  0.085012    24.861
+Butterfly n, factor    2  0.032588    20.110
+fft        1.035   10.762  3.80E-06  Best result for 3090/VF                 
+ib, icl    3    5
+Set-up  0.000107
+Fixed stride  0.511827
+Gather        0.035873
+Bit reversal  0.547868
+factor  0.000048
+Butterfly 1, factor   16  0.060907    22.596
+Butterfly n, factor   16  0.080187    26.358
+Butterfly n, factor   16  0.085248    24.793
+Butterfly n, factor   16  0.084390    25.045
+Butterfly n, factor    2  0.033400    19.622
+fft        0.893   12.472  3.80E-06  Best result for 3090/VF                 
+ib, icl    3    6
+Set-up  0.000116
+Fixed stride  0.525759
+Gather        0.036518
+Bit reversal  0.562444
+factor  0.000048
+Butterfly 1, factor   16  0.060558    22.726
+Butterfly n, factor   16  0.080170    26.363
+Butterfly n, factor   16  0.084468    25.022
+Butterfly n, factor   16  0.084588    24.986
+Butterfly n, factor    2  0.033599    19.505
+fft        0.907   12.283  3.80E-06  Best result for 3090/VF                 
+ib, icl    3    7
+Set-up  0.000112
+Fixed stride  0.543756
+Gather        0.036495
+Bit reversal  0.580411
+factor  0.000056
+Butterfly 1, factor   16  0.060622    22.702
+Butterfly n, factor   16  0.080075    26.394
+Butterfly n, factor   16  0.084416    25.037
+Butterfly n, factor   16  0.085180    24.813
+Butterfly n, factor    2  0.032716    20.032
+fft        0.925   12.049  3.80E-06  Best result for 3090/VF                 
+ib, icl    3    8
+Set-up  0.000131
+Fixed stride  0.411594
+Gather        0.036963
+Bit reversal  0.448727
+factor  0.000057
+Butterfly 1, factor   16  0.060643    22.694
+Butterfly n, factor   16  0.079973    26.428
+Butterfly n, factor   16  0.084467    25.022
+Butterfly n, factor   16  0.085231    24.798
+Butterfly n, factor    2  0.032903    19.918
+fft        0.793   14.046  3.80E-06  Best result for 3090/VF                 
+ib, icl    3    9
+Set-up  0.000166
+Fixed stride  0.421434
+Gather        0.036631
+Bit reversal  0.458216
+factor  0.000063
+Butterfly 1, factor   16  0.060981    22.568
+Butterfly n, factor   16  0.080632    26.212
+Butterfly n, factor   16  0.084399    25.042
+Butterfly n, factor   16  0.084186    25.105
+Butterfly n, factor    2  0.032879    19.932
+fft        0.803   13.881  3.80E-06  Best result for 3090/VF                 
+ib, icl    3   10
+Set-up  0.000119
+Fixed stride  0.441110
+Gather        0.037196
+Bit reversal  0.478465
+factor  0.000058
+Butterfly 1, factor   16  0.060515    22.742
+Butterfly n, factor   16  0.080246    26.338
+Butterfly n, factor   16  0.084591    24.985
+Butterfly n, factor   16  0.084950    24.880
+Butterfly n, factor    2  0.032597    20.105
+fft        0.823   13.544  3.80E-06  Best result for 3090/VF                 
+ib, icl    3   11
+Set-up  0.000128
+Fixed stride  0.315825
+Gather        0.036845
+Bit reversal  0.352822
+factor  0.000050
+Butterfly 1, factor   16  0.061003    22.561
+Butterfly n, factor   16  0.081286    26.001
+Butterfly n, factor   16  0.085328    24.769
+Butterfly n, factor   16  0.085268    24.787
+Butterfly n, factor    2  0.033164    19.761
+fft        0.700   15.915  3.80E-06  Best result for 3090/VF                 
+ib, icl    3   12
+Set-up  0.000116
+Fixed stride  0.323874
+Gather        0.036794
+Bit reversal  0.360828
+factor  0.000052
+Butterfly 1, factor   16  0.061374    22.424
+Butterfly n, factor   16  0.080460    26.268
+Butterfly n, factor   16  0.084233    25.092
+Butterfly n, factor   16  0.084176    25.108
+Butterfly n, factor    2  0.033496    19.565
+fft        0.706   15.786  3.80E-06  Best result for 3090/VF                 
+ib, icl    3   13
+Set-up  0.000130
+Fixed stride  0.337113
+Gather        0.039531
+Bit reversal  0.376813
+factor  0.000056
+Butterfly 1, factor   16  0.061045    22.545
+Butterfly n, factor   16  0.080322    26.313
+Butterfly n, factor   16  0.084698    24.954
+Butterfly n, factor   16  0.084966    24.875
+Butterfly n, factor    2  0.033060    19.823
+fft        0.722   15.430  3.80E-06  Best result for 3090/VF                 
+ib, icl    3   14
+Set-up  0.000139
+Fixed stride  0.208630
+Gather        0.074692
+Bit reversal  0.283484
+factor  0.000051
+Butterfly 1, factor   16  0.060672    22.684
+Butterfly n, factor   16  0.080605    26.221
+Butterfly n, factor   16  0.084256    25.085
+Butterfly n, factor   16  0.084647    24.969
+Butterfly n, factor    2  0.032676    20.056
+fft        0.628   17.752  3.80E-06  Best result for 3090/VF                 
+ib, icl    3   15
+Set-up  0.000113
+Fixed stride  0.113605
+Gather        0.180967
+Bit reversal  0.294735
+factor  0.000055
+Butterfly 1, factor   16  0.061038    22.548
+Butterfly n, factor   16  0.080561    26.235
+Butterfly n, factor   16  0.084881    24.900
+Butterfly n, factor   16  0.085065    24.846
+Butterfly n, factor    2  0.032741    20.016
+fft        0.640   17.400  3.80E-06  Best result for 3090/VF                 
+ib, icl    3   16
+Set-up  0.000116
+Fixed stride  0.126616
+Gather        0.192689
+Bit reversal  0.319460
+factor  0.000062
+Butterfly 1, factor   16  0.060351    22.804
+Butterfly n, factor   16  0.079470    26.595
+Butterfly n, factor   16  0.084004    25.160
+Butterfly n, factor   16  0.085456    24.732
+Butterfly n, factor    2  0.033340    19.657
+fft        0.663   16.795  3.80E-06  Best result for 3090/VF                 
+ib, icl    3   17
+Set-up  0.000111
+Gather        0.195066
+Bit reversal  0.195222
+factor  0.000049
+Butterfly 1, factor   16  0.060773    22.646
+Butterfly n, factor   16  0.080275    26.329
+Butterfly n, factor   16  0.085807    24.631
+Butterfly n, factor   16  0.084306    25.070
+Butterfly n, factor    2  0.033287    19.688
+fft        0.541   20.598  3.80E-06  Best result for 3090/VF                 
+ib, icl    4    2
+Set-up  0.000120
+Fixed stride  0.492687
+Gather        0.037806
+Bit reversal  0.530653
+factor  0.000059
+Butterfly 1, factor   16  0.060442    22.770
+Butterfly n, factor   16  0.079645    26.537
+Butterfly n, factor   16  0.084867    24.904
+Butterfly n, factor   16  0.084536    25.002
+Butterfly n, factor    2  0.033472    19.579
+fft        0.875   12.735  3.80E-06  Best result for 3090/VF                 
+ib, icl    4    3
+Set-up  0.000121
+Fixed stride  0.498494
+Gather        0.036827
+Bit reversal  0.535483
+factor  0.000049
+Butterfly 1, factor   16  0.061077    22.533
+Butterfly n, factor   16  0.080738    26.178
+Butterfly n, factor   16  0.084258    25.084
+Butterfly n, factor   16  0.084449    25.027
+Butterfly n, factor    2  0.033223    19.726
+fft        0.880   12.655  3.80E-06  Best result for 3090/VF                 
+ib, icl    4    4
+Set-up  0.000107
+Fixed stride  0.520315
+Gather        0.036144
+Bit reversal  0.556617
+factor  0.000051
+Butterfly 1, factor   16  0.061056    22.541
+Butterfly n, factor   16  0.079857    26.467
+Butterfly n, factor   16  0.083342    25.360
+Butterfly n, factor   16  0.084030    25.152
+Butterfly n, factor    2  0.034066    19.238
+fft        0.900   12.377  3.80E-06  Best result for 3090/VF                 
+ib, icl    4    5
+Set-up  0.000122
+Fixed stride  0.387508
+Gather        0.035403
+Bit reversal  0.423068
+factor  0.000048
+Butterfly 1, factor   16  0.060532    22.736
+Butterfly n, factor   16  0.080300    26.320
+Butterfly n, factor   16  0.084323    25.065
+Butterfly n, factor   16  0.084053    25.145
+Butterfly n, factor    2  0.033382    19.632
+fft        0.767   14.529  3.80E-06  Best result for 3090/VF                 
+ib, icl    4    6
+Set-up  0.000128
+Fixed stride  0.393301
+Gather        0.036850
+Bit reversal  0.430312
+factor  0.000060
+Butterfly 1, factor   16  0.059921    22.968
+Butterfly n, factor   16  0.079876    26.460
+Butterfly n, factor   16  0.084338    25.060
+Butterfly n, factor   16  0.084804    24.922
+Butterfly n, factor    2  0.032437    20.204
+fft        0.773   14.416  3.80E-06  Best result for 3090/VF                 
+ib, icl    4    7
+Set-up  0.000115
+Fixed stride  0.400391
+Gather        0.035920
+Bit reversal  0.436461
+factor  0.000060
+Butterfly 1, factor   16  0.060749    22.655
+Butterfly n, factor   16  0.080370    26.298
+Butterfly n, factor   16  0.084571    24.991
+Butterfly n, factor   16  0.085427    24.741
+Butterfly n, factor    2  0.032903    19.918
+fft        0.782   14.253  3.80E-06  Best result for 3090/VF                 
+ib, icl    4    8
+Set-up  0.000116
+Fixed stride  0.423673
+Gather        0.036883
+Bit reversal  0.460714
+factor  0.000053
+Butterfly 1, factor   16  0.060125    22.890
+Butterfly n, factor   16  0.079249    26.669
+Butterfly n, factor   16  0.083873    25.199
+Butterfly n, factor   16  0.084143    25.118
+Butterfly n, factor    2  0.033302    19.680
+fft        0.803   13.880  3.80E-06  Best result for 3090/VF                 
+ib, icl    4    9
+Set-up  0.000124
+Fixed stride  0.294485
+Gather        0.036893
+Bit reversal  0.331538
+factor  0.000057
+Butterfly 1, factor   16  0.060053    22.917
+Butterfly n, factor   16  0.079199    26.686
+Butterfly n, factor   16  0.084683    24.958
+Butterfly n, factor   16  0.083931    25.182
+Butterfly n, factor    2  0.033713    19.439
+fft        0.674   16.520  3.80E-06  Best result for 3090/VF                 
+ib, icl    4   10
+Set-up  0.000118
+Fixed stride  0.298316
+Gather        0.037345
+Bit reversal  0.335838
+factor  0.000054
+Butterfly 1, factor   16  0.060321    22.816
+Butterfly n, factor   16  0.079259    26.666
+Butterfly n, factor   16  0.084449    25.027
+Butterfly n, factor   16  0.084494    25.014
+Butterfly n, factor    2  0.032847    19.952
+fft        0.678   16.421  3.80E-06  Best result for 3090/VF                 
+ib, icl    4   11
+Set-up  0.000116
+Fixed stride  0.310359
+Gather        0.036926
+Bit reversal  0.347442
+factor  0.000058
+Butterfly 1, factor   16  0.060565    22.724
+Butterfly n, factor   16  0.079619    26.546
+Butterfly n, factor   16  0.084672    24.961
+Butterfly n, factor   16  0.084550    24.997
+Butterfly n, factor    2  0.032984    19.869
+fft        0.691   16.121  3.80E-06  Best result for 3090/VF                 
+ib, icl    4   12
+Set-up  0.000128
+Fixed stride  0.332311
+Gather        0.037031
+Bit reversal  0.369510
+factor  0.000048
+Butterfly 1, factor   16  0.061031    22.550
+Butterfly n, factor   16  0.080005    26.417
+Butterfly n, factor   16  0.084194    25.103
+Butterfly n, factor   16  0.084778    24.930
+Butterfly n, factor    2  0.032997    19.861
+fft        0.714   15.609  3.80E-06  Best result for 3090/VF                 
+ib, icl    4   13
+Set-up  0.000119
+Fixed stride  0.204820
+Gather        0.039431
+Bit reversal  0.244402
+factor  0.000047
+Butterfly 1, factor   16  0.060887    22.603
+Butterfly n, factor   16  0.080699    26.190
+Butterfly n, factor   16  0.084530    25.003
+Butterfly n, factor   16  0.085627    24.683
+Butterfly n, factor    2  0.032901    19.919
+fft        0.590   18.876  3.80E-06  Best result for 3090/VF                 
+ib, icl    4   14
+Set-up  0.000122
+Fixed stride  0.208122
+Gather        0.074535
+Bit reversal  0.282815
+factor  0.000054
+Butterfly 1, factor   16  0.060630    22.699
+Butterfly n, factor   16  0.079731    26.508
+Butterfly n, factor   16  0.084605    24.981
+Butterfly n, factor   16  0.084870    24.903
+Butterfly n, factor    2  0.033541    19.539
+fft        0.627   17.758  3.80E-06  Best result for 3090/VF                 
+ib, icl    4   15
+Set-up  0.000120
+Fixed stride  0.114042
+Gather        0.185746
+Bit reversal  0.299942
+factor  0.000050
+Butterfly 1, factor   16  0.060833    22.624
+Butterfly n, factor   16  0.080888    26.129
+Butterfly n, factor   16  0.084423    25.035
+Butterfly n, factor   16  0.084579    24.989
+Butterfly n, factor    2  0.032790    19.987
+fft        0.645   17.283  3.80E-06  Best result for 3090/VF                 
+ib, icl    4   16
+Set-up  0.000230
+Fixed stride  0.127189
+Gather        0.196662
+Bit reversal  0.323950
+factor  0.000082
+Butterfly 1, factor   16  0.061405    22.413
+Butterfly n, factor   16  0.080608    26.220
+Butterfly n, factor   16  0.084571    24.991
+Butterfly n, factor   16  0.084349    25.057
+Butterfly n, factor    2  0.033454    19.590
+fft        0.669   16.651  3.80E-06  Best result for 3090/VF                 
+ib, icl    4   17
+Set-up  0.000332
+Gather        0.192217
+Bit reversal  0.192307
+factor  0.000277
+Butterfly 1, factor   16  0.060926    22.589
+Butterfly n, factor   16  0.080810    26.154
+Butterfly n, factor   16  0.085341    24.766
+Butterfly n, factor   16  0.084388    25.045
+Butterfly n, factor    2  0.033169    19.758
+fft        0.538   20.718  3.80E-06  Best result for 3090/VF                 
+ib, icl    5    2
+Set-up  0.000198
+Fixed stride  0.380293
+Gather        0.037998
+Bit reversal  0.418222
+factor  0.000138
+Butterfly 1, factor   16  0.060446    22.768
+Butterfly n, factor   16  0.080430    26.278
+Butterfly n, factor   16  0.084363    25.053
+Butterfly n, factor   16  0.085632    24.682
+Butterfly n, factor    2  0.032425    20.212
+fft        0.763   14.610  3.80E-06  Best result for 3090/VF                 
+ib, icl    5    3
+Set-up  0.000219
+Fixed stride  0.384481
+Gather        0.037651
+Bit reversal  0.422268
+factor  0.000254
+Butterfly 1, factor   16  0.060389    22.790
+Butterfly n, factor   16  0.079677    26.526
+Butterfly n, factor   16  0.084203    25.100
+Butterfly n, factor   16  0.084879    24.901
+Butterfly n, factor    2  0.033428    19.605
+fft        0.766   14.553  3.80E-06  Best result for 3090/VF                 
+ib, icl    5    4
+Set-up  0.000170
+Fixed stride  0.391337
+Gather        0.036837
+Bit reversal  0.428287
+factor  0.000171
+Butterfly 1, factor   16  0.061035    22.548
+Butterfly n, factor   16  0.080219    26.347
+Butterfly n, factor   16  0.085296    24.779
+Butterfly n, factor   16  0.085252    24.792
+Butterfly n, factor    2  0.033294    19.684
+fft        0.774   14.400  3.80E-06  Best result for 3090/VF                 
+ib, icl    5    5
+Set-up  0.000293
+Fixed stride  0.402116
+Gather        0.036074
+Bit reversal  0.438346
+factor  0.000238
+Butterfly 1, factor   16  0.060060    22.915
+Butterfly n, factor   16  0.080649    26.207
+Butterfly n, factor   16  0.084294    25.073
+Butterfly n, factor   16  0.084765    24.934
+Butterfly n, factor    2  0.033546    19.536
+fft        0.782   14.247  3.80E-06  Best result for 3090/VF                 
+ib, icl    5    6
+Set-up  0.000229
+Fixed stride  0.428129
+Gather        0.037330
+Bit reversal  0.465402
+factor  0.000177
+Butterfly 1, factor   16  0.061082    22.531
+Butterfly n, factor   16  0.081383    25.970
+Butterfly n, factor   16  0.084281    25.077
+Butterfly n, factor   16  0.085509    24.717
+Butterfly n, factor    2  0.033678    19.460
+fft        0.812   13.726  3.80E-06  Best result for 3090/VF                 
+ib, icl    5    7
+Set-up  0.000250
+Fixed stride  0.289232
+Gather        0.035693
+Bit reversal  0.325158
+factor  0.000076
+Butterfly 1, factor   16  0.061169    22.499
+Butterfly n, factor   16  0.080924    26.118
+Butterfly n, factor   16  0.084504    25.011
+Butterfly n, factor   16  0.084854    24.908
+Butterfly n, factor    2  0.033425    19.607
+fft        0.671   16.607  3.80E-06  Best result for 3090/VF                 
+ib, icl    5    8
+Set-up  0.000237
+Fixed stride  0.292536
+Gather        0.036403
+Bit reversal  0.329017
+factor  0.000264
+Butterfly 1, factor   16  0.061319    22.444
+Butterfly n, factor   16  0.080770    26.167
+Butterfly n, factor   16  0.084725    24.946
+Butterfly n, factor   16  0.086225    24.512
+Butterfly n, factor    2  0.033042    19.834
+fft        0.676   16.492  3.80E-06  Best result for 3090/VF                 
+ib, icl    5    9
+Set-up  0.000252
+Fixed stride  0.299050
+Gather        0.036839
+Bit reversal  0.336006
+factor  0.000178
+Butterfly 1, factor   16  0.060991    22.565
+Butterfly n, factor   16  0.080260    26.334
+Butterfly n, factor   16  0.084861    24.906
+Butterfly n, factor   16  0.084964    24.876
+Butterfly n, factor    2  0.033156    19.766
+fft        0.681   16.365  3.80E-06  Best result for 3090/VF                 
+ib, icl    5   10
+Set-up  0.000145
+Fixed stride  0.305417
+Gather        0.036490
+Bit reversal  0.341999
+factor  0.000063
+Butterfly 1, factor   16  0.061138    22.511
+Butterfly n, factor   16  0.080414    26.283
+Butterfly n, factor   16  0.084825    24.917
+Butterfly n, factor   16  0.084390    25.045
+Butterfly n, factor    2  0.032626    20.087
+fft        0.686   16.238  3.80E-06  Best result for 3090/VF                 
+ib, icl    5   11
+Set-up  0.000203
+Fixed stride  0.330955
+Gather        0.037179
+Bit reversal  0.368081
+factor  0.000266
+Butterfly 1, factor   16  0.060723    22.664
+Butterfly n, factor   16  0.080843    26.144
+Butterfly n, factor   16  0.084586    24.987
+Butterfly n, factor   16  0.085182    24.812
+Butterfly n, factor    2  0.033701    19.446
+fft        0.714   15.608  3.80E-06  Best result for 3090/VF                 
+ib, icl    5   12
+Set-up  0.000269
+Fixed stride  0.201760
+Gather        0.037166
+Bit reversal  0.238921
+factor  0.000260
+Butterfly 1, factor   16  0.060696    22.675
+Butterfly n, factor   16  0.080195    26.355
+Butterfly n, factor   16  0.084629    24.974
+Butterfly n, factor   16  0.084942    24.882
+Butterfly n, factor    2  0.033398    19.623
+fft        0.584   19.090  3.80E-06  Best result for 3090/VF                 
+ib, icl    5   13
+Set-up  0.000305
+Fixed stride  0.201961
+Gather        0.039098
+Bit reversal  0.241091
+factor  0.000232
+Butterfly 1, factor   16  0.060761    22.650
+Butterfly n, factor   16  0.080245    26.338
+Butterfly n, factor   16  0.084640    24.971
+Butterfly n, factor   16  0.084834    24.914
+Butterfly n, factor    2  0.032653    20.070
+fft        0.585   19.043  3.80E-06  Best result for 3090/VF                 
+ib, icl    5   14
+Set-up  0.000343
+Fixed stride  0.204167
+Gather        0.073755
+Bit reversal  0.277951
+factor  0.000235
+Butterfly 1, factor   16  0.060088    22.904
+Butterfly n, factor   16  0.080214    26.349
+Butterfly n, factor   16  0.084097    25.132
+Butterfly n, factor   16  0.084553    24.997
+Butterfly n, factor    2  0.032811    19.974
+fft        0.620   17.959  3.80E-06  Best result for 3090/VF                 
+ib, icl    5   15
+Set-up  0.000264
+Fixed stride  0.113601
+Gather        0.189159
+Bit reversal  0.302772
+factor  0.000143
+Butterfly 1, factor   16  0.060883    22.605
+Butterfly n, factor   16  0.079829    26.476
+Butterfly n, factor   16  0.084030    25.152
+Butterfly n, factor   16  0.084660    24.965
+Butterfly n, factor    2  0.032646    20.075
+fft        0.645   17.263  3.80E-06  Best result for 3090/VF                 
+ib, icl    5   16
+Set-up  0.000335
+Fixed stride  0.127498
+Gather        0.187040
+Bit reversal  0.314571
+factor  0.000221
+Butterfly 1, factor   16  0.061088    22.529
+Butterfly n, factor   16  0.079947    26.437
+Butterfly n, factor   16  0.084118    25.126
+Butterfly n, factor   16  0.084532    25.003
+Butterfly n, factor    2  0.032571    20.121
+fft        0.657   16.945  3.80E-06  Best result for 3090/VF                 
+ib, icl    5   17
+Set-up  0.000270
+Gather        0.191405
+Bit reversal  0.191494
+factor  0.000192
+Butterfly 1, factor   16  0.060295    22.825
+Butterfly n, factor   16  0.079847    26.470
+Butterfly n, factor   16  0.084637    24.972
+Butterfly n, factor   16  0.084442    25.030
+Butterfly n, factor    2  0.033049    19.830
+fft        0.534   20.856  3.80E-06  Best result for 3090/VF                 
+ib, icl    6    2
+Set-up  0.000333
+Fixed stride  0.394558
+Gather        0.037780
+Bit reversal  0.432404
+factor  0.000136
+Butterfly 1, factor   16  0.061435    22.402
+Butterfly n, factor   16  0.080642    26.209
+Butterfly n, factor   16  0.085763    24.644
+Butterfly n, factor   16  0.086009    24.573
+Butterfly n, factor    2  0.032806    19.977
+fft        0.779   14.296  3.80E-06  Best result for 3090/VF                 
+ib, icl    6    3
+Set-up  0.000272
+Fixed stride  0.404382
+Gather        0.038001
+Bit reversal  0.442395
+factor  0.000119
+Butterfly 1, factor   16  0.061155    22.504
+Butterfly n, factor   16  0.080835    26.146
+Butterfly n, factor   16  0.086289    24.494
+Butterfly n, factor   16  0.085236    24.796
+Butterfly n, factor    2  0.033222    19.727
+fft        0.790   14.107  3.80E-06  Best result for 3090/VF                 
+ib, icl    6    4
+Set-up  0.000180
+Fixed stride  0.428353
+Gather        0.037119
+Bit reversal  0.465432
+factor  0.000205
+Butterfly 1, factor   16  0.059883    22.982
+Butterfly n, factor   16  0.081036    26.082
+Butterfly n, factor   16  0.085727    24.654
+Butterfly n, factor   16  0.085346    24.764
+Butterfly n, factor    2  0.033485    19.571
+fft        0.812   13.729  3.80E-06  Best result for 3090/VF                 
+ib, icl    6    5
+Set-up  0.000267
+Fixed stride  0.288930
+Gather        0.035870
+Bit reversal  0.324780
+factor  0.000177
+Butterfly 1, factor   16  0.060558    22.726
+Butterfly n, factor   16  0.079940    26.439
+Butterfly n, factor   16  0.084821    24.918
+Butterfly n, factor   16  0.085042    24.853
+Butterfly n, factor    2  0.033234    19.720
+fft        0.669   16.650  3.80E-06  Best result for 3090/VF                 
+ib, icl    6    6
+Set-up  0.000170
+Fixed stride  0.288332
+Gather        0.036380
+Bit reversal  0.324748
+factor  0.000220
+Butterfly 1, factor   16  0.061345    22.435
+Butterfly n, factor   16  0.080891    26.128
+Butterfly n, factor   16  0.085750    24.648
+Butterfly n, factor   16  0.085279    24.784
+Butterfly n, factor    2  0.033420    19.610
+fft        0.672   16.591  3.80E-06  Best result for 3090/VF                 
+ib, icl    6    7
+Set-up  0.000184
+Fixed stride  0.294032
+Gather        0.036643
+Bit reversal  0.330677
+factor  0.000215
+Butterfly 1, factor   16  0.060984    22.568
+Butterfly n, factor   16  0.080733    26.179
+Butterfly n, factor   16  0.085385    24.753
+Butterfly n, factor   16  0.085338    24.767
+Butterfly n, factor    2  0.033558    19.529
+fft        0.678   16.444  3.80E-06  Best result for 3090/VF                 
+ib, icl    6    8
+Set-up  0.000313
+Fixed stride  0.301392
+Gather        0.036837
+Bit reversal  0.338201
+factor  0.000175
+Butterfly 1, factor   16  0.061530    22.367
+Butterfly n, factor   16  0.080801    26.157
+Butterfly n, factor   16  0.085575    24.698
+Butterfly n, factor   16  0.085199    24.807
+Butterfly n, factor    2  0.033329    19.664
+fft        0.685   16.262  3.80E-06  Best result for 3090/VF                 
+ib, icl    6    9
+Set-up  0.000251
+Fixed stride  0.310220
+Gather        0.037024
+Bit reversal  0.347175
+factor  0.000117
+Butterfly 1, factor   16  0.061095    22.527
+Butterfly n, factor   16  0.080822    26.151
+Butterfly n, factor   16  0.085673    24.670
+Butterfly n, factor   16  0.084574    24.990
+Butterfly n, factor    2  0.033633    19.486
+fft        0.693   16.065  3.80E-06  Best result for 3090/VF                 
+ib, icl    6   10
+Set-up  0.000300
+Fixed stride  0.331694
+Gather        0.037314
+Bit reversal  0.368962
+factor  0.000222
+Butterfly 1, factor   16  0.061114    22.520
+Butterfly n, factor   16  0.081207    26.027
+Butterfly n, factor   16  0.085049    24.851
+Butterfly n, factor   16  0.084848    24.910
+Butterfly n, factor    2  0.033321    19.668
+fft        0.715   15.574  3.80E-06  Best result for 3090/VF                 
+ib, icl    6   11
+Set-up  0.000211
+Fixed stride  0.200533
+Gather        0.037618
+Bit reversal  0.238149
+factor  0.000218
+Butterfly 1, factor   16  0.061143    22.509
+Butterfly n, factor   16  0.081145    26.047
+Butterfly n, factor   16  0.085348    24.764
+Butterfly n, factor   16  0.085781    24.639
+Butterfly n, factor    2  0.033388    19.628
+fft        0.586   19.026  3.80E-06  Best result for 3090/VF                 
+ib, icl    6   12
+Set-up  0.000295
+Fixed stride  0.206042
+Gather        0.037573
+Bit reversal  0.243719
+factor  0.000172
+Butterfly 1, factor   16  0.061033    22.549
+Butterfly n, factor   16  0.081638    25.889
+Butterfly n, factor   16  0.084833    24.914
+Butterfly n, factor   16  0.085566    24.701
+Butterfly n, factor    2  0.033786    19.398
+fft        0.592   18.833  3.80E-06  Best result for 3090/VF                 
+ib, icl    6   13
+Set-up  0.000192
+Fixed stride  0.206710
+Gather        0.039889
+Bit reversal  0.246770
+factor  0.000052
+Butterfly 1, factor   16  0.060672    22.684
+Butterfly n, factor   16  0.081631    25.891
+Butterfly n, factor   16  0.084867    24.904
+Butterfly n, factor   16  0.084969    24.874
+Butterfly n, factor    2  0.033620    19.493
+fft        0.593   18.777  3.80E-06  Best result for 3090/VF                 
+ib, icl    6   14
+Set-up  0.000275
+Fixed stride  0.208898
+Gather        0.076219
+Bit reversal  0.285054
+factor  0.000248
+Butterfly 1, factor   16  0.060910    22.595
+Butterfly n, factor   16  0.081229    26.020
+Butterfly n, factor   16  0.085547    24.706
+Butterfly n, factor   16  0.086129    24.539
+Butterfly n, factor    2  0.033158    19.765
+fft        0.633   17.603  3.80E-06  Best result for 3090/VF                 
+ib, icl    6   15
+Set-up  0.000168
+Fixed stride  0.114998
+Gather        0.191403
+Bit reversal  0.306484
+factor  0.000192
+Butterfly 1, factor   16  0.061313    22.446
+Butterfly n, factor   16  0.081813    25.834
+Butterfly n, factor   16  0.085970    24.585
+Butterfly n, factor   16  0.085801    24.633
+Butterfly n, factor    2  0.032654    20.070
+fft        0.654   17.028  3.80E-06  Best result for 3090/VF                 
+ib, icl    6   16
+Set-up  0.000210
+Fixed stride  0.127351
+Gather        0.184553
+Bit reversal  0.311839
+factor  0.000175
+Butterfly 1, factor   16  0.060948    22.581
+Butterfly n, factor   16  0.080608    26.220
+Butterfly n, factor   16  0.085410    24.746
+Butterfly n, factor   16  0.085100    24.836
+Butterfly n, factor    2  0.033545    19.537
+fft        0.658   16.926  3.80E-06  Best result for 3090/VF                 
+ib, icl    6   17
+Set-up  0.000141
+Gather        0.195960
+Bit reversal  0.196051
+factor  0.000111
+Butterfly 1, factor   16  0.060573    22.721
+Butterfly n, factor   16  0.079823    26.478
+Butterfly n, factor   16  0.084348    25.057
+Butterfly n, factor   16  0.084294    25.073
+Butterfly n, factor    2  0.033171    19.757
+fft        0.539   20.681  3.80E-06  Best result for 3090/VF                 
+ib, icl    7    2
+Set-up  0.000237
+Fixed stride  0.443893
+Gather        0.037279
+Bit reversal  0.481224
+factor  0.000131
+Butterfly 1, factor   16  0.061247    22.471
+Butterfly n, factor   16  0.080694    26.192
+Butterfly n, factor   16  0.084516    25.007
+Butterfly n, factor   16  0.084760    24.935
+Butterfly n, factor    2  0.033591    19.510
+fft        0.826   13.480  3.80E-06  Best result for 3090/VF                 
+ib, icl    7    3
+Set-up  0.000374
+Fixed stride  0.291913
+Gather        0.037972
+Bit reversal  0.329871
+factor  0.000143
+Butterfly 1, factor   16  0.061059    22.540
+Butterfly n, factor   16  0.080703    26.189
+Butterfly n, factor   16  0.084699    24.954
+Butterfly n, factor   16  0.085283    24.783
+Butterfly n, factor    2  0.033411    19.615
+fft        0.675   16.495  3.80E-06  Best result for 3090/VF                 
+ib, icl    7    4
+Set-up  0.000240
+Fixed stride  0.290899
+Gather        0.037427
+Bit reversal  0.328289
+factor  0.000278
+Butterfly 1, factor   16  0.061149    22.507
+Butterfly n, factor   16  0.080302    26.320
+Butterfly n, factor   16  0.085426    24.741
+Butterfly n, factor   16  0.085005    24.864
+Butterfly n, factor    2  0.033513    19.555
+fft        0.674   16.522  3.80E-06  Best result for 3090/VF                 
+ib, icl    7    5
+Set-up  0.000193
+Fixed stride  0.293610
+Gather        0.036184
+Bit reversal  0.329732
+factor  0.000251
+Butterfly 1, factor   16  0.060364    22.799
+Butterfly n, factor   16  0.080291    26.323
+Butterfly n, factor   16  0.085294    24.780
+Butterfly n, factor   16  0.084717    24.948
+Butterfly n, factor    2  0.033555    19.531
+fft        0.675   16.509  3.80E-06  Best result for 3090/VF                 
+ib, icl    7    6
+Set-up  0.000267
+Fixed stride  0.298542
+Gather        0.036255
+Bit reversal  0.334933
+factor  0.000080
+Butterfly 1, factor   16  0.061309    22.448
+Butterfly n, factor   16  0.080786    26.162
+Butterfly n, factor   16  0.085055    24.849
+Butterfly n, factor   16  0.085011    24.862
+Butterfly n, factor    2  0.033190    19.746
+fft        0.681   16.364  3.80E-06  Best result for 3090/VF                 
+ib, icl    7    7
+Set-up  0.000241
+Fixed stride  0.303262
+Gather        0.036431
+Bit reversal  0.339741
+factor  0.000245
+Butterfly 1, factor   16  0.060908    22.596
+Butterfly n, factor   16  0.080523    26.248
+Butterfly n, factor   16  0.085061    24.847
+Butterfly n, factor   16  0.084661    24.965
+Butterfly n, factor    2  0.032710    20.036
+fft        0.684   16.277  3.80E-06  Best result for 3090/VF                 
+ib, icl    7    8
+Set-up  0.000252
+Fixed stride  0.311398
+Gather        0.037555
+Bit reversal  0.348929
+factor  0.000162
+Butterfly 1, factor   16  0.060842    22.620
+Butterfly n, factor   16  0.080605    26.221
+Butterfly n, factor   16  0.084723    24.947
+Butterfly n, factor   16  0.085029    24.857
+Butterfly n, factor    2  0.033853    19.359
+fft        0.694   16.045  3.80E-06  Best result for 3090/VF                 
+ib, icl    7    9
+Set-up  0.000270
+Fixed stride  0.338468
+Gather        0.036918
+Bit reversal  0.375386
+factor  0.000244
+Butterfly 1, factor   16  0.060461    22.763
+Butterfly n, factor   16  0.080539    26.242
+Butterfly n, factor   16  0.085131    24.827
+Butterfly n, factor   16  0.085310    24.775
+Butterfly n, factor    2  0.033241    19.716
+fft        0.721   15.454  3.80E-06  Best result for 3090/VF                 
+ib, icl    7   10
+Set-up  0.000297
+Fixed stride  0.201271
+Gather        0.037678
+Bit reversal  0.238947
+factor  0.000287
+Butterfly 1, factor   16  0.060589    22.715
+Butterfly n, factor   16  0.080841    26.144
+Butterfly n, factor   16  0.084976    24.872
+Butterfly n, factor   16  0.085406    24.747
+Butterfly n, factor    2  0.033196    19.742
+fft        0.584   19.065  3.80E-06  Best result for 3090/VF                 
+ib, icl    7   11
+Set-up  0.000110
+Fixed stride  0.203292
+Gather        0.037075
+Bit reversal  0.240293
+factor  0.000165
+Butterfly 1, factor   16  0.060818    22.629
+Butterfly n, factor   16  0.080254    26.335
+Butterfly n, factor   16  0.085116    24.831
+Butterfly n, factor   16  0.085163    24.817
+Butterfly n, factor    2  0.033518    19.552
+fft        0.586   19.022  3.80E-06  Best result for 3090/VF                 
+ib, icl    7   12
+Set-up  0.000156
+Fixed stride  0.203609
+Gather        0.037816
+Bit reversal  0.241521
+factor  0.000172
+Butterfly 1, factor   16  0.061328    22.441
+Butterfly n, factor   16  0.081332    25.987
+Butterfly n, factor   16  0.085473    24.728
+Butterfly n, factor   16  0.085733    24.653
+Butterfly n, factor    2  0.033710    19.441
+fft        0.589   18.906  3.80E-06  Best result for 3090/VF                 
+ib, icl    7   13
+Set-up  0.000175
+Fixed stride  0.203082
+Gather        0.039493
+Bit reversal  0.242707
+factor  0.000134
+Butterfly 1, factor   16  0.061541    22.363
+Butterfly n, factor   16  0.080441    26.274
+Butterfly n, factor   16  0.083992    25.163
+Butterfly n, factor   16  0.085969    24.585
+Butterfly n, factor    2  0.033205    19.737
+fft        0.589   18.930  3.80E-06  Best result for 3090/VF                 
+ib, icl    7   14
+Set-up  0.000208
+Fixed stride  0.208345
+Gather        0.076454
+Bit reversal  0.284797
+factor  0.000235
+Butterfly 1, factor   16  0.061281    22.458
+Butterfly n, factor   16  0.080811    26.154
+Butterfly n, factor   16  0.084930    24.886
+Butterfly n, factor   16  0.085375    24.756
+Butterfly n, factor    2  0.032193    20.357
+fft        0.630   17.687  3.80E-06  Best result for 3090/VF                 
+ib, icl    7   15
+Set-up  0.000314
+Fixed stride  0.113890
+Gather        0.189343
+Bit reversal  0.303208
+factor  0.000089
+Butterfly 1, factor   16  0.060648    22.693
+Butterfly n, factor   16  0.080226    26.345
+Butterfly n, factor   16  0.085439    24.737
+Butterfly n, factor   16  0.084881    24.900
+Butterfly n, factor    2  0.032742    20.016
+fft        0.648   17.196  3.80E-06  Best result for 3090/VF                 
+ib, icl    7   16
+Set-up  0.000151
+Fixed stride  0.127233
+Gather        0.192652
+Bit reversal  0.319941
+factor  0.000226
+Butterfly 1, factor   16  0.060452    22.766
+Butterfly n, factor   16  0.079997    26.420
+Butterfly n, factor   16  0.084383    25.047
+Butterfly n, factor   16  0.084440    25.030
+Butterfly n, factor    2  0.033137    19.777
+fft        0.663   16.799  3.80E-06  Best result for 3090/VF                 
+ib, icl    7   17
+Set-up  0.000198
+Gather        0.196778
+Bit reversal  0.196869
+factor  0.000197
+Butterfly 1, factor   16  0.060809    22.633
+Butterfly n, factor   16  0.079990    26.423
+Butterfly n, factor   16  0.085075    24.843
+Butterfly n, factor   16  0.084030    25.152
+Butterfly n, factor    2  0.033279    19.693
+fft        0.541   20.602  3.80E-06  Best result for 3090/VF                 
+ib, icl    8    2
+Set-up  0.000235
+Fixed stride  0.291834
+Gather        0.038197
+Bit reversal  0.330034
+factor  0.000060
+Butterfly 1, factor   16  0.060911    22.595
+Butterfly n, factor   16  0.080023    26.412
+Butterfly n, factor   16  0.085478    24.726
+Butterfly n, factor   16  0.085425    24.741
+Butterfly n, factor    2  0.033860    19.355
+fft        0.676   16.472  3.80E-06  Best result for 3090/VF                 
+ib, icl    8    3
+Set-up  0.000126
+Fixed stride  0.295717
+Gather        0.037935
+Bit reversal  0.333681
+factor  0.000048
+Butterfly 1, factor   16  0.061078    22.533
+Butterfly n, factor   16  0.079953    26.435
+Butterfly n, factor   16  0.084442    25.029
+Butterfly n, factor   16  0.085207    24.805
+Butterfly n, factor    2  0.033590    19.510
+fft        0.679   16.419  3.80E-06  Best result for 3090/VF                 
+ib, icl    8    4
+Set-up  0.000283
+Fixed stride  0.294564
+Gather        0.037080
+Bit reversal  0.331606
+factor  0.000170
+Butterfly 1, factor   16  0.061158    22.503
+Butterfly n, factor   16  0.080221    26.346
+Butterfly n, factor   16  0.084420    25.036
+Butterfly n, factor   16  0.084608    24.980
+Butterfly n, factor    2  0.032712    20.034
+fft        0.675   16.494  3.80E-06  Best result for 3090/VF                 
+ib, icl    8    5
+Set-up  0.000341
+Fixed stride  0.294761
+Gather        0.036132
+Bit reversal  0.330904
+factor  0.000202
+Butterfly 1, factor   16  0.060746    22.656
+Butterfly n, factor   16  0.079916    26.447
+Butterfly n, factor   16  0.084319    25.066
+Butterfly n, factor   16  0.084389    25.045
+Butterfly n, factor    2  0.033395    19.624
+fft        0.674   16.519  3.80E-06  Best result for 3090/VF                 
+ib, icl    8    6
+Set-up  0.000123
+Fixed stride  0.300529
+Gather        0.036738
+Bit reversal  0.337367
+factor  0.000072
+Butterfly 1, factor   16  0.060730    22.662
+Butterfly n, factor   16  0.080029    26.410
+Butterfly n, factor   16  0.084690    24.956
+Butterfly n, factor   16  0.084769    24.933
+Butterfly n, factor    2  0.034405    19.048
+fft        0.683   16.318  3.80E-06  Best result for 3090/VF                 
+ib, icl    8    7
+Set-up  0.000208
+Fixed stride  0.308856
+Gather        0.036358
+Bit reversal  0.345286
+factor  0.000176
+Butterfly 1, factor   16  0.060784    22.642
+Butterfly n, factor   16  0.079828    26.476
+Butterfly n, factor   16  0.083980    25.167
+Butterfly n, factor   16  0.084949    24.880
+Butterfly n, factor    2  0.032864    19.942
+fft        0.688   16.192  3.80E-06  Best result for 3090/VF                 
+ib, icl    8    8
+Set-up  0.000280
+Fixed stride  0.333932
+Gather        0.036342
+Bit reversal  0.370415
+factor  0.000158
+Butterfly 1, factor   16  0.061152    22.506
+Butterfly n, factor   16  0.079991    26.422
+Butterfly n, factor   16  0.084266    25.082
+Butterfly n, factor   16  0.084644    24.970
+Butterfly n, factor    2  0.033437    19.600
+fft        0.715   15.591  3.80E-06  Best result for 3090/VF                 
+ib, icl    8    9
+Set-up  0.000304
+Fixed stride  0.204427
+Gather        0.036990
+Bit reversal  0.241434
+factor  0.000090
+Butterfly 1, factor   16  0.060640    22.696
+Butterfly n, factor   16  0.080306    26.318
+Butterfly n, factor   16  0.085096    24.837
+Butterfly n, factor   16  0.084736    24.943
+Butterfly n, factor    2  0.032700    20.041
+fft        0.586   19.025  3.80E-06  Best result for 3090/VF                 
+ib, icl    8   10
+Set-up  0.000359
+Fixed stride  0.200508
+Gather        0.037131
+Bit reversal  0.237661
+factor  0.000218
+Butterfly 1, factor   16  0.060089    22.904
+Butterfly n, factor   16  0.079509    26.582
+Butterfly n, factor   16  0.084069    25.140
+Butterfly n, factor   16  0.084412    25.038
+Butterfly n, factor    2  0.032881    19.931
+fft        0.579   19.236  3.80E-06  Best result for 3090/VF                 
+ib, icl    8   11
+Set-up  0.000155
+Fixed stride  0.199008
+Gather        0.037235
+Bit reversal  0.236300
+factor  0.000078
+Butterfly 1, factor   16  0.060629    22.700
+Butterfly n, factor   16  0.080317    26.315
+Butterfly n, factor   16  0.084886    24.899
+Butterfly n, factor   16  0.084379    25.048
+Butterfly n, factor    2  0.033530    19.545
+fft        0.581   19.190  3.80E-06  Best result for 3090/VF                 
+ib, icl    8   12
+Set-up  0.000252
+Fixed stride  0.204331
+Gather        0.037127
+Bit reversal  0.241564
+factor  0.000292
+Butterfly 1, factor   16  0.060770    22.647
+Butterfly n, factor   16  0.080137    26.374
+Butterfly n, factor   16  0.085019    24.860
+Butterfly n, factor   16  0.084626    24.975
+Butterfly n, factor    2  0.033197    19.742
+fft        0.586   19.017  3.80E-06  Best result for 3090/VF                 
+ib, icl    8   13
+Set-up  0.000298
+Fixed stride  0.204563
+Gather        0.039354
+Bit reversal  0.244034
+factor  0.000245
+Butterfly 1, factor   16  0.060423    22.777
+Butterfly n, factor   16  0.079897    26.453
+Butterfly n, factor   16  0.085037    24.854
+Butterfly n, factor   16  0.085027    24.857
+Butterfly n, factor    2  0.033045    19.832
+fft        0.588   18.935  3.80E-06  Best result for 3090/VF                 
+ib, icl    8   14
+Set-up  0.000338
+Fixed stride  0.211295
+Gather        0.073658
+Bit reversal  0.284933
+factor  0.000128
+Butterfly 1, factor   16  0.060921    22.591
+Butterfly n, factor   16  0.080464    26.267
+Butterfly n, factor   16  0.084612    24.979
+Butterfly n, factor   16  0.085270    24.786
+Butterfly n, factor    2  0.033318    19.670
+fft        0.630   17.680  3.80E-06  Best result for 3090/VF                 
+ib, icl    8   15
+Set-up  0.000236
+Fixed stride  0.113860
+Gather        0.193924
+Bit reversal  0.307789
+factor  0.000280
+Butterfly 1, factor   16  0.060303    22.822
+Butterfly n, factor   16  0.080177    26.361
+Butterfly n, factor   16  0.084726    24.945
+Butterfly n, factor   16  0.085050    24.851
+Butterfly n, factor    2  0.033189    19.746
+fft        0.652   17.087  3.80E-06  Best result for 3090/VF                 
+ib, icl    8   16
+Set-up  0.000278
+Fixed stride  0.127415
+Gather        0.186604
+Bit reversal  0.314151
+factor  0.000134
+Butterfly 1, factor   16  0.061148    22.507
+Butterfly n, factor   16  0.079925    26.444
+Butterfly n, factor   16  0.085352    24.763
+Butterfly n, factor   16  0.085237    24.796
+Butterfly n, factor    2  0.033221    19.727
+fft        0.660   16.884  3.80E-06  Best result for 3090/VF                 
+ib, icl    8   17
+Set-up  0.000265
+Gather        0.197827
+Bit reversal  0.197919
+factor  0.000269
+Butterfly 1, factor   16  0.061089    22.529
+Butterfly n, factor   16  0.080462    26.268
+Butterfly n, factor   16  0.085334    24.768
+Butterfly n, factor   16  0.084822    24.917
+Butterfly n, factor    2  0.032554    20.131
+fft        0.543   20.519  3.80E-06  Best result for 3090/VF                 

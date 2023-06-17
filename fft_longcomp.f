@@ -1,0 +1,1005 @@
+@process directive(' dir:') novector
+c
+c Best FFT for the 3090
+c Incorporates ffta, fftc, ffte, ffth, ffti, fftn, fftp, ffts
+c
+      function fft ( dr, di, lens, ndim, last, irev,
+     *   coeff2, coeff4, coef16, instr, istart, ic, ib )
+c
+c Arguments
+c
+c dr      = real part of array to be transformed
+c di      = imaginary part of array to be transformed
+c lens    = log2 length of each dimension
+c ndim    = number of dimensions
+c last    = length of arrays
+c irev    = bit reversal index array
+c coef2   = coefficient array for radix-2
+c coeff4  = coefficient array for radix-4
+c coef16  = coefficient array for radix-16
+c instr   = write timing info if non zero
+c istart  = data in top half if istart is zero
+c ic      = longest string to use for bit reversal
+c
+c Parameters
+c
+c minvec  = shortest vector loop used
+c nfmax   = maximum number of factors in lengths
+c npr     = number of "primes" in list
+c
+      parameter ( minvec = 128, nfmax = 50, npr = 3 )
+      dimension dr(0:*), di(0:*), irev(0:*)
+      complex t0, t1, t2, t3, r0, r1, r2, r3, temp, t, c
+      complex d0, d1, d2, d3, d4, d5, d6, d7,
+     *        d8, d9, da, db, dc, dd, de, df
+      complex coef1, coef2, coef3,
+     *   coeff2 (0:last/ 2-1,   *), 
+     *   coeff4 (0:last/ 4-1, 3,*),
+     *   coef16(0:last/16-1,15,*)
+      dimension lens(ndim), ifac(nfmax), ipr(npr)
+      dimension irev2(0:2**13-1)
+      data ipr/16, 4, 2/
+      cmr(xr,xi,c) = xr*real(c) - xi*imag(c)
+      cmi(xr,xi,c) = xi*real(c) + xr*imag(c)
+c
+c Initialize flop count
+c
+      times = seconds(0.0)
+      fft = 0.0
+c
+c Build short table of coefficients for radix-16
+c angle = 2 pi / 16
+c
+      angle = 0.5*atan(1.0)
+      coef1 = cmplx(cos(  angle),sin(  angle))
+      coef2 = cmplx(cos(2*angle),sin(2*angle))
+      coef3 = cmplx(cos(3*angle),sin(3*angle))
+c
+c Find total length, max length, sum of log of dimension,
+c and largest log dimension
+c
+      lentotl = 0
+      maxlenl = 0
+      do i = 1, ndim
+	 lentotl = lentotl + lens(i)
+	 maxlenl = max(maxlenl,lens(i))
+      enddo
+      lentot = 2**lentotl
+      maxlen = 2**maxlenl 
+      if ( istart .eq. 0 ) then
+         lip = lentot
+         lop = 0
+      else
+         lip = 0
+         lop = lentot
+      endif
+      if ( instr .ne. 0 )
+     *   write(*,'(a,f10.6)')'Set-up',seconds(times)
+c
+c Copy d with bit reversal for first stage of FFT
+c Assumes cache line size is 32 words, cache holds lengths up to 2**ic
+c
+      times = seconds(0.0)
+      ld = 2**lens(1)
+      ntimes = lens(1) - ic
+      if ( ntimes .gt. 0 .and. ntimes .lt. 35 ) then
+c
+c Do a radix lensidim/iblk bit reversal using a fixed stride load
+c
+         do n = ntimes, 1, -ib
+            iblk = 2**min(ib,n)
+            call reorder ( iblk, irev2 )
+            leff = ld/iblk
+            do l = 0, lentot - 1, ld
+               if ( iblk .eq. 64 ) then
+c dir: ignore recrdeps(dr)
+                  do i = 0, leff - 1
+                     dr(i+lip        +l) = dr(iblk*i+lop   +l)
+                     dr(i+lip+   leff+l) = dr(iblk*i+lop+32+l)
+                     dr(i+lip+ 2*leff+l) = dr(iblk*i+lop+16+l)
+                     dr(i+lip+ 3*leff+l) = dr(iblk*i+lop+48+l)
+                     dr(i+lip+ 4*leff+l) = dr(iblk*i+lop+ 8+l)
+                     dr(i+lip+ 5*leff+l) = dr(iblk*i+lop+40+l)
+                     dr(i+lip+ 6*leff+l) = dr(iblk*i+lop+24+l)
+                     dr(i+lip+ 7*leff+l) = dr(iblk*i+lop+56+l)
+                     dr(i+lip+ 8*leff+l) = dr(iblk*i+lop+ 4+l)
+                     dr(i+lip+ 9*leff+l) = dr(iblk*i+lop+36+l)
+                     dr(i+lip+10*leff+l) = dr(iblk*i+lop+20+l)
+                     dr(i+lip+11*leff+l) = dr(iblk*i+lop+52+l)
+                     dr(i+lip+12*leff+l) = dr(iblk*i+lop+12+l)
+                     dr(i+lip+13*leff+l) = dr(iblk*i+lop+44+l)
+                     dr(i+lip+14*leff+l) = dr(iblk*i+lop+28+l)
+                     dr(i+lip+15*leff+l) = dr(iblk*i+lop+60+l)
+                     dr(i+lip+16*leff+l) = dr(iblk*i+lop+ 2+l)
+                     dr(i+lip+17*leff+l) = dr(iblk*i+lop+34+l)
+                     dr(i+lip+18*leff+l) = dr(iblk*i+lop+18+l)
+                     dr(i+lip+19*leff+l) = dr(iblk*i+lop+50+l)
+                     dr(i+lip+20*leff+l) = dr(iblk*i+lop+10+l)
+                     dr(i+lip+21*leff+l) = dr(iblk*i+lop+42+l)
+                     dr(i+lip+22*leff+l) = dr(iblk*i+lop+26+l)
+                     dr(i+lip+23*leff+l) = dr(iblk*i+lop+58+l)
+                     dr(i+lip+24*leff+l) = dr(iblk*i+lop+ 6+l)
+                     dr(i+lip+25*leff+l) = dr(iblk*i+lop+38+l)
+                     dr(i+lip+26*leff+l) = dr(iblk*i+lop+22+l)
+                     dr(i+lip+27*leff+l) = dr(iblk*i+lop+54+l)
+                     dr(i+lip+28*leff+l) = dr(iblk*i+lop+14+l)
+                     dr(i+lip+29*leff+l) = dr(iblk*i+lop+46+l)
+                     dr(i+lip+30*leff+l) = dr(iblk*i+lop+30+l)
+                     dr(i+lip+31*leff+l) = dr(iblk*i+lop+62+l)
+                     dr(i+lip+32*leff+l) = dr(iblk*i+lop+ 1+l)
+                     dr(i+lip+33*leff+l) = dr(iblk*i+lop+33+l)
+                     dr(i+lip+34*leff+l) = dr(iblk*i+lop+17+l)
+                     dr(i+lip+35*leff+l) = dr(iblk*i+lop+49+l)
+                     dr(i+lip+36*leff+l) = dr(iblk*i+lop+ 9+l)
+                     dr(i+lip+37*leff+l) = dr(iblk*i+lop+41+l)
+                     dr(i+lip+38*leff+l) = dr(iblk*i+lop+25+l)
+                     dr(i+lip+39*leff+l) = dr(iblk*i+lop+57+l)
+                     dr(i+lip+40*leff+l) = dr(iblk*i+lop+ 5+l)
+                     dr(i+lip+41*leff+l) = dr(iblk*i+lop+37+l)
+                     dr(i+lip+42*leff+l) = dr(iblk*i+lop+21+l)
+                     dr(i+lip+43*leff+l) = dr(iblk*i+lop+53+l)
+                     dr(i+lip+44*leff+l) = dr(iblk*i+lop+13+l)
+                     dr(i+lip+45*leff+l) = dr(iblk*i+lop+45+l)
+                     dr(i+lip+46*leff+l) = dr(iblk*i+lop+29+l)
+                     dr(i+lip+47*leff+l) = dr(iblk*i+lop+61+l)
+                     dr(i+lip+48*leff+l) = dr(iblk*i+lop+ 3+l)
+                     dr(i+lip+49*leff+l) = dr(iblk*i+lop+35+l)
+                     dr(i+lip+50*leff+l) = dr(iblk*i+lop+19+l)
+                     dr(i+lip+51*leff+l) = dr(iblk*i+lop+51+l)
+                     dr(i+lip+52*leff+l) = dr(iblk*i+lop+11+l)
+                     dr(i+lip+53*leff+l) = dr(iblk*i+lop+43+l)
+                     dr(i+lip+54*leff+l) = dr(iblk*i+lop+27+l)
+                     dr(i+lip+55*leff+l) = dr(iblk*i+lop+59+l)
+                     dr(i+lip+56*leff+l) = dr(iblk*i+lop+ 7+l)
+                     dr(i+lip+57*leff+l) = dr(iblk*i+lop+39+l)
+                     dr(i+lip+58*leff+l) = dr(iblk*i+lop+23+l)
+                     dr(i+lip+59*leff+l) = dr(iblk*i+lop+55+l)
+                     dr(i+lip+60*leff+l) = dr(iblk*i+lop+15+l)
+                     dr(i+lip+61*leff+l) = dr(iblk*i+lop+47+l)
+                     dr(i+lip+62*leff+l) = dr(iblk*i+lop+31+l)
+                     dr(i+lip+63*leff+l) = dr(iblk*i+lop+63+l)
+                  enddo
+c dir: ignore recrdeps(dr)
+                  do i = 0, leff - 1
+                     di(i+lip        +l) = di(iblk*i+lop   +l)
+                     di(i+lip+   leff+l) = di(iblk*i+lop+32+l)
+                     di(i+lip+ 2*leff+l) = di(iblk*i+lop+16+l)
+                     di(i+lip+ 3*leff+l) = di(iblk*i+lop+48+l)
+                     di(i+lip+ 4*leff+l) = di(iblk*i+lop+ 8+l)
+                     di(i+lip+ 5*leff+l) = di(iblk*i+lop+40+l)
+                     di(i+lip+ 6*leff+l) = di(iblk*i+lop+24+l)
+                     di(i+lip+ 7*leff+l) = di(iblk*i+lop+56+l)
+                     di(i+lip+ 8*leff+l) = di(iblk*i+lop+ 4+l)
+                     di(i+lip+ 9*leff+l) = di(iblk*i+lop+36+l)
+                     di(i+lip+10*leff+l) = di(iblk*i+lop+20+l)
+                     di(i+lip+11*leff+l) = di(iblk*i+lop+52+l)
+                     di(i+lip+12*leff+l) = di(iblk*i+lop+12+l)
+                     di(i+lip+13*leff+l) = di(iblk*i+lop+44+l)
+                     di(i+lip+14*leff+l) = di(iblk*i+lop+28+l)
+                     di(i+lip+15*leff+l) = di(iblk*i+lop+60+l)
+                     di(i+lip+16*leff+l) = di(iblk*i+lop+ 2+l)
+                     di(i+lip+17*leff+l) = di(iblk*i+lop+34+l)
+                     di(i+lip+18*leff+l) = di(iblk*i+lop+18+l)
+                     di(i+lip+19*leff+l) = di(iblk*i+lop+50+l)
+                     di(i+lip+20*leff+l) = di(iblk*i+lop+10+l)
+                     di(i+lip+21*leff+l) = di(iblk*i+lop+42+l)
+                     di(i+lip+22*leff+l) = di(iblk*i+lop+26+l)
+                     di(i+lip+23*leff+l) = di(iblk*i+lop+58+l)
+                     di(i+lip+24*leff+l) = di(iblk*i+lop+ 6+l)
+                     di(i+lip+25*leff+l) = di(iblk*i+lop+38+l)
+                     di(i+lip+26*leff+l) = di(iblk*i+lop+22+l)
+                     di(i+lip+27*leff+l) = di(iblk*i+lop+54+l)
+                     di(i+lip+28*leff+l) = di(iblk*i+lop+14+l)
+                     di(i+lip+29*leff+l) = di(iblk*i+lop+46+l)
+                     di(i+lip+30*leff+l) = di(iblk*i+lop+30+l)
+                     di(i+lip+31*leff+l) = di(iblk*i+lop+62+l)
+                     di(i+lip+32*leff+l) = di(iblk*i+lop+ 1+l)
+                     di(i+lip+33*leff+l) = di(iblk*i+lop+33+l)
+                     di(i+lip+34*leff+l) = di(iblk*i+lop+17+l)
+                     di(i+lip+35*leff+l) = di(iblk*i+lop+49+l)
+                     di(i+lip+36*leff+l) = di(iblk*i+lop+ 9+l)
+                     di(i+lip+37*leff+l) = di(iblk*i+lop+41+l)
+                     di(i+lip+38*leff+l) = di(iblk*i+lop+25+l)
+                     di(i+lip+39*leff+l) = di(iblk*i+lop+57+l)
+                     di(i+lip+40*leff+l) = di(iblk*i+lop+ 5+l)
+                     di(i+lip+41*leff+l) = di(iblk*i+lop+37+l)
+                     di(i+lip+42*leff+l) = di(iblk*i+lop+21+l)
+                     di(i+lip+43*leff+l) = di(iblk*i+lop+53+l)
+                     di(i+lip+44*leff+l) = di(iblk*i+lop+13+l)
+                     di(i+lip+45*leff+l) = di(iblk*i+lop+45+l)
+                     di(i+lip+46*leff+l) = di(iblk*i+lop+29+l)
+                     di(i+lip+47*leff+l) = di(iblk*i+lop+61+l)
+                     di(i+lip+48*leff+l) = di(iblk*i+lop+ 3+l)
+                     di(i+lip+49*leff+l) = di(iblk*i+lop+35+l)
+                     di(i+lip+50*leff+l) = di(iblk*i+lop+19+l)
+                     di(i+lip+51*leff+l) = di(iblk*i+lop+51+l)
+                     di(i+lip+52*leff+l) = di(iblk*i+lop+11+l)
+                     di(i+lip+53*leff+l) = di(iblk*i+lop+43+l)
+                     di(i+lip+54*leff+l) = di(iblk*i+lop+27+l)
+                     di(i+lip+55*leff+l) = di(iblk*i+lop+59+l)
+                     di(i+lip+56*leff+l) = di(iblk*i+lop+ 7+l)
+                     di(i+lip+57*leff+l) = di(iblk*i+lop+39+l)
+                     di(i+lip+58*leff+l) = di(iblk*i+lop+23+l)
+                     di(i+lip+59*leff+l) = di(iblk*i+lop+55+l)
+                     di(i+lip+60*leff+l) = di(iblk*i+lop+15+l)
+                     di(i+lip+61*leff+l) = di(iblk*i+lop+47+l)
+                     di(i+lip+62*leff+l) = di(iblk*i+lop+31+l)
+                     di(i+lip+63*leff+l) = di(iblk*i+lop+63+l)
+                  enddo
+               else if ( iblk .eq. 32 ) then
+c dir: ignore recrdeps(dr)
+                  do i = 0, leff - 1
+                     dr(i+lip        +l) = dr(iblk*i+lop   +l)
+                     dr(i+lip+   leff+l) = dr(iblk*i+lop+16+l)
+                     dr(i+lip+ 2*leff+l) = dr(iblk*i+lop+ 8+l)
+                     dr(i+lip+ 3*leff+l) = dr(iblk*i+lop+24+l)
+                     dr(i+lip+ 4*leff+l) = dr(iblk*i+lop+ 4+l)
+                     dr(i+lip+ 5*leff+l) = dr(iblk*i+lop+20+l)
+                     dr(i+lip+ 6*leff+l) = dr(iblk*i+lop+12+l)
+                     dr(i+lip+ 7*leff+l) = dr(iblk*i+lop+28+l)
+                     dr(i+lip+ 8*leff+l) = dr(iblk*i+lop+ 2+l)
+                     dr(i+lip+ 9*leff+l) = dr(iblk*i+lop+18+l)
+                     dr(i+lip+10*leff+l) = dr(iblk*i+lop+10+l)
+                     dr(i+lip+11*leff+l) = dr(iblk*i+lop+26+l)
+                     dr(i+lip+12*leff+l) = dr(iblk*i+lop+ 6+l)
+                     dr(i+lip+13*leff+l) = dr(iblk*i+lop+22+l)
+                     dr(i+lip+14*leff+l) = dr(iblk*i+lop+14+l)
+                     dr(i+lip+15*leff+l) = dr(iblk*i+lop+30+l)
+                     dr(i+lip+16*leff+l) = dr(iblk*i+lop+ 1+l)
+                     dr(i+lip+17*leff+l) = dr(iblk*i+lop+17+l)
+                     dr(i+lip+18*leff+l) = dr(iblk*i+lop+ 9+l)
+                     dr(i+lip+19*leff+l) = dr(iblk*i+lop+25+l)
+                     dr(i+lip+20*leff+l) = dr(iblk*i+lop+ 5+l)
+                     dr(i+lip+21*leff+l) = dr(iblk*i+lop+21+l)
+                     dr(i+lip+22*leff+l) = dr(iblk*i+lop+13+l)
+                     dr(i+lip+23*leff+l) = dr(iblk*i+lop+29+l)
+                     dr(i+lip+24*leff+l) = dr(iblk*i+lop+ 3+l)
+                     dr(i+lip+25*leff+l) = dr(iblk*i+lop+19+l)
+                     dr(i+lip+26*leff+l) = dr(iblk*i+lop+11+l)
+                     dr(i+lip+27*leff+l) = dr(iblk*i+lop+27+l)
+                     dr(i+lip+28*leff+l) = dr(iblk*i+lop+ 7+l)
+                     dr(i+lip+29*leff+l) = dr(iblk*i+lop+23+l)
+                     dr(i+lip+30*leff+l) = dr(iblk*i+lop+15+l)
+                     dr(i+lip+31*leff+l) = dr(iblk*i+lop+31+l)
+                  enddo
+c dir: ignore recrdeps(di)
+                  do i = 0, leff - 1
+                     di(i+lip        +l) = di(iblk*i+lop   +l)
+                     di(i+lip+   leff+l) = di(iblk*i+lop+16+l)
+                     di(i+lip+ 2*leff+l) = di(iblk*i+lop+ 8+l)
+                     di(i+lip+ 3*leff+l) = di(iblk*i+lop+24+l)
+                     di(i+lip+ 4*leff+l) = di(iblk*i+lop+ 4+l)
+                     di(i+lip+ 5*leff+l) = di(iblk*i+lop+20+l)
+                     di(i+lip+ 6*leff+l) = di(iblk*i+lop+12+l)
+                     di(i+lip+ 7*leff+l) = di(iblk*i+lop+28+l)
+                     di(i+lip+ 8*leff+l) = di(iblk*i+lop+ 2+l)
+                     di(i+lip+ 9*leff+l) = di(iblk*i+lop+18+l)
+                     di(i+lip+10*leff+l) = di(iblk*i+lop+10+l)
+                     di(i+lip+11*leff+l) = di(iblk*i+lop+26+l)
+                     di(i+lip+12*leff+l) = di(iblk*i+lop+ 6+l)
+                     di(i+lip+13*leff+l) = di(iblk*i+lop+22+l)
+                     di(i+lip+14*leff+l) = di(iblk*i+lop+14+l)
+                     di(i+lip+15*leff+l) = di(iblk*i+lop+30+l)
+                     di(i+lip+16*leff+l) = di(iblk*i+lop+ 1+l)
+                     di(i+lip+17*leff+l) = di(iblk*i+lop+17+l)
+                     di(i+lip+18*leff+l) = di(iblk*i+lop+ 9+l)
+                     di(i+lip+19*leff+l) = di(iblk*i+lop+25+l)
+                     di(i+lip+20*leff+l) = di(iblk*i+lop+ 5+l)
+                     di(i+lip+21*leff+l) = di(iblk*i+lop+21+l)
+                     di(i+lip+22*leff+l) = di(iblk*i+lop+13+l)
+                     di(i+lip+23*leff+l) = di(iblk*i+lop+29+l)
+                     di(i+lip+24*leff+l) = di(iblk*i+lop+ 3+l)
+                     di(i+lip+25*leff+l) = di(iblk*i+lop+19+l)
+                     di(i+lip+26*leff+l) = di(iblk*i+lop+11+l)
+                     di(i+lip+27*leff+l) = di(iblk*i+lop+27+l)
+                     di(i+lip+28*leff+l) = di(iblk*i+lop+ 7+l)
+                     di(i+lip+29*leff+l) = di(iblk*i+lop+23+l)
+                     di(i+lip+30*leff+l) = di(iblk*i+lop+15+l)
+                     di(i+lip+31*leff+l) = di(iblk*i+lop+31+l)
+                  enddo
+               elseif ( iblk .eq. 16 ) then
+c dir: ignore recrdeps(dr)
+                  do i = 0, leff - 1
+                     dr(i+lip        +l) = dr(iblk*i+lop   +l)
+                     dr(i+lip+   leff+l) = dr(iblk*i+lop+ 8+l)
+                     dr(i+lip+ 2*leff+l) = dr(iblk*i+lop+ 4+l)
+                     dr(i+lip+ 3*leff+l) = dr(iblk*i+lop+12+l)
+                     dr(i+lip+ 4*leff+l) = dr(iblk*i+lop+ 2+l)
+                     dr(i+lip+ 5*leff+l) = dr(iblk*i+lop+10+l)
+                     dr(i+lip+ 6*leff+l) = dr(iblk*i+lop+ 6+l)
+                     dr(i+lip+ 7*leff+l) = dr(iblk*i+lop+14+l)
+                     dr(i+lip+ 8*leff+l) = dr(iblk*i+lop+ 1+l)
+                     dr(i+lip+ 9*leff+l) = dr(iblk*i+lop+ 9+l)
+                     dr(i+lip+10*leff+l) = dr(iblk*i+lop+ 5+l)
+                     dr(i+lip+11*leff+l) = dr(iblk*i+lop+13+l)
+                     dr(i+lip+12*leff+l) = dr(iblk*i+lop+ 3+l)
+                     dr(i+lip+13*leff+l) = dr(iblk*i+lop+11+l)
+                     dr(i+lip+14*leff+l) = dr(iblk*i+lop+ 7+l)
+                     dr(i+lip+15*leff+l) = dr(iblk*i+lop+15+l)
+                  enddo
+c dir: ignore recrdeps(di)
+                  do i = 0, leff - 1
+                     di(i+lip        +l) = di(iblk*i+lop   +l)
+                     di(i+lip+   leff+l) = di(iblk*i+lop+ 8+l)
+                     di(i+lip+ 2*leff+l) = di(iblk*i+lop+ 4+l)
+                     di(i+lip+ 3*leff+l) = di(iblk*i+lop+12+l)
+                     di(i+lip+ 4*leff+l) = di(iblk*i+lop+ 2+l)
+                     di(i+lip+ 5*leff+l) = di(iblk*i+lop+10+l)
+                     di(i+lip+ 6*leff+l) = di(iblk*i+lop+ 6+l)
+                     di(i+lip+ 7*leff+l) = di(iblk*i+lop+14+l)
+                     di(i+lip+ 8*leff+l) = di(iblk*i+lop+ 1+l)
+                     di(i+lip+ 9*leff+l) = di(iblk*i+lop+ 9+l)
+                     di(i+lip+10*leff+l) = di(iblk*i+lop+ 5+l)
+                     di(i+lip+11*leff+l) = di(iblk*i+lop+13+l)
+                     di(i+lip+12*leff+l) = di(iblk*i+lop+ 3+l)
+                     di(i+lip+13*leff+l) = di(iblk*i+lop+11+l)
+                     di(i+lip+14*leff+l) = di(iblk*i+lop+ 7+l)
+                     di(i+lip+15*leff+l) = di(iblk*i+lop+15+l)
+                  enddo
+               elseif ( iblk .eq. 8 ) then
+c dir: ignore recrdeps(dr,di)
+                  do i = 0, leff - 1
+                     dr(i+lip        +l) = dr(iblk*i+lop   +l)
+                     dr(i+lip+   leff+l) = dr(iblk*i+lop+ 4+l)
+                     dr(i+lip+ 2*leff+l) = dr(iblk*i+lop+ 2+l)
+                     dr(i+lip+ 3*leff+l) = dr(iblk*i+lop+ 6+l)
+                     dr(i+lip+ 4*leff+l) = dr(iblk*i+lop+ 1+l)
+                     dr(i+lip+ 5*leff+l) = dr(iblk*i+lop+ 5+l)
+                     dr(i+lip+ 6*leff+l) = dr(iblk*i+lop+ 3+l)
+                     dr(i+lip+ 7*leff+l) = dr(iblk*i+lop+ 7+l)
+                     di(i+lip        +l) = di(iblk*i+lop   +l)
+                     di(i+lip+   leff+l) = di(iblk*i+lop+ 4+l)
+                     di(i+lip+ 2*leff+l) = di(iblk*i+lop+ 2+l)
+                     di(i+lip+ 3*leff+l) = di(iblk*i+lop+ 6+l)
+                     di(i+lip+ 4*leff+l) = di(iblk*i+lop+ 1+l)
+                     di(i+lip+ 5*leff+l) = di(iblk*i+lop+ 5+l)
+                     di(i+lip+ 6*leff+l) = di(iblk*i+lop+ 3+l)
+                     di(i+lip+ 7*leff+l) = di(iblk*i+lop+ 7+l)
+                  enddo
+               elseif ( iblk .eq. 4 ) then
+c dir: ignore recrdeps(dr,di)
+                  do i = 0, leff - 1
+                     dr(i+lip        +l) = dr(iblk*i+lop   +l)
+                     dr(i+lip+   leff+l) = dr(iblk*i+lop+ 2+l)
+                     dr(i+lip+ 2*leff+l) = dr(iblk*i+lop+ 1+l)
+                     dr(i+lip+ 3*leff+l) = dr(iblk*i+lop+ 3+l)
+                     di(i+lip        +l) = di(iblk*i+lop   +l)
+                     di(i+lip+   leff+l) = di(iblk*i+lop+ 2+l)
+                     di(i+lip+ 2*leff+l) = di(iblk*i+lop+ 1+l)
+                     di(i+lip+ 3*leff+l) = di(iblk*i+lop+ 3+l)
+                  enddo
+               elseif ( iblk .eq. 2 ) then
+c dir: ignore recrdeps(dr,di)
+                  do i = 0, leff - 1
+                     dr(i+lip        +l) = dr(2*i+lop   +l)
+                     dr(i+lip+   leff+l) = dr(2*i+lop+ 1+l)
+                     di(i+lip        +l) = di(2*i+lop   +l)
+                     di(i+lip+   leff+l) = di(2*i+lop+ 1+l)
+                  enddo
+               else
+                  do m = 0, iblk - 1
+                     j = irev2(m)
+c dir: ignore recrdeps(dr)
+                     do i = 0, leff - 1
+                        dr(i+lip+m*leff+l) = dr(iblk*i+lop+j+l)
+                     enddo
+c dir: ignore recrdeps(di)
+                     do i = 0, leff - 1
+                        di(i+lip+m*leff+l) = di(iblk*i+lop+j+l)
+                     enddo
+                  enddo
+               endif
+            enddo
+            ld = leff
+            ls = lip
+            lip = lop
+            lop = ls
+         enddo
+         if ( instr .ne. 0 )
+     *      write(*,'(a,f10.6)')'Fixed stride',seconds(times)
+      endif
+c
+c Now reorder each sub part
+c
+      t2 = seconds(0.0)
+c dir: ignore recrdeps(dr,di)
+      do i = 0, lentot - 1
+         dr(i+lip) = dr(irev(i)+lop)
+      enddo
+c dir: ignore recrdeps(dr,di)
+      do i = 0, lentot - 1
+         di(i+lip) = di(irev(i)+lop)
+      enddo
+      if ( instr .ne. 0 )
+     *   write(*,'(a,f10.6)')'Gather      ',seconds(t2)
+      if ( instr .ne. 0 )
+     *   write(*,'(a,f10.6)')'Bit reversal',seconds(times)
+c
+c Main loop over dimensions
+c
+      do idim = 1, ndim
+         lensidim = 2**lens(idim)
+c
+c Find prime factors
+c
+         times = seconds(0.0)
+         call factor ( lensidim, ifac, nfac, nfmax, ipr, npr )
+         if ( instr .ne. 0 )
+     *      write(*,'(a,f10.6)')'factor',seconds(times)
+c
+c First butterfly needs no multiplies
+c
+         times = seconds(0.0)
+         ls = lip
+         lip = lop
+         lop = ls
+         lopfac = lentot/ifac(1)
+         icol = 1
+         if ( ifac(1) .eq. 2 ) then
+c dir: ignore recrdeps(dr,di)
+            do i = 0, lopfac - 1
+               d0r = dr(2*i+lop)
+               dr(i+lip       ) = d0r + dr(2*i+lop+1)
+               dr(i+lip+lopfac) = d0r - dr(2*i+lop+1)
+               d0i = di(2*i+lop)
+               di(i+lip       ) = d0i + di(2*i+lop+1)
+               di(i+lip+lopfac) = d0i - di(2*i+lop+1)
+            enddo
+            icol = icol + 1
+            f = 4*lopfac
+         else if ( ifac(1) .eq. 4 ) then
+c dir: ignore recrdeps(dr,di)
+            do i = 0, lopfac - 1
+               d0x = dr(4*i+lop  )
+               d2x = dr(4*i+lop+2)
+               d0r = d0x + dr(4*i+lop+1)
+               d1r = d2x + dr(4*i+lop+3)
+               d2r = d0x - dr(4*i+lop+1)
+               d3r = d2x - dr(4*i+lop+3)
+               d0x = di(4*i+lop  )
+               d2x = di(4*i+lop+2)
+               d0i = d0x + di(4*i+lop+1)
+               d1i = d2x + di(4*i+lop+3)
+               d2i = d0x - di(4*i+lop+1)
+               d3i = d2x - di(4*i+lop+3)
+               dr(i+lip         ) = d0r + d1r
+               dr(i+lip+  lopfac) = d2r - d3i
+               dr(i+lip+2*lopfac) = d0r - d1r
+               dr(i+lip+3*lopfac) = d2r + d3i
+               di(i+lip         ) = d0i + d1i
+               di(i+lip+  lopfac) = d2i + d3r
+               di(i+lip+2*lopfac) = d0i - d1i
+               di(i+lip+3*lopfac) = d2i - d3r
+            enddo
+            icol = icol + 2
+            f = 16*lopfac
+         else if ( ifac(1) .eq. 16 ) then
+c dir: ignore recrdeps(dr,di)
+            do i = 0, lopfac - 1
+               k = 16*i + lop
+c First section of 4
+               r0 = cmplx(dr(k   ),di(k   )) + cmplx(dr(k+ 1),di(k+ 1))
+               r1 = cmplx(dr(k+ 2),di(k+ 2)) + cmplx(dr(k+ 3),di(k+ 3))
+               r2 = cmplx(dr(k   ),di(k   )) - cmplx(dr(k+ 1),di(k+ 1))
+               r3 = cmplx(dr(k+ 2),di(k+ 2)) - cmplx(dr(k+ 3),di(k+ 3))
+               r3 = cmplx(-imag(r3),real(r3))
+               d0 = r0 + r1
+               d4 = r2 + r3
+               d8 = r0 - r1
+               dc = r2 - r3
+c Second section of 4
+               r0 = cmplx(dr(k+ 4),di(k+ 4)) + cmplx(dr(k+ 5),di(k+ 5))
+               r1 = cmplx(dr(k+ 6),di(k+ 6)) + cmplx(dr(k+ 7),di(k+ 7))
+               r2 = cmplx(dr(k+ 4),di(k+ 4)) - cmplx(dr(k+ 5),di(k+ 5))
+               r3 = cmplx(dr(k+ 6),di(k+ 6)) - cmplx(dr(k+ 7),di(k+ 7))
+               r3 = cmplx(-imag(r3),real(r3))
+               d1 = r0 + r1
+               d5 = r2 + r3
+               d9 = r0 - r1
+               dd = r2 - r3
+               t = d5 * real(coef2)
+               d5 = cmplx(real(t)-imag(t),real(t)+imag(t))
+               d9 = cmplx(-imag(d9),real(d9))
+               t = dd * real(coef2)
+               dd = cmplx(-real(t)-imag(t),real(t)-imag(t))
+c Third section of 4
+               r0 = cmplx(dr(k+ 8),di(k+ 8)) + cmplx(dr(k+ 9),di(k+ 9))
+               r1 = cmplx(dr(k+10),di(k+10)) + cmplx(dr(k+11),di(k+11))
+               r2 = cmplx(dr(k+ 8),di(k+ 8)) - cmplx(dr(k+ 9),di(k+ 9))
+               r3 = cmplx(dr(k+10),di(k+10)) - cmplx(dr(k+11),di(k+11))
+               r3 = cmplx(-imag(r3),real(r3))
+               d2 = r0 + r1
+               d6 = r2 + r3
+               da = r0 - r1
+               de = r2 - r3
+               d6 = d6 * coef1
+               t = da * real(coef2)
+               da = cmplx(real(t)-imag(t),real(t)+imag(t))
+               de = de * coef3
+c Fourth section of 4
+               r0 = cmplx(dr(k+12),di(k+12)) + cmplx(dr(k+13),di(k+13))
+               r1 = cmplx(dr(k+14),di(k+14)) + cmplx(dr(k+15),di(k+15))
+               r2 = cmplx(dr(k+12),di(k+12)) - cmplx(dr(k+13),di(k+13))
+               r3 = cmplx(dr(k+14),di(k+14)) - cmplx(dr(k+15),di(k+15))
+               r3 = cmplx(-imag(r3),real(r3))
+               d3 = r0 + r1
+               d7 = r2 + r3
+               db = r0 - r1
+               df = r2 - r3
+               d7 = d7 * coef3
+               t = db * real(coef2)
+               db = cmplx(-real(t)-imag(t),real(t)-imag(t))
+               df = - df * coef1
+c Second radix-4
+c First section of 4
+               r0 = d0 + d1
+               r1 = d2 + d3
+               r2 = d0 - d1
+               r3 = d2 - d3
+               r3 = cmplx(-imag(r3),real(r3))
+               dr(i+lip          ) = real(r0 + r1)
+               dr(i+lip+ 4*lopfac) = real(r2 + r3)
+               dr(i+lip+ 8*lopfac) = real(r0 - r1)
+               dr(i+lip+12*lopfac) = real(r2 - r3)
+               di(i+lip          ) = imag(r0 + r1)
+               di(i+lip+ 4*lopfac) = imag(r2 + r3)
+               di(i+lip+ 8*lopfac) = imag(r0 - r1)
+               di(i+lip+12*lopfac) = imag(r2 - r3)
+c Second section of 4
+               r0 = d4 + d5
+               r1 = d6 + d7
+               r2 = d4 - d5
+               r3 = d6 - d7
+               r3 = cmplx(-imag(r3),real(r3))
+               dr(i+lip+   lopfac) = real(r0 + r1)
+               dr(i+lip+ 5*lopfac) = real(r2 + r3)
+               dr(i+lip+ 9*lopfac) = real(r0 - r1)
+               dr(i+lip+13*lopfac) = real(r2 - r3)
+               di(i+lip+   lopfac) = imag(r0 + r1)
+               di(i+lip+ 5*lopfac) = imag(r2 + r3)
+               di(i+lip+ 9*lopfac) = imag(r0 - r1)
+               di(i+lip+13*lopfac) = imag(r2 - r3)
+c Third section of 4
+               r0 = d8 + d9
+               r1 = da + db
+               r2 = d8 - d9
+               r3 = da - db
+               r3 = cmplx(-imag(r3),real(r3))
+               dr(i+lip+ 2*lopfac) = real(r0 + r1)
+               dr(i+lip+ 6*lopfac) = real(r2 + r3)
+               dr(i+lip+10*lopfac) = real(r0 - r1)
+               dr(i+lip+14*lopfac) = real(r2 - r3)
+               di(i+lip+ 2*lopfac) = imag(r0 + r1)
+               di(i+lip+ 6*lopfac) = imag(r2 + r3)
+               di(i+lip+10*lopfac) = imag(r0 - r1)
+               di(i+lip+14*lopfac) = imag(r2 - r3)
+c Fourth section of 4
+               r0 = dc + dd
+               r1 = de + df
+               r2 = dc - dd
+               r3 = de - df
+               r3 = cmplx(-imag(r3),real(r3))
+               dr(i+lip+ 3*lopfac) = real(r0 + r1)
+               dr(i+lip+ 7*lopfac) = real(r2 + r3)
+               dr(i+lip+11*lopfac) = real(r0 - r1)
+               dr(i+lip+15*lopfac) = real(r2 - r3)
+               di(i+lip+ 3*lopfac) = imag(r0 + r1)
+               di(i+lip+ 7*lopfac) = imag(r2 + r3)
+               di(i+lip+11*lopfac) = imag(r0 - r1)
+               di(i+lip+15*lopfac) = imag(r2 - r3)
+            enddo
+            icol = icol + 4
+            f = 168*lopfac
+         else
+            stop 'Radix not in list.'
+         endif
+         times = seconds(times)
+         if ( instr .ne. 0 )
+     *      write(*,'(a,i5,f10.6,f10.3)')'Butterfly 1, factor',
+     *        ifac(1),times,1.e-6*f/times
+         fft = fft + f
+c
+c Loop over array doing FFT for rest of stages
+c
+         if2 = lentot/ifac(1)
+         do ibfly = 2, nfac
+            times = seconds(0.0)
+            ls = lip
+            lip = lop
+            lop = ls
+            ipfac = ifac(ibfly)
+            lopfac = lentot/ipfac
+c
+c Now compute this butterfly
+c
+	    if2 = if2/ipfac
+            if ( ipfac .eq. 2 ) then
+c
+c Radix 2
+c
+               if ( if2 .lt. minvec ) then
+c dir: ignore recrdeps(dr,di)
+                  do i = 0, lopfac - 1
+                     dc = cmplx(dr(2*i+lop+1),di(2*i+lop+1))
+                     temp = coeff2(i,icol)*dc
+	             dr(i+lip       ) = dr(2*i+lop)+real(temp)
+	             dr(i+lip+lopfac) = dr(2*i+lop)-real(temp)
+	             di(i+lip       ) = di(2*i+lop)+imag(temp)
+	             di(i+lip+lopfac) = di(2*i+lop)-imag(temp)
+                  enddo
+               else
+                  do k = 0, lopfac - 1, if2
+c dir: ignore recrdeps(dr,di)
+                     do j = 0, if2 - 1
+                        i = j + k
+                        dc = cmplx(dr(2*i+lop+1),di(2*i+lop+1))
+                        temp = coeff2(k,icol)*dc
+	                dr(i+lip       ) = dr(2*i+lop)+real(temp)
+	                dr(i+lip+lopfac) = dr(2*i+lop)-real(temp)
+	                di(i+lip       ) = di(2*i+lop)+imag(temp)
+	                di(i+lip+lopfac) = di(2*i+lop)-imag(temp)
+                     enddo
+                  enddo
+               endif
+               icol = icol + 1
+               f = 10*lopfac
+            else if ( ipfac .eq. 4 ) then
+c
+c Radix 4
+c
+               icol4 = (icol+1)/2
+               if ( if2 .lt. minvec ) then
+c dir: ignore recrdeps(dr,di)
+                  do i = 0, lopfac - 1
+                     k = 4*i + lop
+                     t0 = cmplx(dr(k  ),di(k  ))
+                     t1 = cmplx(dr(k+1),di(k+1))*coeff4(i,2,icol4)
+                     t2 = cmplx(dr(k+2),di(k+2))*coeff4(i,1,icol4)
+                     t3 = cmplx(dr(k+3),di(k+3))*coeff4(i,3,icol4)
+                     r0 = t0 + t1
+                     r1 = t2 + t3
+                     r2 = t0 - t1
+                     r3 = t2 - t3
+                     r3 = cmplx(-imag(r3),real(r3))
+                     dr(i+lip         ) = real(r0+r1)
+                     di(i+lip         ) = imag(r0+r1)
+                     dr(i+lip+  lopfac) = real(r2+r3)
+                     di(i+lip+  lopfac) = imag(r2+r3)
+                     dr(i+lip+2*lopfac) = real(r0-r1)
+                     di(i+lip+2*lopfac) = imag(r0-r1)
+                     dr(i+lip+3*lopfac) = real(r2-r3)
+                     di(i+lip+3*lopfac) = imag(r2-r3)
+                  enddo
+               else
+                  do m = 0, lopfac - 1, if2
+c dir: ignore recrdeps(dr,di)
+                     do j = 0, if2 - 1
+                        i = j + m
+                        k = 4*i + lop
+			t0 = cmplx(dr(k  ),di(k  ))
+			t1 = cmplx(dr(k+1),di(k+1))*coeff4(m,2,icol4)
+			t2 = cmplx(dr(k+2),di(k+2))*coeff4(m,1,icol4)
+			t3 = cmplx(dr(k+3),di(k+3))*coeff4(m,3,icol4)
+			r0 = t0 + t1
+			r1 = t2 + t3
+			r2 = t0 - t1
+			r3 = t2 - t3
+			r3 = cmplx(-imag(r3),real(r3))
+			dr(i+lip         ) = real(r0+r1)
+			di(i+lip         ) = imag(r0+r1)
+			dr(i+lip+  lopfac) = real(r2+r3)
+			di(i+lip+  lopfac) = imag(r2+r3)
+			dr(i+lip+2*lopfac) = real(r0-r1)
+			di(i+lip+2*lopfac) = imag(r0-r1)
+			dr(i+lip+3*lopfac) = real(r2-r3)
+			di(i+lip+3*lopfac) = imag(r2-r3)
+                     enddo
+                  enddo
+               endif
+               icol = icol + 2
+               f = 34*lopfac
+            else if ( ifac(1) .eq. 16 ) then
+c
+c Radix 16
+c
+               icol16 = (icol+3)/4
+               if ( if2 .lt. minvec ) then
+c dir: ignore recrdeps(dr,di)
+                  do i = 0, lopfac - 1
+                     k = 16*i + lop
+c First section of 4
+                     t1r = cmr(dr(k+ 1),di(k+ 1),coef16(i, 8,icol16))
+                     t1i = cmi(dr(k+ 1),di(k+ 1),coef16(i, 8,icol16))
+                     r0 = cmplx(dr(k),di(k)) + cmplx(t1r,t1i)
+                     r2 = cmplx(dr(k),di(k)) - cmplx(t1r,t1i)
+                     t2r = cmr(dr(k+ 2),di(k+ 2),coef16(i, 4,icol16))
+                     t2i = cmi(dr(k+ 2),di(k+ 2),coef16(i, 4,icol16))
+                     t3r = cmr(dr(k+ 3),di(k+ 3),coef16(i,12,icol16))
+                     t3i = cmi(dr(k+ 3),di(k+ 3),coef16(i,12,icol16))
+                     r1 = cmplx(t2r,t2i) + cmplx(t3r,t3i)
+                     r3 = cmplx(t2r,t2i) - cmplx(t3r,t3i)
+                     r3 = cmplx(-imag(r3),real(r3))
+                     d0 = r0 + r1
+                     d4 = r2 + r3
+                     d8 = r0 - r1
+                     dc = r2 - r3
+c Second section of 4
+                     t0r = cmr(dr(k+ 4),di(k+ 4),coef16(i, 2,icol16))
+                     t0i = cmi(dr(k+ 4),di(k+ 4),coef16(i, 2,icol16))
+                     t1r = cmr(dr(k+ 5),di(k+ 5),coef16(i,10,icol16))
+                     t1i = cmi(dr(k+ 5),di(k+ 5),coef16(i,10,icol16))
+                     r0 = cmplx(t0r,t0i) + cmplx(t1r,t1i)
+                     r2 = cmplx(t0r,t0i) - cmplx(t1r,t1i)
+                     t2r = cmr(dr(k+ 6),di(k+ 6),coef16(i, 6,icol16))
+                     t2i = cmi(dr(k+ 6),di(k+ 6),coef16(i, 6,icol16))
+                     t3r = cmr(dr(k+ 7),di(k+ 7),coef16(i,14,icol16))
+                     t3i = cmi(dr(k+ 7),di(k+ 7),coef16(i,14,icol16))
+                     r1 = cmplx(t2r,t2i) + cmplx(t3r,t3i)
+                     r3 = cmplx(t2r,t2i) - cmplx(t3r,t3i)
+                     r3 = cmplx(-imag(r3),real(r3))
+                     d1 = r0 + r1
+                     d5 = r2 + r3
+                     d9 = r0 - r1
+                     dd = r2 - r3
+                     t = d5 * real(coef2)
+                     d5 = cmplx(real(t)-imag(t),real(t)+imag(t))
+                     d9 = cmplx(-imag(d9),real(d9))
+                     t = dd * real(coef2)
+                     dd = cmplx(-real(t)-imag(t),real(t)-imag(t))
+c Third section of 4
+                     t0r = cmr(dr(k+ 8),di(k+ 8),coef16(i, 1,icol16))
+                     t0i = cmi(dr(k+ 8),di(k+ 8),coef16(i, 1,icol16))
+                     t1r = cmr(dr(k+ 9),di(k+ 9),coef16(i, 9,icol16))
+                     t1i = cmi(dr(k+ 9),di(k+ 9),coef16(i, 9,icol16))
+                     r0 = cmplx(t0r,t0i) + cmplx(t1r,t1i)
+                     r2 = cmplx(t0r,t0i) - cmplx(t1r,t1i)
+                     t2r = cmr(dr(k+10),di(k+10),coef16(i, 5,icol16))
+                     t2i = cmi(dr(k+10),di(k+10),coef16(i, 5,icol16))
+                     t3r = cmr(dr(k+11),di(k+11),coef16(i,13,icol16))
+                     t3i = cmi(dr(k+11),di(k+11),coef16(i,13,icol16))
+                     r1 = cmplx(t2r,t2i) + cmplx(t3r,t3i)
+                     r3 = cmplx(t2r,t2i) - cmplx(t3r,t3i)
+                     r3 = cmplx(-imag(r3),real(r3))
+                     d2 = r0 + r1
+                     d6 = r2 + r3
+                     da = r0 - r1
+                     de = r2 - r3
+                     d6 = d6 * coef1
+                     t = da * real(coef2)
+                     da = cmplx(real(t)-imag(t),real(t)+imag(t))
+                     de = de * coef3
+c Fourth section of 4
+                     t0r = cmr(dr(k+12),di(k+12),coef16(i, 3,icol16))
+                     t0i = cmi(dr(k+12),di(k+12),coef16(i, 3,icol16))
+                     t1r = cmr(dr(k+13),di(k+13),coef16(i,11,icol16))
+                     t1i = cmi(dr(k+13),di(k+13),coef16(i,11,icol16))
+                     r0 = cmplx(t0r,t0i) + cmplx(t1r,t1i)
+                     r2 = cmplx(t0r,t0i) - cmplx(t1r,t1i)
+                     t2r = cmr(dr(k+14),di(k+14),coef16(i, 7,icol16))
+                     t2i = cmi(dr(k+14),di(k+14),coef16(i, 7,icol16))
+                     t3r = cmr(dr(k+15),di(k+15),coef16(i,15,icol16))
+                     t3i = cmi(dr(k+15),di(k+15),coef16(i,15,icol16))
+                     r1 = cmplx(t2r,t2i) + cmplx(t3r,t3i)
+                     r3 = cmplx(t2r,t2i) - cmplx(t3r,t3i)
+                     r3 = cmplx(-imag(r3),real(r3))
+                     d3 = r0 + r1
+                     d7 = r2 + r3
+                     db = r0 - r1
+                     df = r2 - r3
+                     d7 = d7 * coef3
+                     t = db * real(coef2)
+                     db = cmplx(-real(t)-imag(t),real(t)-imag(t))
+                     df = - df * coef1
+c Second radix-4
+c First section of 4
+                     r0 = d0 + d1
+                     r1 = d2 + d3
+                     r2 = d0 - d1
+                     r3 = d2 - d3
+                     r3 = cmplx(-imag(r3),real(r3))
+                     dr(i+lip          ) = real(r0 + r1)
+                     dr(i+lip+ 4*lopfac) = real(r2 + r3)
+                     dr(i+lip+ 8*lopfac) = real(r0 - r1)
+                     dr(i+lip+12*lopfac) = real(r2 - r3)
+                     di(i+lip          ) = imag(r0 + r1)
+                     di(i+lip+ 4*lopfac) = imag(r2 + r3)
+                     di(i+lip+ 8*lopfac) = imag(r0 - r1)
+                     di(i+lip+12*lopfac) = imag(r2 - r3)
+c Second section of 4
+                     r0 = d4 + d5
+                     r1 = d6 + d7
+                     r2 = d4 - d5
+                     r3 = d6 - d7
+                     r3 = cmplx(-imag(r3),real(r3))
+                     dr(i+lip+   lopfac) = real(r0 + r1)
+                     dr(i+lip+ 5*lopfac) = real(r2 + r3)
+                     dr(i+lip+ 9*lopfac) = real(r0 - r1)
+                     dr(i+lip+13*lopfac) = real(r2 - r3)
+                     di(i+lip+   lopfac) = imag(r0 + r1)
+                     di(i+lip+ 5*lopfac) = imag(r2 + r3)
+                     di(i+lip+ 9*lopfac) = imag(r0 - r1)
+                     di(i+lip+13*lopfac) = imag(r2 - r3)
+c Third section of 4
+                     r0 = d8 + d9
+                     r1 = da + db
+                     r2 = d8 - d9
+                     r3 = da - db
+                     r3 = cmplx(-imag(r3),real(r3))
+                     dr(i+lip+ 2*lopfac) = real(r0 + r1)
+                     dr(i+lip+ 6*lopfac) = real(r2 + r3)
+                     dr(i+lip+10*lopfac) = real(r0 - r1)
+                     dr(i+lip+14*lopfac) = real(r2 - r3)
+                     di(i+lip+ 2*lopfac) = imag(r0 + r1)
+                     di(i+lip+ 6*lopfac) = imag(r2 + r3)
+                     di(i+lip+10*lopfac) = imag(r0 - r1)
+                     di(i+lip+14*lopfac) = imag(r2 - r3)
+c Fourth section of 4
+                     r0 = dc + dd
+                     r1 = de + df
+                     r2 = dc - dd
+                     r3 = de - df
+                     r3 = cmplx(-imag(r3),real(r3))
+                     dr(i+lip+ 3*lopfac) = real(r0 + r1)
+                     dr(i+lip+ 7*lopfac) = real(r2 + r3)
+                     dr(i+lip+11*lopfac) = real(r0 - r1)
+                     dr(i+lip+15*lopfac) = real(r2 - r3)
+                     di(i+lip+ 3*lopfac) = imag(r0 + r1)
+                     di(i+lip+ 7*lopfac) = imag(r2 + r3)
+                     di(i+lip+11*lopfac) = imag(r0 - r1)
+                     di(i+lip+15*lopfac) = imag(r2 - r3)
+                  enddo
+               else
+                  do m = 0, lopfac - 1, if2
+c dir: ignore recrdeps(dr,di)
+                     do j = 0, if2 - 1
+                        i = j + m
+                        k = 16*i + lop
+c First section of 4
+                        t0=cmplx(dr(k   ),di(k   ))
+                        t1=cmplx(dr(k+ 1),di(k+ 1))*coef16(m, 8,icol16)
+                        r0 = t0 + t1
+                        r2 = t0 - t1
+                        t2=cmplx(dr(k+ 2),di(k+ 2))*coef16(m, 4,icol16)
+                        t3=cmplx(dr(k+ 3),di(k+ 3))*coef16(m,12,icol16)
+                        r1 = t2 + t3
+                        r3 = t2 - t3
+                        r3 = cmplx(-imag(r3),real(r3))
+                        d0 = r0 + r1
+                        d4 = r2 + r3
+                        d8 = r0 - r1
+                        dc = r2 - r3
+c Second section of 4
+                        t0=cmplx(dr(k+ 4),di(k+ 4))*coef16(m, 2,icol16)
+                        t1=cmplx(dr(k+ 5),di(k+ 5))*coef16(m,10,icol16)
+                        r0 = t0 + t1
+                        r2 = t0 - t1
+                        t2=cmplx(dr(k+ 6),di(k+ 6))*coef16(m, 6,icol16)
+                        t3=cmplx(dr(k+ 7),di(k+ 7))*coef16(m,14,icol16)
+                        r1 = t2 + t3
+                        r3 = t2 - t3
+                        r3 = cmplx(-imag(r3),real(r3))
+                        d1 = r0 + r1
+                        d5 = r2 + r3
+                        d9 = r0 - r1
+                        dd = r2 - r3
+                        t = d5 * real(coef2)
+                        d5 = cmplx(real(t)-imag(t),real(t)+imag(t))
+                        d9 = cmplx(-imag(d9),real(d9))
+                        t = dd * real(coef2)
+                        dd = cmplx(-real(t)-imag(t),real(t)-imag(t))
+c Third section of 4
+                        t0=cmplx(dr(k+ 8),di(k+ 8))*coef16(m, 1,icol16)
+                        t1=cmplx(dr(k+ 9),di(k+ 9))*coef16(m, 9,icol16)
+                        r0 = t0 + t1
+                        r2 = t0 - t1
+                        t2=cmplx(dr(k+10),di(k+10))*coef16(m, 5,icol16)
+                        t3=cmplx(dr(k+11),di(k+11))*coef16(m,13,icol16)
+                        r1 = t2 + t3
+                        r3 = t2 - t3
+                        r3 = cmplx(-imag(r3),real(r3))
+                        d2 = r0 + r1
+                        d6 = r2 + r3
+                        da = r0 - r1
+                        de = r2 - r3
+                        d6 = d6 * coef1
+                        t = da * real(coef2)
+                        da = cmplx(real(t)-imag(t),real(t)+imag(t))
+                        de = de * coef3
+c Fourth section of 4
+                        t0=cmplx(dr(k+12),di(k+12))*coef16(m, 3,icol16)
+                        t1=cmplx(dr(k+13),di(k+13))*coef16(m,11,icol16)
+                        r0 = t0 + t1
+                        r2 = t0 - t1
+                        t2=cmplx(dr(k+14),di(k+14))*coef16(m, 7,icol16)
+                        t3=cmplx(dr(k+15),di(k+15))*coef16(m,15,icol16)
+                        r1 = t2 + t3
+                        r3 = t2 - t3
+                        r3 = cmplx(-imag(r3),real(r3))
+                        d3 = r0 + r1
+                        d7 = r2 + r3
+                        db = r0 - r1
+                        df = r2 - r3
+                        d7 = d7 * coef3
+                        t = db * real(coef2)
+                        db = cmplx(-real(t)-imag(t),real(t)-imag(t))
+                        df = - df * coef1
+c Second radix-4
+c First section of 4
+                        r0 = d0 + d1
+                        r1 = d2 + d3
+                        r2 = d0 - d1
+                        r3 = d2 - d3
+                        r3 = cmplx(-imag(r3),real(r3))
+                        dr(i+lip          ) = real(r0 + r1)
+                        dr(i+lip+ 4*lopfac) = real(r2 + r3)
+                        dr(i+lip+ 8*lopfac) = real(r0 - r1)
+                        dr(i+lip+12*lopfac) = real(r2 - r3)
+                        di(i+lip          ) = imag(r0 + r1)
+                        di(i+lip+ 4*lopfac) = imag(r2 + r3)
+                        di(i+lip+ 8*lopfac) = imag(r0 - r1)
+                        di(i+lip+12*lopfac) = imag(r2 - r3)
+c Second section of 4
+                        r0 = d4 + d5
+                        r1 = d6 + d7
+                        r2 = d4 - d5
+                        r3 = d6 - d7
+                        r3 = cmplx(-imag(r3),real(r3))
+                        dr(i+lip+   lopfac) = real(r0 + r1)
+                        dr(i+lip+ 5*lopfac) = real(r2 + r3)
+                        dr(i+lip+ 9*lopfac) = real(r0 - r1)
+                        dr(i+lip+13*lopfac) = real(r2 - r3)
+                        di(i+lip+   lopfac) = imag(r0 + r1)
+                        di(i+lip+ 5*lopfac) = imag(r2 + r3)
+                        di(i+lip+ 9*lopfac) = imag(r0 - r1)
+                        di(i+lip+13*lopfac) = imag(r2 - r3)
+c Third section of 4
+                        r0 = d8 + d9
+                        r1 = da + db
+                        r2 = d8 - d9
+                        r3 = da - db
+                        r3 = cmplx(-imag(r3),real(r3))
+                        dr(i+lip+ 2*lopfac) = real(r0 + r1)
+                        dr(i+lip+ 6*lopfac) = real(r2 + r3)
+                        dr(i+lip+10*lopfac) = real(r0 - r1)
+                        dr(i+lip+14*lopfac) = real(r2 - r3)
+                        di(i+lip+ 2*lopfac) = imag(r0 + r1)
+                        di(i+lip+ 6*lopfac) = imag(r2 + r3)
+                        di(i+lip+10*lopfac) = imag(r0 - r1)
+                        di(i+lip+14*lopfac) = imag(r2 - r3)
+c Fourth section of 4
+                        r0 = dc + dd
+                        r1 = de + df
+                        r2 = dc - dd
+                        r3 = de - df
+                        r3 = cmplx(-imag(r3),real(r3))
+                        dr(i+lip+ 3*lopfac) = real(r0 + r1)
+                        dr(i+lip+ 7*lopfac) = real(r2 + r3)
+                        dr(i+lip+11*lopfac) = real(r0 - r1)
+                        dr(i+lip+15*lopfac) = real(r2 - r3)
+                        di(i+lip+ 3*lopfac) = imag(r0 + r1)
+                        di(i+lip+ 7*lopfac) = imag(r2 + r3)
+                        di(i+lip+11*lopfac) = imag(r0 - r1)
+                        di(i+lip+15*lopfac) = imag(r2 - r3)
+                     enddo
+                  enddo
+               endif
+               icol = icol + 4
+               f = 258*lopfac
+            else
+               stop 'Radix not in list.'
+            endif
+            times = seconds(times)
+            if ( instr .ne. 0 )
+     *         write(*,'(a,i5,f10.6,f10.3)')'Butterfly n, factor',
+     *           ipfac,times,1.e-6*f/times
+            fft = fft + f
+         enddo
+      enddo
+c
+c Point to start of result
+c
+      istart = lip
+c 
+c Done
+c
+      end

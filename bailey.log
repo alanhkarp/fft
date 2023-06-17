@@ -1,0 +1,31 @@
+This is TeX, C Version 3.1t2 (format=lplain3 90.11.12)  15 JUL 1992 09:12
+**bailey
+(bailey.tex
+LaTeX Version 2.09 <7 Dec 1989>
+(/usr/lib/tex/macros/article.sty
+Document Style `article' <16 Mar 88>.
+(/usr/lib/tex/macros/art12.sty)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+) (/usr/lib/tex/macros/fleqn.sty
+\mathindent=\dimen99
+) (bailey.aux)
+[1
+
+] [2] [3] [4] [5] (bailey.aux) ) 
+Here is how much of TeX's memory you used:
+ 157 strings out of 4452
+ 1501 string characters out of 63197
+ 32648 words of memory out of 262141
+ 2111 multiletter control sequences out of 9500
+ 19668 words of font info for 76 fonts, out of 72000 for 255
+ 14 hyphenation exceptions out of 607
+ 12i,7n,17p,153b,142s stack positions out of 300i,40n,60p,3000b,4000s
+
+Output written on bailey.dvi (5 pages, 16160 bytes).

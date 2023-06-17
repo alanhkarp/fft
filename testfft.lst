@@ -1,0 +1,574 @@
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58                                           PAGE:    1
+0REQUESTED OPTIONS (EXECUTE): ignore sdump opt(3) ad(none) gostmt flag(w) source vector(report(xlist))
+0OPTIONS IN EFFECT: NOLIST NOMAP NOXREF GOSTMT NODECK SOURCE NOTERM OBJECT FIXED TRMFLG NOSRCFLG NOSYM RENT SDUMP
+                    NOSXM VECTOR IL(DIM) NOTEST NODC NOICA NODIRECTIVE NODBCS NOSAA NOPARALLEL NOSAVE NOPROF TABS
+                    OPT(3) LANGLVL(77) NOFIPS FLAG(W) AUTODBL(00000) LINECOUNT(60) CHARLEN(500)
+              TABS: 1 9 17 25 33 41 49 57 65 73
+            VECTOR: NOIVA INTRINSIC REDUCTION SIZE(ANY) REPORT(XLIST)
+0 IF DO   ISN  LINE INC *....*...1.........2.........3.........4.........5.........6.........7.*.......8
+0                     [BEGIN INPUT FILE "testfft.f"
+                  1     cprocess dc(big)
+                  2     c Driver routine to test FFT subroutines
+                  3     c
+            1     4           parameter (log2max=20,last=2**log2max,ntests=29)
+            2     5           parameter (ncol=log2max,instr=1)
+            3     6           parameter (ix=1)
+            4     7           complex ans(0:last-1), data(0:2*last-1+ix), datasave(0:last-1)
+            5     8           complex temp, coeff(0:last-1),
+                  9          *        coeff2 (0:last/ 2-1,   ncol),
+                 10          *        coeff4 (0:last/ 4-1, 3,(ncol+1)/2),
+                 11          *        coeff8 (0:last/ 8-1, 7,(ncol+2)/3),
+                 12          *        coeff16(0:last/16-1,15,(ncol+3)/4)
+            6    13           dimension log2len(10), lens(10), irev(0:last-1), irex(0:last-1)
+            7    14           dimension testlist(ntests)
+            8    15           character*6 tests(ntests)
+            9    16           character*40 comments(ntests)
+           10    17           dimension dreal(0:2*last-1+ix,2), aux1(2*last), aux2(2*last)
+           11    18           equivalence (dreal,data), (aux1,coeff), (aux2,data)
+           12    19           data lens/10*1/
+           13    20           data ktest/27/
+                 21     c     data testlist/ 3,28,27*0/
+           14    22           data testlist/    2, 3, 4, 5, 6, 7, 8, 9,10,
+                 23          *              11,12,13,14,15,16,17,18,19,20,
+                 24          *              21,22,23,24,25,26,27,28,2*0/
+           15    25           data tests/'fourn ','fft   ','ffta  ','fftb  ','fftc  ',
+                 26          *           'fftd  ','ffte  ','fftf  ','fftg  ','ffth  ',
+                 27          *           'ffti  ','fftj  ','fftk  ','fftl  ','fftm  ',
+                 28          *           'fftn  ','ffto  ','fftp  ','fftq  ','fftr  ',
+                 29          *           'ffts  ','fftt  ','fftu  ','fftv  ','fftw  ',
+                 30          *           'fftx  ','ffty  ','fftz  ','fftaa '/
+           16    31           data comments/
+                 32          *   'Correct answer from Numerical Recipes   ',  !  1: fourn
+                 33          *   'Best result for 3090/VF                 ',  !  2: fft
+                 34          *   'Base case                               ',  !  3: ffta
+                 35          *   'Use shifts to compute coeffs index      ',  !  4: fftb
+                 36          *   'Avoid integer divide in coeffs index    ',  !  5: fftc
+                 37          *   'Reuse bit reversal and coeffs arrays    ',  !  6: fftd
+                 38          *   'Combine 1st pass with bit reversal      ',  !  7: ffte
+                 39          *   'Improve handling of bit reversal        ',  !  8: fftf
+                 40          *   'Use real arithmetic                     ',  !  9: fftg
+                 41          *   'Separate real and imaginary parts       ',  ! 10: ffth
+                 42          *   'Avoid gather scatter for long vectors   ',  ! 11: ffti
+                 43          *   'Use multiple column coefficient array   ',  ! 12: fftj
+                 44          *   'Gather coefficients before use          ',  ! 13: fftk
+                 45          *   'Use radix 2 and 4                       ',  ! 14: fftl
+                 46          *   'Use one column auxiliary array vs l     ',  ! 15: fftm
+                 47          *   'Use multiple column auxiliary array vs m',  ! 16: fftn
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58  NAME:MAIN                                PAGE:    2
+0 IF DO   ISN  LINE INC *....*...1.........2.........3.........4.........5.........6.........7.*.......8
+0                48          *   'Use 2 radix-2 instead of radix-4 vs l   ',  ! 17: ffto
+                 49          *   'Separate real and imaginary parts vs l  ',  ! 18: fftp
+                 50          *   'Use fixed stride not gather vs i        ',  ! 19: fftq
+                 51          *   'Do radix-16 to improve cache use vs l   ',  ! 20: fftr
+                 52          *   'Do radix-16 as 2 radix-4 vs r           ',  ! 21: ffts
+                 53          *   'Do radix-32 with in-place method vs l   ',  ! 22: fftt
+                 54          *   'Do radix-32 as radix-4s and radix-2 vs t',  ! 23: fftu
+                 55          *   'Do radix-8 for completeness             ',  ! 24: fftv
+                 56          *   'Like fftd but do bit reversal once      ',  ! 25: fftw
+                 57          *   'Improve handling of long bit reversals  ',  ! 26: fftx
+                 58          *   'Use second dimension for flip/flop      ',  ! 27: ffty
+                 59          *   'Do radix-16 in a loop vs s              ',  ! 28: fftz
+                 60          *   'Like ffz but do bit reversal once       '/  ! 29: fftaa
+                 61     c
+                 62     c Read in dimensions
+                 63     c
+           17    64           write(*,*) 'Enter number of dimensions and power of 2 for each'
+           18    65           read(*,*) ndim, (log2len(i),i=1,ndim)
+           19    66           if ( ndim .le. 0 ) stop 'Number of dimensions <= 0.'
+           21    67           if ( ndim .gt. 10 ) stop 'Number of dimensions > 10.'
+           23    68           lentotl = 0
+           24    69           maxlenl = 0
+           25    70           do i = 1, ndim
+      1    26    71              if ( log2len(i) .eq. 0 ) stop 'Length of 1 not allowed.'
+      1    28    72              lentotl = lentotl + log2len(i)
+      1    29    73              lens(i) = 2**log2len(i)
+      1    30    74              maxlenl = max(maxlenl,log2len(i))
+      1    31    75           enddo
+           32    76           lentot = 2**lentotl
+           33    77           maxlen = 2**maxlenl
+           34    78           if ( lentotl .gt. log2max ) stop 'Total size of array too big.'
+           36    79           flops = 1.e-6*5*lentot*lentotl
+                 80     c
+                 81     c Build coefficient array for ESSL routines
+                 82     c
+                 83     c     if ( ndim .eq. 1 ) then
+                 84     c        call scft  ( 1, ans, 1, 1, ans, 1, 1, lens(1),
+                 85     c    *     1, -1, 1.0, aux1, 2*last, aux2, 2*last )
+                 86     c     else if ( ndim .eq. 2 ) then
+                 87     c        call scft2 ( 1, ans, 1, lens(1), ans, 1, lens(1),
+                 88     c    *     lens(1), lens(2), -1, 1.0, aux1, 2*last, aux2, 2*last )
+                 89     c     endif
+                 90     c
+                 91     c Build simple input array
+                 92     c
+           37    93           iseed = 7
+           38    94           do i = 0, lentot-1
+      1    39    95              dr = ran2(iseed) - 0.5
+      1    40    96              di = ran2(iseed) - 0.5
+      1    41    97              datasave(i) = cmplx(dr,di)
+      1    42    98              ans(i) = datasave(i)
+      1    43    99           enddo
+                100     c     call surand ( 7.d0, 2*lentot, datasave )
+                101     c
+                102     c Now call FFT routine from Numerical Recipes for right answer
+                103     c if ndim > 3 or appropriate ESSL routine otherwise
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58  NAME:MAIN                                PAGE:    3
+0 IF DO   ISN  LINE INC *....*...1.........2.........3.........4.........5.........6.........7.*.......8
+0               104     c
+           44   105           write(*,'(a)')'Version  CPU sec   Mflops  Error     Comments'
+           45   106           t1 = seconds(0.0)
+                107     c     if ( ndim .eq. 1 ) then
+                108     c        call scft  ( 0, ans, 1, 1, ans, 1, 1, lens(1),
+                109     c    *     1, -1, 1.0, aux1, 2*last, aux2, 2*last )
+                110     c        t2 = seconds(t1)
+                111     c        write(*,'(a,3x,f7.3,2x,f7.3,1p,e10.2,2x,a)')
+                112     c    *      'scft  ',t2,flops/t2,0.0,comments(1)
+                113     c     else if ( ndim .eq. 2 ) then
+                114     c        call scft2 ( 0, ans, 1, lens(1), ans, 1, lens(1),
+                115     c    *     lens(1), lens(2), -1, 1.0, aux1, 2*last, aux2, 2*last )
+                116     c        t2 = seconds(t1)
+                117     c        write(*,'(a,3x,f7.3,2x,f7.3,1p,e10.2,2x,a)')
+                118     c    *      'scft2 ',t2,flops/t2,0.0,comments(1)
+                119     c     else if ( ndim .eq. 3 ) then
+                120     c        call scft3 ( ans, lens(2), lens(3), ans, lens(2), lens(3),
+                121     c    *     lens(1), lens(2), lens(3), -1, 1.0, aux1, 2*last )
+                122     c        t2 = seconds(t1)
+                123     c        write(*,'(a,3x,f7.3,2x,f7.3,1p,e10.2,2x,a)')
+                124     c    *      'scft3 ',t2,flops/t2,0.0,comments(1)
+                125     c     else
+           46   126              call fourn(ans,lens,ndim,1)
+           47   127              t2 = seconds(t1)
+           48   128              write(*,'(a,3x,f7.3,2x,f7.3,1p,e10.2,2x,a)')
+                129          *      'fourn ',t2,flops/t2,0.0,comments(1)
+                130     c     endif
+                131     c
+                132     c Loop over tests
+                133     c
+           49   134           ib = 5
+           50   135           icl = 12
+           51   136           do jtest = 1, ktest
+      1    52   137              itest = testlist(jtest)
+                138     c
+                139     c Build bit reversal index vector and array of coefficients
+                140     c
+      1    53   141              call coeffs ( maxlen, coeff )
+      1    54   142              call coeff24 ( last, maxlenl, lentotl,
+      1         143          *     coeff, coeff2, coeff4, coeff8, coeff16 )
+      1    55   144              istart = 0
+      1    56   145              ic = 2**icl
+      1    57   146              if ( tests(itest) .eq. 'fft   '.and. lens(1) .gt. ic ) then
+   1  1    58   147                 call reorder ( ic, irev )
+   1  1    59   148                 do j = ic, maxlen-1, ic
+   1  2    60   149                    do i = 0, ic - 1
+   1  3    61   150                       irev(i+j) = irev(i) + j
+   1  3    62   151                    enddo
+   1  2    63   152                 enddo
+   1  1    64   153                 call reorder3 ( lentot, maxlen, ndim, lens, irev, irex )
+   1  1    65   154              else
+   1  1    66   155                 call reorder ( maxlen, irev )
+   1  1    67   156                 call reorder2 ( lentot, maxlen, ndim, lens, irev, irex )
+   1  1    68   157              endif
+                158     c
+                159     c Copy to data for first use
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58  NAME:MAIN                                PAGE:    4
+0 IF DO   ISN  LINE INC *....*...1.........2.........3.........4.........5.........6.........7.*.......8
+0               160     c
+      1    69   161              do i = 0, lentot-1
+      2    70   162                 if ( tests(itest) .ne. 'fft   ' .and.
+      2         163          *           tests(itest) .ne. 'ffth  ' .and.
+      2         164          *           tests(itest) .ne. 'fftp  ' ) then
+   1  2    71   165                    data(i) = datasave(i)
+   1  2    72   166                 else
+   1  2    73   167                    dreal(i,1) = real(datasave(i))
+   1  2    74   168                    dreal(i,2) = aimag(datasave(i))
+   1  2    75   169                 endif
+      2    76   170              enddo
+                171     c
+                172     c Call next test routine
+                173     c
+      1    77   174              t1 = seconds(0.0)
+      1    78   175              if ( itest .eq. 2 ) then
+   1  1    79   176                 call fft(dreal(0,1),dreal(0,2),log2len,ndim,last,irex,
+   1  1         177          *        coeff2,coeff4,coeff16,instr,istart,icl,ib,lentot)
+   1  1    80   178              elseif ( itest .eq.  3 ) then
+   1  1    81   179                 call ffta(data,log2len,ndim,coeff,irev)
+   1  1    82   180              elseif ( itest .eq.  4 ) then
+   1  1    83   181                 call fftb(data,log2len,ndim,coeff,irev)
+   1  1    84   182              elseif ( itest .eq.  5 ) then
+   1  1    85   183                 call fftc(data,log2len,ndim,coeff,irev)
+   1  1    86   184              elseif ( itest .eq.  6 ) then
+   1  1    87   185                 call fftd(data,log2len,ndim,coeff,irev)
+   1  1    88   186              elseif ( itest .eq.  7 ) then
+   1  1    89   187                 call ffte(data,log2len,ndim,coeff,irev)
+   1  1    90   188              elseif ( itest .eq.  8 ) then
+   1  1    91   189                 call fftf(data,log2len,ndim,coeff,irev)
+   1  1    92   190              elseif ( itest .eq.  9 ) then
+   1  1    93   191                 call fftg(data,log2len,ndim,coeff,irev)
+   1  1    94   192              elseif ( itest .eq. 10 ) then
+   1  1    95   193                 call ffth(dreal(0,1),dreal(0,2),log2len,ndim,coeff,irev)
+   1  1    96   194              elseif ( itest .eq. 11 ) then
+   1  1    97   195                 call ffti(data,log2len,ndim,coeff,irev)
+   1  1    98   196              elseif ( itest .eq. 12 ) then
+   1  1    99   197                 call fftj(data,log2len,ndim,last,coeff2,irev)
+   1  1   100   198              elseif ( itest .eq. 13 ) then
+   1  1   101   199                 call fftk(data,log2len,ndim,coeff,irev)
+   1  1   102   200              elseif ( itest .eq. 14 ) then
+   1  1   103   201                 call fftl(data,log2len,ndim,coeff,irev)
+   1  1   104   202              elseif ( itest .eq. 15 ) then
+   1  1   105   203                 call fftm(data,log2len,ndim,last,coeff2,coeff4,irev)
+   1  1   106   204              elseif ( itest .eq. 16 ) then
+   1  1   107   205                 call fftn(data,log2len,ndim,last,coeff2,coeff4,irev)
+   1  1   108   206              elseif ( itest .eq. 17 ) then
+   1  1   109   207                 call ffto(data,log2len,ndim,coeff,irev)
+   1  1   110   208              elseif ( itest .eq. 18 ) then
+   1  1   111   209                 call fftp(dreal(0,1),dreal(0,2),log2len,ndim,coeff,irev)
+   1  1   112   210              elseif ( itest .eq. 19 ) then
+   1  1   113   211                 call fftq(data,log2len,ndim,coeff,irev)
+   1  1   114   212              elseif ( itest .eq. 20 ) then
+   1  1   115   213                 call fftr(data,log2len,ndim,coeff,irev)
+   1  1   116   214              elseif ( itest .eq. 21 ) then
+   1  1   117   215                 call ffts(data,log2len,ndim,coeff,irev)
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58  NAME:MAIN                                PAGE:    5
+0 IF DO   ISN  LINE INC *....*...1.........2.........3.........4.........5.........6.........7.*.......8
+0  1  1   118   216              elseif ( itest .eq. 22 ) then
+   1  1   119   217                 call fftt(data,log2len,ndim,coeff,irev)
+   1  1   120   218              elseif ( itest .eq. 23 ) then
+   1  1   121   219                 call fftu(data,log2len,ndim,coeff,irev)
+   1  1   122   220              elseif ( itest .eq. 24 ) then
+   1  1   123   221                 call fftv(data,log2len,ndim,coeff,irev)
+   1  1   124   222              elseif ( itest .eq. 25 ) then
+   1  1   125   223                 call fftw(data,log2len,ndim,coeff,irex)
+   1  1   126   224              elseif ( itest .eq. 26 ) then
+   1  1   127   225                 call fftx(data,log2len,ndim,coeff,irev)
+   1  1   128   226              elseif ( itest .eq. 27 ) then
+   1  1   129   227                 call ffty(data,log2len,ndim,coeff,irev,lentot)
+   1  1   130   228              elseif ( itest .eq. 28 ) then
+   1  1   131   229                 call fftz(data,log2len,ndim,coeff,irev,irex)
+   1  1   132   230              endif
+      1   133   231              t2 = seconds(t1)
+                232     c
+                233     c     Check errors
+                234     c
+      1   134   235              err = 0.0
+      1   135   236              big = 0.0
+      1   136   237              do i = 0, lentot-1
+      2   137   238                 if ( tests(itest) .ne. 'fft   ' .and.
+      2         239          *           tests(itest) .ne. 'ffth  ' .and.
+      2         240          *           tests(itest) .ne. 'fftp  ' ) then
+   1  2   138   241                    temp = data(i+istart)
+   1  2   139   242                 else
+   1  2   140   243                    temp = cmplx(dreal(i+istart,1),dreal(i+istart,2))
+   1  2   141   244                 endif
+      2   142   245                 err = max(err,abs(temp-ans(i)))
+      2   143   246                 big = max(big,abs(data(i)))
+      2   144   247              enddo
+      1   145   248              write(*,'(a,3x,f7.3,2x,f7.3,1p,e10.2,2x,a)')
+      1         249          *      tests(itest),t2,flops/t2,err/big,comments(itest)
+      1   146   250           enddo
+                251     c
+          147   252           end
+                      ]END INPUT FILE "testfft.f"
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58  NAME:MAIN                                PAGE:    6
+0                                        REPORT(XLIST)  VECTORIZATION ANALYSIS
++                                        _____________  _____________ ________
+0 ISN FLAG NESTING *....*...1.........2.........3.........4.........5.........6.........7.*.......8 MESSAGES
++ ___ ____ _______                                                                                  ________
+0                  cprocess dc(big)
+                   c Driver routine to test FFT subroutines
+                   c
+ 0001                    parameter (log2max=20,last=2**log2max,ntests=29)
+ 0002                    parameter (ncol=log2max,instr=1)
+ 0003                    parameter (ix=1)
+ 0004                    complex ans(0:last-1), data(0:2*last-1+ix), datasave(0:last-1)
+ 0005                    complex temp, coeff(0:last-1),
+ 0005                   *        coeff2 (0:last/ 2-1,   ncol),
+ 0005                   *        coeff4 (0:last/ 4-1, 3,(ncol+1)/2),
+ 0005                   *        coeff8 (0:last/ 8-1, 7,(ncol+2)/3),
+ 0005                   *        coeff16(0:last/16-1,15,(ncol+3)/4)
+ 0006                    dimension log2len(10), lens(10), irev(0:last-1), irex(0:last-1)
+ 0007                    dimension testlist(ntests)
+ 0008                    character*6 tests(ntests)
+ 0009                    character*40 comments(ntests)
+ 0010                    dimension dreal(0:2*last-1+ix,2), aux1(2*last), aux2(2*last)
+ 0011                    equivalence (dreal,data), (aux1,coeff), (aux2,data)
+ 0012                    data lens/10*1/
+ 0013                    data ktest/27/
+                   c     data testlist/ 3,28,27*0/
+ 0014                    data testlist/    2, 3, 4, 5, 6, 7, 8, 9,10,
+ 0014                   *              11,12,13,14,15,16,17,18,19,20,
+ 0014                   *              21,22,23,24,25,26,27,28,2*0/
+ 0015                    data tests/'fourn ','fft   ','ffta  ','fftb  ','fftc  ',
+ 0015                   *           'fftd  ','ffte  ','fftf  ','fftg  ','ffth  ',
+ 0015                   *           'ffti  ','fftj  ','fftk  ','fftl  ','fftm  ',
+ 0015                   *           'fftn  ','ffto  ','fftp  ','fftq  ','fftr  ',
+ 0015                   *           'ffts  ','fftt  ','fftu  ','fftv  ','fftw  ',
+ 0015                   *           'fftx  ','ffty  ','fftz  ','fftaa '/
+ 0016                    data comments/
+ 0016                   *   'Correct answer from Numerical Recipes   ',  !  1: fourn
+ 0016                   *   'Best result for 3090/VF                 ',  !  2: fft
+ 0016                   *   'Base case                               ',  !  3: ffta
+ 0016                   *   'Use shifts to compute coeffs index      ',  !  4: fftb
+ 0016                   *   'Avoid integer divide in coeffs index    ',  !  5: fftc
+ 0016                   *   'Reuse bit reversal and coeffs arrays    ',  !  6: fftd
+ 0016                   *   'Combine 1st pass with bit reversal      ',  !  7: ffte
+ 0016                   *   'Improve handling of bit reversal        ',  !  8: fftf
+ 0016                   *   'Use real arithmetic                     ',  !  9: fftg
+ 0016                   *   'Separate real and imaginary parts       ',  ! 10: ffth
+ 0016                   *   'Avoid gather scatter for long vectors   ',  ! 11: ffti
+ 0016                   *   'Use multiple column coefficient array   ',  ! 12: fftj
+ 0016                   *   'Gather coefficients before use          ',  ! 13: fftk
+ 0016                   *   'Use radix 2 and 4                       ',  ! 14: fftl
+ 0016                   *   'Use one column auxiliary array vs l     ',  ! 15: fftm
+ 0016                   *   'Use multiple column auxiliary array vs m',  ! 16: fftn
+ 0016                   *   'Use 2 radix-2 instead of radix-4 vs l   ',  ! 17: ffto
+ 0016                   *   'Separate real and imaginary parts vs l  ',  ! 18: fftp
+ 0016                   *   'Use fixed stride not gather vs i        ',  ! 19: fftq
+ 0016                   *   'Do radix-16 to improve cache use vs l   ',  ! 20: fftr
+ 0016                   *   'Do radix-16 as 2 radix-4 vs r           ',  ! 21: ffts
+ 0016                   *   'Do radix-32 with in-place method vs l   ',  ! 22: fftt
+ 0016                   *   'Do radix-32 as radix-4s and radix-2 vs t',  ! 23: fftu
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58  NAME:MAIN                                PAGE:    7
+0                                        REPORT(XLIST)  VECTORIZATION ANALYSIS
++                                        _____________  _____________ ________
+0 ISN FLAG NESTING *....*...1.........2.........3.........4.........5.........6.........7.*.......8 MESSAGES
++ ___ ____ _______                                                                                  ________
+00016                   *   'Do radix-8 for completeness             ',  ! 24: fftv
+ 0016                   *   'Like fftd but do bit reversal once      ',  ! 25: fftw
+ 0016                   *   'Improve handling of long bit reversals  ',  ! 26: fftx
+ 0016                   *   'Use second dimension for flip/flop      ',  ! 27: ffty
+ 0016                   *   'Do radix-16 in a loop vs s              ',  ! 28: fftz
+ 0016                   *   'Like ffz but do bit reversal once       '/  ! 29: fftaa
+                   c
+                   c Read in dimensions
+                   c
+ 0017                    write(*,*) 'Enter number of dimensions and power of 2 for each'
+ 0018                    read(*,*) ndim, (log2len(i),i=1,ndim)
+ 0019                    if ( ndim .le. 0 ) stop 'Number of dimensions <= 0.'
+ 0021                    if ( ndim .gt. 10 ) stop 'Number of dimensions > 10.'
+ 0023                    lentotl = 0
+ 0024                    maxlenl = 0
+ 0025 RECR +-------      do i = 1, ndim
+ 0026      |                if ( log2len(i) .eq. 0 ) stop 'Length of 1 not allowed.'                OPTIMIZER INDUCED DEPENDENCE-24
+ 0028      |                lentotl = lentotl + log2len(i)                                          OPTIMIZER INDUCED DEPENDENCE-24
+ 0029      |                lens(i) = 2**log2len(i)                                                 OPTIMIZER INDUCED DEPENDENCE-24
+ 0030      |_______         maxlenl = max(maxlenl,log2len(i))                                       SCALAR DEFINED BEFORE LOOP  -26
+ 0032                    lentot = 2**lentotl
+ 0033                    maxlen = 2**maxlenl
+ 0034                    if ( lentotl .gt. log2max ) stop 'Total size of array too big.'
+ 0036                    flops = 1.e-6*5*lentot*lentotl
+                   c
+                   c Build coefficient array for ESSL routines
+                   c
+                   c     if ( ndim .eq. 1 ) then
+                   c        call scft  ( 1, ans, 1, 1, ans, 1, 1, lens(1),
+                   c    *     1, -1, 1.0, aux1, 2*last, aux2, 2*last )
+                   c     else if ( ndim .eq. 2 ) then
+                   c        call scft2 ( 1, ans, 1, lens(1), ans, 1, lens(1),
+                   c    *     lens(1), lens(2), -1, 1.0, aux1, 2*last, aux2, 2*last )
+                   c     endif
+                   c
+                   c Build simple input array
+                   c
+ 0037                    iseed = 7
+ 0038 UNAN               do i = 0, lentot-1                                                         USER FUNCTION OR SUBROUTINE -14
+ 0039                       dr = ran2(iseed) - 0.5
+ 0040                       di = ran2(iseed) - 0.5
+ 0041                       datasave(i) = cmplx(dr,di)
+ 0042                       ans(i) = datasave(i)
+ 0043                    enddo
+                   c     call surand ( 7.d0, 2*lentot, datasave )
+                   c
+                   c Now call FFT routine from Numerical Recipes for right answer
+                   c if ndim > 3 or appropriate ESSL routine otherwise
+                   c
+ 0044                    write(*,'(a)')'Version  CPU sec   Mflops  Error     Comments'
+ 0045                    t1 = seconds(0.0)
+                   c     if ( ndim .eq. 1 ) then
+                   c        call scft  ( 0, ans, 1, 1, ans, 1, 1, lens(1),
+                   c    *     1, -1, 1.0, aux1, 2*last, aux2, 2*last )
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58  NAME:MAIN                                PAGE:    8
+0                                        REPORT(XLIST)  VECTORIZATION ANALYSIS
++                                        _____________  _____________ ________
+0 ISN FLAG NESTING *....*...1.........2.........3.........4.........5.........6.........7.*.......8 MESSAGES
++ ___ ____ _______                                                                                  ________
+0                  c        t2 = seconds(t1)
+                   c        write(*,'(a,3x,f7.3,2x,f7.3,1p,e10.2,2x,a)')
+                   c    *      'scft  ',t2,flops/t2,0.0,comments(1)
+                   c     else if ( ndim .eq. 2 ) then
+                   c        call scft2 ( 0, ans, 1, lens(1), ans, 1, lens(1),
+                   c    *     lens(1), lens(2), -1, 1.0, aux1, 2*last, aux2, 2*last )
+                   c        t2 = seconds(t1)
+                   c        write(*,'(a,3x,f7.3,2x,f7.3,1p,e10.2,2x,a)')
+                   c    *      'scft2 ',t2,flops/t2,0.0,comments(1)
+                   c     else if ( ndim .eq. 3 ) then
+                   c        call scft3 ( ans, lens(2), lens(3), ans, lens(2), lens(3),
+                   c    *     lens(1), lens(2), lens(3), -1, 1.0, aux1, 2*last )
+                   c        t2 = seconds(t1)
+                   c        write(*,'(a,3x,f7.3,2x,f7.3,1p,e10.2,2x,a)')
+                   c    *      'scft3 ',t2,flops/t2,0.0,comments(1)
+                   c     else
+ 0046                       call fourn(ans,lens,ndim,1)
+ 0047                       t2 = seconds(t1)
+ 0048                       write(*,'(a,3x,f7.3,2x,f7.3,1p,e10.2,2x,a)')
+ 0048                   *      'fourn ',t2,flops/t2,0.0,comments(1)
+                   c     endif
+                   c
+                   c Loop over tests
+                   c
+ 0049                    ib = 5
+ 0050                    icl = 12
+ 0051 UNAN               do jtest = 1, ktest                                                        CHARACTER DATA              -06
+                                                                                                    USER FUNCTION OR SUBROUTINE -14
+ 0052                       itest = testlist(jtest)
+                   c
+                   c Build bit reversal index vector and array of coefficients
+                   c
+ 0053                       call coeffs ( maxlen, coeff )
+ 0054                       call coeff24 ( last, maxlenl, lentotl,
+ 0054                   *     coeff, coeff2, coeff4, coeff8, coeff16 )
+ 0055                       istart = 0
+ 0056                       ic = 2**icl
+ 0057                       if ( tests(itest) .eq. 'fft   '.and. lens(1) .gt. ic ) then
+ 0058                          call reorder ( ic, irev )
+ 0059 RECR +-------            do j = ic, maxlen-1, ic                                              DEFINITE RECURRENCE         -22
+ 0060 RECR |+------               do i = 0, ic - 1                                                  POSSIBLE RECURRENCE         -20
+ 0061      ||______                  irev(i+j) = irev(i) + j                                        SUBSCRIPT TOO COMPLEX       -25
+           |_______
+ 0064                          call reorder3 ( lentot, maxlen, ndim, lens, irev, irex )
+ 0065                       else
+ 0066                          call reorder ( maxlen, irev )
+ 0067                          call reorder2 ( lentot, maxlen, ndim, lens, irev, irex )
+ 0068                       endif
+                   c
+                   c Copy to data for first use
+                   c
+ 0069 UNAN                  do i = 0, lentot-1                                                      CHARACTER DATA              -06
+ 0070                          if ( tests(itest) .ne. 'fft   ' .and.
+ 0070                   *           tests(itest) .ne. 'ffth  ' .and.
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58  NAME:MAIN                                PAGE:    9
+0                                        REPORT(XLIST)  VECTORIZATION ANALYSIS
++                                        _____________  _____________ ________
+0 ISN FLAG NESTING *....*...1.........2.........3.........4.........5.........6.........7.*.......8 MESSAGES
++ ___ ____ _______                                                                                  ________
+00070                   *           tests(itest) .ne. 'fftp  ' ) then
+ 0071                             data(i) = datasave(i)
+ 0072                          else
+ 0073                             dreal(i,1) = real(datasave(i))
+ 0074                             dreal(i,2) = aimag(datasave(i))
+ 0075                          endif
+ 0076                       enddo
+                   c
+                   c Call next test routine
+                   c
+ 0077                       t1 = seconds(0.0)
+ 0078                       if ( itest .eq. 2 ) then
+ 0079                          call fft(dreal(0,1),dreal(0,2),log2len,ndim,last,irex,
+ 0079                   *        coeff2,coeff4,coeff16,instr,istart,icl,ib,lentot)
+ 0080                       elseif ( itest .eq.  3 ) then
+ 0081                          call ffta(data,log2len,ndim,coeff,irev)
+ 0082                       elseif ( itest .eq.  4 ) then
+ 0083                          call fftb(data,log2len,ndim,coeff,irev)
+ 0084                       elseif ( itest .eq.  5 ) then
+ 0085                          call fftc(data,log2len,ndim,coeff,irev)
+ 0086                       elseif ( itest .eq.  6 ) then
+ 0087                          call fftd(data,log2len,ndim,coeff,irev)
+ 0088                       elseif ( itest .eq.  7 ) then
+ 0089                          call ffte(data,log2len,ndim,coeff,irev)
+ 0090                       elseif ( itest .eq.  8 ) then
+ 0091                          call fftf(data,log2len,ndim,coeff,irev)
+ 0092                       elseif ( itest .eq.  9 ) then
+ 0093                          call fftg(data,log2len,ndim,coeff,irev)
+ 0094                       elseif ( itest .eq. 10 ) then
+ 0095                          call ffth(dreal(0,1),dreal(0,2),log2len,ndim,coeff,irev)
+ 0096                       elseif ( itest .eq. 11 ) then
+ 0097                          call ffti(data,log2len,ndim,coeff,irev)
+ 0098                       elseif ( itest .eq. 12 ) then
+ 0099                          call fftj(data,log2len,ndim,last,coeff2,irev)
+ 0100                       elseif ( itest .eq. 13 ) then
+ 0101                          call fftk(data,log2len,ndim,coeff,irev)
+ 0102                       elseif ( itest .eq. 14 ) then
+ 0103                          call fftl(data,log2len,ndim,coeff,irev)
+ 0104                       elseif ( itest .eq. 15 ) then
+ 0105                          call fftm(data,log2len,ndim,last,coeff2,coeff4,irev)
+ 0106                       elseif ( itest .eq. 16 ) then
+ 0107                          call fftn(data,log2len,ndim,last,coeff2,coeff4,irev)
+ 0108                       elseif ( itest .eq. 17 ) then
+ 0109                          call ffto(data,log2len,ndim,coeff,irev)
+ 0110                       elseif ( itest .eq. 18 ) then
+ 0111                          call fftp(dreal(0,1),dreal(0,2),log2len,ndim,coeff,irev)
+ 0112                       elseif ( itest .eq. 19 ) then
+ 0113                          call fftq(data,log2len,ndim,coeff,irev)
+ 0114                       elseif ( itest .eq. 20 ) then
+ 0115                          call fftr(data,log2len,ndim,coeff,irev)
+ 0116                       elseif ( itest .eq. 21 ) then
+ 0117                          call ffts(data,log2len,ndim,coeff,irev)
+ 0118                       elseif ( itest .eq. 22 ) then
+ 0119                          call fftt(data,log2len,ndim,coeff,irev)
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58  NAME:MAIN                                PAGE:   10
+0                                        REPORT(XLIST)  VECTORIZATION ANALYSIS
++                                        _____________  _____________ ________
+0 ISN FLAG NESTING *....*...1.........2.........3.........4.........5.........6.........7.*.......8 MESSAGES
++ ___ ____ _______                                                                                  ________
+00120                       elseif ( itest .eq. 23 ) then
+ 0121                          call fftu(data,log2len,ndim,coeff,irev)
+ 0122                       elseif ( itest .eq. 24 ) then
+ 0123                          call fftv(data,log2len,ndim,coeff,irev)
+ 0124                       elseif ( itest .eq. 25 ) then
+ 0125                          call fftw(data,log2len,ndim,coeff,irex)
+ 0126                       elseif ( itest .eq. 26 ) then
+ 0127                          call fftx(data,log2len,ndim,coeff,irev)
+ 0128                       elseif ( itest .eq. 27 ) then
+ 0129                          call ffty(data,log2len,ndim,coeff,irev,lentot)
+ 0130                       elseif ( itest .eq. 28 ) then
+ 0131                          call fftz(data,log2len,ndim,coeff,irev,irex)
+ 0132                       endif
+ 0133                       t2 = seconds(t1)
+                   c
+                   c     Check errors
+                   c
+ 0134                       err = 0.0
+ 0135                       big = 0.0
+ 0136 UNAN                  do i = 0, lentot-1                                                      CHARACTER DATA              -06
+ 0137                          if ( tests(itest) .ne. 'fft   ' .and.
+ 0137                   *           tests(itest) .ne. 'ffth  ' .and.
+ 0137                   *           tests(itest) .ne. 'fftp  ' ) then
+ 0138                             temp = data(i+istart)
+ 0139                          else
+ 0140                             temp = cmplx(dreal(i+istart,1),dreal(i+istart,2))
+ 0141                          endif
+ 0142                          err = max(err,abs(temp-ans(i)))
+ 0143                          big = max(big,abs(data(i)))
+ 0144                       enddo
+ 0145                       write(*,'(a,3x,f7.3,2x,f7.3,1p,e10.2,2x,a)')
+ 0145                   *      tests(itest),t2,flops/t2,err/big,comments(itest)
+ 0146                    enddo
+                   c
+ 0147                    end
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58  NAME:MAIN                                PAGE:   11
+0NUMBER    ISN        FLAG  VS FORTRAN VECTOR REPORT MESSAGES
++______    ___        ____  __ _______ ______ ______ ________
+0ILX0124I  0026-0029  RECR  A COMPILER TEMPORARY INTRODUCED DURING SCALAR OPTIMIZATION HAS CAUSED ONE OR MORE DEPENDENCES IN THE
+                            LOOP(S) AT NESTING LEVEL(S) "1".
+0ILX0126I  0030       RECR  THE SCALAR VARIABLE(S) "MAXLENL" ARE NOT ELIGIBLE FOR EXPANSION BECAUSE THEY MAY USE VALUES THAT WERE
+                            SET BEFORE THE EXECUTION OF THE CONTAINING LOOP AND THEIR VALUES MAY BE USED AFTER THE EXECUTION OF THE
+                            CONTAINING LOOP.
+0ILX0114I  0038-0051  UNAN  THE USER FUNCTION(S) OR SUBROUTINE(S) "RAN2" AT ISN "40", "RAN2" AT ISN "39", "SECONDS" AT ISN "133",
+                            "FFTZ" AT ISN "131", "FFTY" AT ISN "129", "FFTX" AT ISN "127", "FFTW" AT ISN "125", "FFTV" AT ISN
+                            "123", "FFTU" AT ISN "121", "FFTT" AT ISN "119", "FFTS" AT ISN "117", "FFTR" AT ISN "115", "FFTQ" AT
+                            ISN "113", "FFTP" AT ISN "111", "FFTO" AT ISN "109", "FFTN" AT ISN "107", "FFTM" AT ISN "105", "FFTL"
+                            AT ISN "103", "FFTK" AT ISN "101", "FFTJ" AT ISN "99", "FFTI" AT ISN "97", "FFTH" AT ISN "95", "FFTG"
+                            AT ISN "93", "FFTF" AT ISN "91", ARE NOT ANALYZABLE.
+0ILX0106I  0051       UNAN  ONE OR MORE STATEMENTS USING CHARACTER DATA OCCUR AT ISN(S) "57".
+0ILX0122I  0059       RECR  THIS LOOP COULD NOT BE VECTORIZED BECAUSE OF A DEFINITE RECURRENCE INVOLVING THE VARIABLE(S) "IREV".
+0ILX0120I  0060       RECR  THIS LOOP COULD NOT BE VECTORIZED BECAUSE OF A POSSIBLE RECURRENCE INVOLVING THE ARRAY(S) "IREV". THE
+                            INFORMATION NEEDED TO DETERMINE WHETHER OR NOT THE RECURRENCE EXISTS WAS NOT AVAILABLE TO THE COMPILER.
+                            IF NO RECURRENCE EXISTS, VECTORIZATION CAN BE ACHIEVED WITH AN IGNORE DIRECTIVE.
+0ILX0125I  0061       RECR  THE ARRAY(S) "IREV" USE SUBSCRIPT COMPUTATIONS THAT COULD NOT BE ANALYZED. THEY MAY INVOLVE INDIRECT
+                            ADDRESSING, DATA CONVERSIONS, UNKNOWN STRIDES, OR AUXILIARY INDUCTION VARIABLES. THE COMPILER HAS
+                            ASSUMED THAT THESE ARRAYS CARRY DEPENDENCES IN LOOP(S) AT NESTING LEVEL(S) "2" AND "1".
+0ILX0106I  0069-0136  UNAN  ONE OR MORE STATEMENTS USING CHARACTER DATA OCCUR AT ISN(S) "70" AND "137".
+1LEVEL 2.5.D (fvs w/dbx)    910808.911115.xa          JAN 31, 1992  11:53:58  NAME:MAIN                                PAGE:   12
+0*STATISTICS*   SOURCE STATEMENTS: 143, PROGRAM SIZE: 6020 BYTES, PROGRAM NAME: MAIN,   PAGE:    1
+ *STATISTICS*   PROGRAM SIZE DETAIL: 6020 = (T.3652  D.2368  B.0), S.287835112
+ *STATISTICS*   NO DIAGNOSTICS GENERATED.
+0**MAIN** END OF COMPILATION 1 ******

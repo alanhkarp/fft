@@ -1,0 +1,2373 @@
+ f90(1)                                                               f90(1)
+
+
+
+
+ NAME
+      f90 - HP Fortran compiler
+
+ SYNOPSIS
+      f90 [options] [files] ...
+
+ DESCRIPTION
+      f90 is the HP Fortran compiler.  See the OPTIONS section below for a
+      list of the compile-line options accepted by the compiler.
+
+      The f90 compiler accepts the following arguments as files:
+
+           o  Files that end in .f90, .f, .F, .i90, and .i are compiled as
+              Fortran source files.
+
+              If each source compiles successfully, its corresponding object
+              code is left in the current directory in a file whose name is
+              that of the source, but with .o substituted for the extension.
+
+              The extensions have the following meanings:
+
+                   .f90 Free-format source file, processed by the compiler
+
+                   .F   Fixed-format source file, processed by the C
+                        preprocessor, then by the compiler; see cpp(1)
+
+                   .f   Fixed-format source file, processed by the compiler
+
+                   .i90 Free-format output from C preprocessor, if source
+                        ends in .f90
+
+                   .i   Fixed-format output from C preprocessor, if source
+                        ends in .F or .f
+
+              Note that only files ending in .F are preprocessed by the C
+              preprocessor by default.  To preprocess files that end in .f90
+              and .f, you must specify the +cpp=yes option (see below).
+
+           o  Files that end in .o are passed on to the linker to be linked
+              into the final program; see ld(1) for information about the
+              linker.
+
+           o  Files that end in .s are passed on to the assembler; see as(1)
+
+      Note that files that end in .mod are Fortran modules that are created
+      and read by the compiler.  However, the compiler does not accept .mod
+      files on the command line.  See the EXAMPLES section for additional
+      information about .mod files.
+
+ OPTIONS
+      The f90 compiler recognizes the options listed in this section.
+
+
+
+                                    - 1 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+      The compiler also recognizes several specialized optimization options
+      (listed in the OPTIMIZATION section) which affect how f90 optimizes
+      the programs it compiles.
+
+           +A             Set the alignment of data items within FORTRAN
+                          STRUCTUREs, COMMON blocks,
+                           and EQUIVALENCE classes. Specifying +A without
+                          any arguments aligns data
+                           on 2-byte boundaries. So, it is slightly
+                          different from the f77 +A.
+
+           +noalign64bitpointers
+                          Disables correct alignment of pointers in derived
+                          types when compiling for wide mode (+DA2.0W).  F90
+                          releases before v2.4 improperly aligned such
+                          pointers, occasionally leading to runtime aborts.
+                          v2.4 properly aligns pointers, but introduces a
+                          potential binary incompatibility.  For users whose
+                          code contains derived types with components having
+                          the POINTER attribute, and who used F90 releases
+                          before v2.4: recompile all source files that
+                          reference variables of derived types which contain
+                          the POINTER attribute.  Users who have successfuly
+                          used such derived type variables with older
+                          releases and who do not wish to recompile all
+                          sources must specify +noalign64bitpointers when
+                          compiling selected source files.  Users who do not
+                          compile with +DA2.0W or who do not use derived
+                          types that have components with the POINTER
+                          attribute are not affected.
+
+           +allow_unaligned
+                          Relaxes the natural data type rules for alignment.
+
+           +[no]asm       Compile the named source files and leave [do not
+                          leave] the assembly language output in
+                          corresponding files whose names end with .s The
+                          default is +noasm.
+
+           +[no]autodbl   Promote [do not promote] all integer, logical, and
+                          real items to 8 bytes, and all double-precision
+                          and complex items to 16 bytes.  (So long as the
+                          byte size has not been explicitly declared as in
+                          real*4.) The default is +noautodbl.
+
+           +[no]autodbl4  Promote [do not promote] all integer, logical, and
+                          real items to 8 bytes, and complex items to 16
+                          bytes.  (So long as the byte size has not been
+                          explicitly declared as in real*4.) The +autodbl4
+                          option does not promote the size of double-
+                          precision and double-complex items.  The default
+
+
+
+                                    - 2 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          is +noautodbl4.
+
+           -Boption       The new -B options are recognized by HP Fortran to
+                          specify whether references to global symbols may
+                          be resolved to symbols defined in the current
+                          translation unit, or whether they must by assumed
+                          to be potentially resolved to symbols defined in
+                          another load module.  The -B options are only
+                          supported on HP-UX version 11i and later. See
+                          section on SYMBOL BINDING.
+
+           -c             Suppress linking and produce an object (.o) file
+                          from each source file.
+
+           -C             Perform run-time error checking of array
+                          subscripts. Has the same functionality as the
+                          +check=all option.
+
+           +cat           Concatenates all source files of the same source
+                          form together, then compiles the concatenated
+                          source all at once. This enables inlining at +O3
+                          within the concatenated file.
+
+           +charlit77     Character literals are placed in writable static
+                          storage. This allows character strings passed as
+                          actual arguments to be modified by the called
+                          routine.
+
+           +check={all|none}
+                          Enable (+check=all) or disable (+check=none) run-
+                          time range checking of array subscripts.  The
+                          default is +check=none.
+
+           +cpp={yes|no|default}
+                          Invoke the C preprocessor.  +cpp=yes passes all
+                          source files to the preprocessor.  +cpp=default
+                          passes only files ending in .F suffix.  +cpp=no
+                          suppresses passing any files.  The default is
+                          +cpp=default.
+
+           +[no]cpp_keep  Retain [discard] output from the C preprocessor.
+                          If the source filename is file.f or file.F, output
+                          is stored in file.i; if the source filename is
+                          file.f90, the output filename is file.i90.  The
+                          default, +nocpp_keep, is to discard the output.
+
+           -Dname[=def]   Define a symbol name to the C preprocessor.  This
+                          option applies only to files that are processed by
+                          cpp.
+
+
+
+
+
+                                    - 3 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           +DAmodel       Generate code for a specific version of the PA-
+                          RISC architecture. For a PA-RISC 2.0 64-bit
+                          executable specify +DA2.0W.
+
+                          model can be one of the following:
+
+                               o  A PA-RISC version number (such as 1.1 or
+                                  2.0)
+
+                               o  A model number (such as 750 or 870)
+
+                               o  One of the PA-RISC processor names (such
+                                  as PA7000, PA7100, or PA8000).
+
+                               o  The word portable to generate code
+                                  compatible across all PA-RISC 1.1 and 2.0
+                                  workstations and servers.
+
+                          If this option is not used, code is generated
+                          based on the model number returned by the uname -m
+                          command; see uname(2).  This option is only valid
+                          on PA-RISC.
+
+           +DA2.0W        Changes the default size of a Cray pointer will
+                          become the larger of a default sized integer and a
+                          C pointer (8-bytes), rather than the 4-byte
+                          default.
+
+                          The use of +DA2.0W produces object files which can
+                          only be linked on systems running HP-UX version
+                          11.0 or later.
+
+           +DC7200        Perform memory hierarchy optimizations for the
+                          PA7200 processor.
+
+           +DDdata_model  Generate code using either the ILP32 or LP64 data
+                          model.  Defined values for data_model are:
+
+                               32  Use the ILP32 data model.  The sizes of
+                                   the int, long and pointer data types are
+                                   32-bits.
+
+                               64  Use the LP64 data model.  The size of the
+                                   int data type is 32-bits, and the sizes
+                                   of the long and pointer data types are
+                                   64-bits. Defines __LP64__ to the
+                                   preprocessor.
+
+                          The default is +DD32.
+
+
+
+
+
+                                    - 4 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           +[no]demand_load
+                          Mark [do not mark] the output file from the linker
+                          demand load.  The default is +nodemand_load.
+
+           +dfname        Specify profile database file name for profile-
+                          based optimizations.  The default is flow.data if
+                          name is not specified. +df requires the
+                          specification of +P.  This option is a synonym for
+                          +Oprofile=use: filename.  See ld(1) and +P for
+                          more details.  This option is only valid on the
+                          Itanium(R) processor family architecture.
+
+           +[no]dlines    Compile debug lines as source statements [treat as
+                          comment lines].  Source lines must be in fixed
+                          format.  Source lines with a D or d in column 1
+                          are treated as comments if +dlines is not
+                          specified.  The default is +nodlines.
+
+
+
+           +DOosname      where osname is one of: 11.20, 11.22, or 11.23.
+                          This option sets the target operating system for
+                          the compiler, and is intended for enabling
+                          optimizations that are not backward compatible.
+                          Can be used at any level of optimization. The
+                          default value for osname is the operating system
+                          version of the computer on which the compiler is
+                          invoked.
+
+           +DSmodel       Perform instruction scheduling appropriate for a
+                          specific implementation of the architecture.
+                          model can be one of the following on a PA-RISC
+                          architecture:
+
+                               o  A PA-RISC version number (1.1 or 2.0)
+
+                               o  A model number (such as 750 or 870)
+
+                               o  One of the PA-RISC processor names (such
+                                  as PA7000, PA7100, or PA8000).
+
+                          If this option is not used, code is scheduled for
+                          best execution on the PA2.0 architecture.  Code
+                          scheduled for one architecture will execute on
+                          another architecture, though possibly not as
+                          efficiently.  The PA2.0 scheduler is used by
+                          default because it works well for earlier
+                          architectures, while the earlier schedulers
+                          sometimes generate code that runs inefficiently on
+                          PA2.0 architectures.
+
+
+
+
+                                    - 5 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          ON Itanium(R) processor family architecture, the
+                          defined values for model are:
+
+                               blended   Tune for best performance on a
+                                         combination of processors (i.e.,
+                                         Itanium(R) or Itanium(R) 2
+                                         processor).
+
+                               itanium   Tune for best performance on an
+                                         Itanium(R) processor.
+
+                               itanium2  Tune for best performance on an
+                                         Itanium(R) 2 processor.
+
+                               native    Tune for best performance on the
+                                         processor on which the compiler is
+                                         running.
+
+                               The default model for HP-UX 11i v1.5 is
+                               blended.
+
+           -dynamic       Generate a dynamically bound executable.  See -
+                          minshared for partially statically bound
+                          executables.
+
+           +[no]escape    Treat the backslash character (\) as a C-like
+                          escape [literal] character.  The default is
+                          +noescape.
+
+           +[no]es        Similar to +[no]extend_source except that
+                          character literals and hollerith constants
+                          continued across a line boundary are not padded.
+                          This option provides compatibility with f77's +es
+                          option.
+
+           -exec          Indicates that any object files created will be
+                          used to create an executable file. Constants with
+                          a protected or hidden export class are placed in
+                          the read-only data section.  This option also
+                          implies -Bprotected_def.
+
+           +[no]extend_source
+                          Allow [do not allow] up to 254 characters on a
+                          single source line.  The default,
+                          +noextend_source, is 72 characters for fixed
+                          format and 132 for free format.
+
+           +externals=file
+                          Specifies a file that contains a list of procedure
+                          names to be considered external as opposed to
+                          intrinsic. Using this option causes the routines
+
+
+
+                                    - 6 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          whose names appear in file to be treated as if
+                          they were declared with the EXTERNAL attribute.
+
+           +fastallocatable
+                          Enables a different representation for allocatable
+                          arrays in the object code produced by the
+                          compiler.  This alternate representation avoids
+                          problems in optimizing code containing allocatable
+                          array references.  This alternate representation
+                          for allocatable arrays is binary compatible with
+                          the old representation.
+
+           +FPflags       Specify how the runtime environment for trapping
+                          floating-point operations should be initialized at
+                          program startup.  The default is that all traps
+                          are disabled.  See ld(1) for specific values for
+                          flags.
+
+           +[no]fp_exception
+                          Enable [disable] floating-point exceptions and
+                          cause the running program to issue a procedure
+                          traceback for runtime errors.  The default is
+                          +nofp_exception.  This is a compile time flag.
+
+           -g             Generate debugging information needed by gdb or
+                          wdb; on Itanium(R) processor family architecture
+                          and dde and xdb on PA-RISC see gdb(1) , wdb(1) ,
+                          dde(1) , and xdb(1) This option is compatible with
+                          optimization levels 0, 1, and 2.
+
+           -G             Generate code for gprof(1) profiling. Same
+                          functionality as +gprof.
+
+           +getarg0
+
+           +getarg1       These options control the behavior of the getarg
+                          intrinsic subroutine.  +getarg0 requests the
+                          industry standard behavior for getarg, where an
+                          index value of zero causes the program name to be
+                          returned.  HP's f77 getarg intrinsic implements
+                          this industry standard convention also.  +getarg1
+                          is used to request non-standard behavior, where an
+                          index value of one causes the program name to be
+                          returned (older releases of HP's f90 behaved in
+                          this manner).  The default is +getarg0.
+
+           +gformat77     Requests the Fortran 77 style of formatting a
+                          value of zero with the G edit descriptor.  Fortran
+                          uses an F edit descriptor when the value being
+                          written is zero, while Fortran 77 uses an E edit
+                          descriptor.
+
+
+
+                                    - 7 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           +[no]gprof     Prepare [do not prepare] object files for
+                          profiling with gprof; see gprof(1).  The default
+                          is +nogprof.
+
+           +hugecommon=name
+                          Places the COMMON block named name into a huge
+                          data segment. The default is to place COMMON
+                          blocks larger than 2 gigabytes into huge data
+                          segments.  This option is honored on all PA-RISC
+                          architectures.  However, you must also specify the
+                          +DA2.0W option to allocate a common block larger
+                          than 2 gigabytes or it will fail.
+
+           +hugesize=n    Places COMMON blocks that are larger than n
+                          kilobytes in size into a huge data segment. The
+                          default is to place COMMON blocks larger than 2
+                          gigabytes into huge data segments
+                          (+hugesize=2097152).  This option is honored on
+                          all PA-RISC architectures.  However, you must also
+                          specify the +DA2.0W option to allocate a common
+                          block larger than 2 gigabytes or it will fail.
+
+           +i2            Treat all integer or logical constants,
+                          intrinsics, and user variables (declared as
+                          integer or logical) as 2-byte values, rather than
+                          the current 4-byte default.
+
+           +i8            Treat all integer or logical constants,
+                          intrinsics, and user variables (declared as
+                          integer or logical) as 8-byte values, rather than
+                          the current 4-byte default.
+
+           +ild           Specify incremental linking. This option is valid
+                          only for 64 bit links.
+
+                          If the output file does not exist, or if it was
+                          created without the +ild option, the linker
+                          performs an initial incremental link. The output
+                          file produced is suitable for subsequent
+                          incremental links. The incremental link option is
+                          valid for both executable and shared library
+                          links. It is not valid for relocatable links,
+                          options (or tools) that strip the output module,
+                          and certain optimization options.  See ld(1) for
+                          more information.
+
+           +ildrelink     Perform an initial incremental link, regardless of
+                          the output load module.  This option is valid only
+                          for 64 bit links.
+
+                          In certain situations during incremental linking
+
+
+
+                                    - 8 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          (for example, internal padding space is
+                          exhausted), the incremental linker is forced to
+                          perform an initial incremental link. The
+                          +ildrelink option allows you to avoid such
+                          unexpected initial incremental links by
+                          periodically rebuilding the output file.
+
+           -Idirectory    Add directory to the list of directories searched
+                          for files specified in INCLUDE lines and in
+                          include directives, and for .mod files.  The
+                          command line can have multiple occurrences of this
+                          option, each specifying a different directory.
+
+           +[no]implicit_none
+                          Cause the types of identifiers to be implicitly
+                          undefined [defined].  The default,
+                          +noimplicit_none, provides the standard implicit
+                          typing.
+
+           +indirectcommonlist=file
+                          The common blocks listed in file (one per line, no
+                          enclosing '/'s) are treated as shared common
+                          blocks, but are not attached.  The user must
+                          attach or otherwise allocate storage for such
+                          common blocks before they are referenced.
+
+           +io77          Suppresses the generation of the optional leading
+                          "0" before the decimal point for real numbers
+                          printed with the E and F edit descriptors.
+                          Fortran 77 suppressed these leading zeros unless
+                          the NOSTANDARDIO flag was used.  Along with
+                          +gformat77, the +io77 flag provides formatted
+                          output compatibility with the Fortran 77 product.
+
+           +k             Generate code for programs that reference a very
+                          large number of shared data items.  The linker
+                          will issue a diagnostic message in the rare case
+                          when this option is needed.  This option is only
+                          valid for the PA-RISC architecture.
+
+           -K             Use static storage for locals instead of stack
+                          storage. Same functionality as the +save option.
+                          The default is +nosave.
+
+           -Ldirectory    Add directory to the front of the library search
+                          path.  This option applies only to libraries named
+                          in -l operands.  For more information, see ld(1).
+
+           -lx            Add libx.a or libx.sl to the library search path.
+                          See the -Ldirectory option and ld(1).
+
+
+
+
+                                    - 9 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           +langlvl={90|default}
+                          Issue warnings for all extensions to the Fortran
+                          90 standard (+langlvl=90).  The default,
+                          +langlvl=default, allows extensions.
+
+           +[no]list      Write [suppress] a program listing to the standard
+                          output during compilation.  The default is
+                          +nolist.
+
+           -minshared     Indicates that the result of the current
+                          compilation is going into an executable file that
+                          will make minimal use of shared libraries.
+                          Equivalent to -exec -Bprotected.  This option is
+                          only supported on HP-UX version 11i and later.
+
+           +moddir=directory
+                          Write .mod files to directory.  The default is to
+                          write .mod files to the current directory.  See
+                          the EXAMPLES section for information about
+                          compiling programs that use modules.
+
+           +multi_open    Enables attaching multiple FORTRAN UNITs to the
+                          same file by allowing the file to be opened in
+                          multiple Fortran OPEN statements.
+
+           -n             Mark output from the linker shared.  For details
+                          and system defaults, see ld(1)
+
+           -N             Mark output from the linker unshared.  For details
+                          and system defaults, see ld(1)
+
+           +nls=lang      Enable 16-bit Native Language Support (NLS) in
+                          strings and comments in the language specified by
+                          lang.
+
+           +nocheckuf     Disable the OPEN statement error check for opening
+                          text files with ACCESS="sequential",
+                          FORM="unformatted".  Useful when only
+                          BUFFERIN/BUFFEROUT statements will be used to
+                          access the opened unit.  The main program must be
+                          compiled with this flag for it to have any effect,
+                          and all OPEN statements will then skip this error
+                          check.
+
+           +nopadsharedcommon
+                          Do not pad shared common blocks to a multiple of 8
+                          bytes.  Useful when sharing shared common blocks
+                          between f77 generated programs and f90 generated
+                          programs.  All source files referencing the same
+                          shared common block must be compiled with the same
+                          setting of this flag.
+
+
+
+                                   - 10 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           -O[optlevel]   Specify the level of optimization.  If optlevel is
+                          not specified, the program is optimized at level 2
+                          (-O2).  For information about the levels of
+                          optimization, see +Ooptlevel.  For information
+                          about additional optimization options, see the
+                          OPTIMIZATION section.
+
+           +Ooptlevel     Specify the level of optimization. Higher levels
+                          include optimizations performed at lower levels.
+                          Many other options beginning with +O enable
+                          specific optimizations; see the OPTIMIZATION
+                          section.
+
+                          optlevel can be one of the following:
+
+                               0    Minimal optimization, fastest compile
+                                    time, best debugging support.  This is
+                                    the default.
+
+                               1    Block-level optimizations, moderately
+                                    fast compile time, moderate improvement
+                                    in runtime performance.
+
+                               2    Full optimization within each subprogram
+                                    in a file.  Marked improvement in
+                                    runtime performance, noticeably longer
+                                    compile time, program transformations
+                                    more pronounced than at lower levels.
+
+                               3    Full optimization across all subprograms
+                                    within the source file, including
+                                    subprogram cloning and inlining.  This
+                                    level of optimization can greatly
+                                    improve the runtime performance of
+                                    programs that make frequent procedure
+                                    calls.
+
+                               4    Perform level 3 as well as doing
+                                    interprocedural optimizations across
+                                    translation units (link time
+                                    optimizations). Object files generated
+                                    at this level contain an intermediate
+                                    representation of the user code and are
+                                    intended to be temporary files. These
+                                    intermediate object files are not
+                                    guaranteed to be compatible from one
+                                    version of the compiler to the next.
+                                    Requires concurrent use of the
+                                    +Oprofile=use option. This option is
+                                    only supported on Itanium(R) processor
+                                    family architecture.
+
+
+
+                                   - 11 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          For information about additional optimization
+                          options, see the OPTIMIZATION section.
+
+           +Ooptlevel=name1[,name2...]
+                          Decrease the optimization to optlevel for one or
+                          more specified routines.  This option can occur at
+                          optimization levels 1, 2, 3 or 4.  The option
+                          cannot raise the optimization level above what was
+                          specified in the +Ooptlevel option.  This option
+                          can occur multiple times, possibly with different
+                          values of optlevel.
+
+           -o outfile     Name the output file outfile instead of the
+                          default file name (for example, a.out or
+                          filename.o).
+
+           +[no]objdebug  This option, when used with any of the -g options,
+                          will cause the debug information to be left in the
+                          object files instead of being placed in the a.out.
+                          This will bypass the pxdb step and the links will
+                          be faster.  Available only for wdb(1) or gdb(1).
+                          +objdebug is the default at compile time.
+                          +noobjdebug can be used at link time to continue
+                          to place the debug info into the a.out, even if
+                          some objects were compiled with +objdebug.  NOTE:
+                          Object files and archive libraries must be
+                          accessible to the debugger if the +objdebug method
+                          of storing debug information is used.
+
+           +[no]onetrip   Execute any counter-controlled DO loop at least
+                          once (+onetrip).  The behavior enabled by +onetrip
+                          is contrary to the Fortran Standard.  The default
+                          is +noonetrip.
+
+           -p             Generate code for prof(1) profiling. Same
+                          functionality as the +prof option. The default is
+                          +noprof.
+
+           +P             Optimize the application based on profile data
+                          found in the database file flow.data , produced by
+                          compilation with +I ld(1), +I, and +df, for more
+                          details. The +P option is incompatible with the +I
+                          and -S options.  It is incompatible with the -g
+                          option only during compile time.  This option is
+                          only valid on Itanium(R) processor family
+                          architecture.
+
+           +pa            Generate code for profiling. The +pa option
+                          instruments code for routine-level analysis.  This
+                          option cannot be used when generating position-
+                          independent code (for instance, when +pic=short,
+
+
+
+                                   - 12 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          +pic=long, +z, or +Z is specified).  This option
+                          is only valid on PA-RISC.  NOTE: CXperf is no
+                          longer supported.
+
+           +pal           Generate code for profiling. The +pal option
+                          instruments code for loop-level and routine-level
+                          analysis code (for instance, when +pic=short,
+                          +pic=long, +z, or +Z is specified).  This option
+                          is only valid on PA-RISC.  NOTE: CXperf is no
+                          longer supported.
+
+           +parallel      Generate parallel executable code.  For use with
+                          parallel programs that are compiled at
+                          optimization levels +O0 through +O2.  This option
+                          is only valid on HP-UX version 11.0 and later.
+
+           +O[no]parallel_intrinsics
+                          Link with the parallel version of some intrinsics
+                          in the libF90_parallel library. The default is
+                          +Onoparallel_intrinsics.
+
+           +pic={short|long|no}
+                          Generate Position Independent Code (PIC) with
+                          short displacements (+pic=short) or long
+                          displacements (+pic=long) for use in shared
+                          libraries.  The default is +pic=no, except when
+                          generating PA-RISC 2.0 64-bit executables, when
+                          the default is +pic=long.
+
+           +[no]ppu       Postpend [do not postpend] underscores at the end
+                          of definitions of and references to externally
+                          visible symbols (+ppu).  The default is +noppu for
+                          PA-RISC 32-bit object files and +ppu for PA-RISC
+                          64-bit object files.  The default is +ppu for
+                          Itanium(R) processor family architecture 32-bit
+                          and 64-bit object files.
+
+           +pre_include=file
+                          Process contents of file before all source files.
+                          The command line can have multiple occurrences of
+                          this option, each specifying a different file;
+                          they will be processed in the specified order.
+
+           +[no]prof      Prepare [do not prepare] object files for
+                          profiling with prof; see prof(1).  The default is
+                          +noprof.
+
+           -q             Mark output from the linker demand load.  Same
+                          functionality as the +demand_load option. The
+                          default is +nodemand_load.
+
+
+
+
+                                   - 13 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           -Q             Mark output from the linker no demand load.  Same
+                          functionality as the +nodemand_load option (the
+                          default).
+
+           +real_constant={single|double}
+                          Treat all single-precision real and complex
+                          constants as either single-precision
+                          (+real_constant=single, the default) or double-
+                          precision (+real_constant=double).  This option
+                          has no effect on constants that are explicitly
+                          sized or when the +autodbl or +autodbl4 option is
+                          specified.
+
+           -R4            Set the precision of real and complex constants to
+                          single-precision.  Same functionality as the
+                          +real_constant=single option (the default).
+
+           +r8            Treat all real constants, real intrinsics, and
+                          user variables declared as real as 8-byte values,
+                          rather than the current 4-byte default.
+
+           -R8            Set the precision of real and complex constants to
+                          double-precision.  Same functionality as the
+                          +real_constant=double option. The default is
+                          +real_constant=single.
+
+           -s             Strip symbol table information from linker output.
+                          Same functionality as the +strip option. The
+                          default is +nostrip.
+
+           -S             Generate assembly listings for the specified
+                          source files.  Same functionality as the +asm
+                          option. The default is +noasm.
+
+           +[no]save      Save [do not save] all local variables in all
+                          subprograms.  This option is useful for porting
+                          older programs.  Note the following when using
+                          +save:
+
+                               o  All non-initialized variables are
+                                  initialized to zero.
+
+                               o  This option may result in lower
+                                  performance, especially of optimized code.
+
+                          The default is +nosave.
+
+           +[no]srcpos    Control the generation of source position
+                          information for the Caliper and CXperf performance
+                          analysis tools.  When +srcpos is in effect (the
+                          default), the compiler generates this information.
+
+
+
+                                   - 14 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          When +nosrcpos is in effect, the compiler does not
+                          generate this information, and the compiler will
+                          instruct the linker to discard any of this
+                          information encountered in object files.  This
+                          option is only supported on Itanium(R) processor
+                          family architecture.
+
+           +[no]shared    Cause the output file from the linker to be marked
+                          shared [unshared].  The default is +shared.
+                          Equivalent to -n [-N].
+
+           +[no]sharedlibF90
+                          Link with the shared [archive] version of the
+                          libF90 or libF90_parallel library, depending on
+                          the value of +O[no]parallel_intrinsics. The
+                          default is to link with the archive version of
+                          libF90.
+
+           +[no]sharedlibIO77
+                          Link with the shared [archive] version of the
+                          libIO77 library. The default is to link with the
+                          archive version of libIO77. This option is
+                          supported on the Itanium(R) processor family only.
+
+           +[no]sharedlibU77
+                          Link with the shared [archive] version of the
+                          libU77 library, when combined with +U77. The
+                          default is to link with the archive version of
+                          libU77. This option is supported on the Itanium(R)
+                          processor family only.
+
+           +[no]signedzero
+                          Enable signed-zero support.  This option forces a
+                          floating point value of negative zero that appears
+                          as a formatted output list item to be represented
+                          in the output record with a leading '-'.  This
+                          option also changes the behavior of the SIGN
+                          intrinsic. The +nosignedzero option provides
+                          compatibility with HP's f77.  The default is
+                          +signedzero.
+
+           +source={fixed|free|default}
+                          Accept source files in fixed format
+                          (+source=fixed) or free format (+source=free).
+                          The default, +source=default, is free for .f90
+                          files and fixed for .f and .F source files.
+
+           +[no]strip     Strip [do not strip] symbol table information from
+                          the linker output.  For more information, see
+                          ld(1) and strip(1).  This option is incompatible
+                          with -g. The default is +nostrip.
+
+
+
+                                   - 15 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           +trigdacc      The compiler will use more accurate cosd, sind,
+                          and tand intrinsics, than the standard ones.  The
+                          standard ones have some accuracy problems with the
+                          boundary cases (i.e., cosd(90) needs to be 0.0),
+                          these new intrinsics get these cases right.
+
+           -tx,name       Substitute a private version (name) of one or more
+                          subprocesses of the compilation.  x can be one of
+                          the following:
+
+                               a    Assembler
+                               c    Compiler
+                               l    Linker
+                               p    C preprocessor
+                               s    crt0.o startup file
+                               e    end.o debug file
+
+                          For more information about the -t option, see the
+                          HP Fortran Programmer's Reference.
+
+           +[no]ttybuf    Use buffered [unbuffered] output to the tty.  See
+                          also the TTYUNBUF environment variable under
+                          EXTERNAL INFLUENCES.  The default is +ttybuf.
+
+           -Uname         Remove any initial definition of name, where name
+                          is a reserved symbol that is predefined by the
+                          particular preprocessor.
+
+           +[no]U77       Invoke [do not invoke] support for the BSD 3f
+                          library.  The default is +noU77.
+
+           +[no]uppercase Use uppercase [lowercase] for all external names.
+                          The default is +nouppercase.
+
+           +usage         List and briefly describe all f90 options.
+
+           -v             Write a verbose description of the compilation
+                          process on standard output.
+
+           +version       Write compiler version information to standard
+                          output, without compiling.
+
+           -w             Suppress warning messages.
+
+           +Warg1[,arg2,...,argN]
+                          Selectively suppresses any specified warning
+                          messages, where arg1 through argN are valid
+                          compiler warning message numbers.
+
+           +Wearg1[,arg2,...,argN]
+                          Selectively interpret any specified warning
+
+
+
+                                   - 16 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          messages as errors.  arg1 through argN are valid
+                          compiler message numbers.
+
+           +Wwarg1[,arg2,...,argN]
+                          Selectively treats compiler warnings as warnings.
+                          arg1 through argN are valid compiler message
+                          numbers.  Using -w in combination with +Ww allows
+                          the user to suppress all warnings except those
+                          specified with +Ww.
+
+                          To control warnings concerning command line
+                          options, the -w/+W options need to appear before
+                          the option which is causing the warning.
+                          Conflicts between +W, +Ww and +We are resolved
+                          based on their severity, with +We being the
+                          highest and +W the lowest.
+
+           -Wx,arg1[,arg2,...,argN]
+                          Cause arg1 through argN to be handed off to a
+                          subprocess of the compilation, identified by x.  x
+                          can be one of the following:
+
+                               a    Assembler
+                               c    Compiler
+                               l    Linker
+                               p    C preprocessor
+
+           +what          Prints the what string for the Fortran driver,
+                          providing version and patch #'s.
+
+           -Y=lang        Enable Native Language Support in the given
+                          language (lang).  Same functionality as the +nls
+                          option.
+
+           +z             Generate position-independent code (small model).
+                          Equivalent to the +pic=short option. The default
+                          is +pic=no, except when generating PA-RISC 2.0
+                          64-bit executables, when the default is +pic=long.
+
+           +Z             Generate position-independent code (large model).
+                          Equivalent to the +pic=long option. The default is
+                          +pic=no, except when generating PA-RISC 2.0 64-bit
+                          executables, when the default is +pic=long.
+
+ EXTERNAL INFLUENCES
+    International Code Set Support
+      Single- and multi-byte character code sets are supported in comments
+      and strings when the +nls option is used.
+
+    Environment Variables
+      Environment variables may be set in a user's .cshrc file (for the csh
+
+
+
+                                   - 17 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+      shell) or .kshrc file (for the ksh shell), or by using the setenv or
+      export commands (for csh and ksh, respectively).
+
+      HP_F90OPTS     Contains options and arguments for the compiler.  The
+                     compiler picks up the value of HP_F90OPTS and places
+                     its contents before any arguments on the command line.
+                     For example, if HP_F90OPTS has the value -v, the
+                     following compile-line:
+
+                          f90 +list prog.f90
+
+                     is equivalent to
+
+                          f90 -v +list prog.f90
+
+                     The | character can be used to specify that options
+                     appearing before | are to be recognized before any
+                     options on the command line and that options appearing
+                     after | are to be recognized after any options on the
+                     command line.  For example, in the ksh shell the
+                     commands:
+
+                          HP_F90OPTS="-O | -lmylib"
+                          export HP_F90OPTS
+                          f90 -v prog.f90
+
+                     are equivalent to:
+
+                          f90 -O -v prog.f90 -lmylib
+
+      MP_NUMBER_OF_THREADS
+                     This environment variable specifies the number of
+                     processors that are to execute programs that have been
+                     compiled for parallel execution.  If not set, it
+                     defaults to the number of processors on the executing
+                     machine.
+
+                     The following command line shows the csh shell syntax
+                     for specifying that two processors be used:
+
+                          setenv MP_NUMBER_OF_THREADS 2
+
+                     The following is the equivalent ksh shell syntax:
+
+                          export MP_NUMBER_OF_THREADS=2
+
+      TMPDIR         This environment variable specifies a directory for
+                     temporary files to be used instead of the default
+                     directory /var/tmp.
+
+
+
+
+
+                                   - 18 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+      TTYUNBUF       This environment variable controls tty buffering.  To
+                     enable tty buffering, set TTYUNBUF=0.  To disable tty
+                     buffering, set TTYUNBUF to a nonzero value.
+
+ DIAGNOSTICS
+      Errors and warnings are written on standard error.  If a listing is
+      requested (+list), errors and warnings are also written to the listing
+      file.  The compiler also lists on standard error the names of each
+      source file and procedure as they are encountered.
+
+ SYMBOL BINDING
+      The following new -B options are recognized by HP Fortran to specify
+      whether references to global symbols may be resolved to symbols
+      defined in the current translation unit, or whether they must by
+      assumed to be potentially resolved to symbols defined in another load
+      module.
+
+      All -B options are applied in a 'left to right' order so that options
+      at the end of a string may supercede those that appear earlier in the
+      string.
+
+           -Bdefault=symbol[,symbol...]
+                      The named symbols are assigned the default export
+                      class.  These symbols may be imported or exported
+                      outside of the current load module.  The compiler will
+                      access tentative symbols through the linkage table.
+                      Any symbol that is not assigned to another export
+                      class through use of another -B option (or the
+                      deprecated +O[no]extern option) will have the default
+                      export class.  The -Bdefault option may also be used
+                      on a per-symbol basis to specify exceptions to global
+                      -Bprotected, -Bhidden or -Bextern options.
+
+           -Bdefault:filename
+                      The file indicated by filename contains a list of
+                      symbols, separated by spaces or newlines. These
+                      symbols are assigned the default export class.
+
+           -Bextern[=symbol[,symbol...]]
+                      The named symbols, or all undefined symbols if no list
+                      is provided, are assigned the default export class.
+                      Additionally, the compiler will inline the import stub
+                      for calls to these symbols.  No compile-time binding
+                      of these symbols will be done.  All references to
+                      these symbols will be through the linkage table, so an
+                      unnecessary performance penalty will occur if
+
+           -Bextern   is applied to a listed symbol that is resolved in the
+                      same load module.
+
+
+
+
+
+                                   - 19 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           -Bextern:filename
+                      The file indicated by filename contains a list of
+                      symbols, separated by spaces or newlines. These
+                      symbols are assigned the default export class.
+                      Additionally, the compiler will inline the import stub
+                      for calls to these symbols.  No compile-time binding
+                      of these symbols will be done.  All references to
+                      these symbols will be through the linkage table, so an
+                      unnecessary performance penalty will occur if -Bextern
+                      is applied to a symbol that is resolved in the same
+                      load module.
+
+           -Bhidden[=symbol[,symbol...]]
+                      The named symbols, or all symbols if no symbols are
+                      specified, are assigned the hidden export class. The
+                      hidden export class is similar to the protected export
+                      class.  These symbols will not be preempted by symbols
+                      from other load modules, so the compiler may bypass
+                      the linkage table for both code and data references
+                      and bind them to locally defined code and data
+                      symbols.  In addition, hidden symbols will not be
+                      exported outside the current load module. The linker
+                      may eliminate them from a shared library, but in an
+                      executable, they remain accessible to the debugger
+                      unless  +Oprocelim is also specified.
+
+                      When used with no symbol list, -Bhidden implies -Wl,-
+                      aarchive_shared, causing the linker to prefer an
+                      archive library over a shared library if one is
+                      available.  This can be overridden by following the -
+                      Bhidden option with a subsequent -Wl,-a option.
+
+           -Bhidden:filename
+                      The file indicated by filename contains a list of
+                      symbols, separated by spaces or newlines. These
+                      symbols are assigned the hidden export class.
+
+           -Bprotected[=symbol[,symbol...]]
+                      The named symbols, or all symbols if no symbols are
+                      specified, are assigned the protected export class.
+                      That means these symbols will not be preempted by
+                      symbols from other load modules, so the compiler may
+                      bypass the linkage table for both code and data
+                      references and bind them to locally defined code and
+                      data symbols.
+
+                      When used with no symbol list, -Bprotected implies -
+                      Wl,-aarchive_shared, causing the linker to prefer an
+                      archive library over a shared library if one is
+                      available.  This can be overridden by following the -
+                      Bprotected option with a subsequent -Wl,-a option.
+
+
+
+                                   - 20 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           -Bprotected:filename
+                      The file indicated by filename contains a list of
+                      symbols, separated by spaces or newlines. These
+                      symbols are assigned the protected export class.
+
+           -Bprotected_data
+                      Marks only data symbols as having the protected export
+                      class.
+
+           -Bprotected_def
+                      Same as -Bprotected but only locally defined (non-
+                      tentative) symbols are assigned the protected export
+                      class.
+
+           -Bsymbolic All symbols are assigned the protected export class.
+                      Equivalent to -Bprotected with no symbol list.
+
+ OPTIMIZATION
+      The f90 compiler recognizes the optimization options described in this
+      section in addition to the general compile-line options listed in the
+      OPTIONS section.
+
+      To use these optimization options, you must also specify either the
+      +Ooptlevel or -O[optlevel] option, where optlevel must be the level
+      specified in the option descriptions. For details about -O[optlevel]
+      and +Ooptlevel see the OPTIONS section.
+
+      NOTE:
+           You can also specify -O in the place of +O to achieve the same
+           optimization.
+
+      The optimization options described here enable you to control the
+      optimization technologies described in the HP PA-RISC Compiler
+      Optimization Technology White Paper.  For an online PostScript file of
+      this paper see:
+
+           /opt/langtools/newconfig/white_papers/optimize.ps
+
+      The options that follow are either "packaged" options that enable or
+      disable a set of related optimizations, or are "fine-tuning" options
+      that enable or disable specific optimizations.
+
+    Packaged Optimization Options
+      The following options allow the user to control the extent of
+      optimization as well as to disable optimizations that impact code size
+      and system resources:
+
+           +O[no]aggressive
+                          Apply [do not apply] aggressive optimizations.
+                          These include new optimizations as well as
+                          optimizations invoked by the following option
+
+
+
+                                   - 21 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          settings:
+
+                               +Oentrysched
+                               +Olibcalls
+                               +Onofltacc
+                               +Onoinitcheck
+                               +FPD
+
+                          This option can be used at level 2 and higher.
+                          Note that +FPD will only be enabled if
+                          +Oaggressive is also used on the link line.  The
+                          default is +Onoaggressive.  Note that +Oaggressive
+                          is incompatible with +Oconservative.  This option
+                          has been deprecated on version HP-UX 11i and
+                          later.
+
+           +O[no]autopar  Do [do not] automatically parallelize loops that
+                          are deemed safe and profitable by the Loop
+                          parallelizer. The default is +Onoautopar.
+                          +Oparallel implies +Oautopar. +Oopenmp implies
+                          +Onoautopar. +Oautopar combined with +O3 and
+                          +Oopenmp will honor Openmp parallelization
+                          directives and attempt to parallelize safe and
+                          profitable loops.  +Oautopar combined with +O3 and
+                          +Oparallel will honor the proprietary HP parallel
+                          programming model.  +Oautopar combined with +O3
+                          will automatically parallelize profitable loops.
+                          It will not honor the Openmp programming model or
+                          the older HP proprietary programming model.  On
+                          Itanium(R) processor family architecture, the +O4
+                          optimization level does not support the use of the
+                          older HP proprietary programming model. Rather it
+                          only supports +Oopenmp and if desired, automatic
+                          parallelization via +Oautopar. The +Oparallel
+                          option enables the use of the older HP proprietary
+                          programming model.  +Oautopar now links in libcps.
+
+           +Oall          Apply maximum optimization to achieve the best
+                          runtime performance.  This option is equivalent to
+                          specifying +Oaggressive and +Onolimit on the same
+                          command line.  The +Oall option automatically
+                          invokes the highest level of optimization.  This
+                          option has been deprecated on version HP-UX 11i
+                          and later.
+
+           +O[no]conservative
+                          Make [do not make] conservative assumptions about
+                          the program when optimizing.  This option can be
+                          used at level 2 and higher.  The default is
+                          +Onoconservative.
+
+
+
+
+                                   - 22 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          Specifying +Oconservative sets the following
+                          option settings:
+
+                               +Onomoveflops
+                               +Oparmsoverlap
+                               +Ofltacc
+
+                          This option has been deprecated on version HP-UX
+                          11i and later.
+
+           +O[no]limit    Suppress [do not suppress] optimizations that
+                          significantly increase compile-time or consume
+                          large amounts of memory.  This option can be used
+                          at level 2 and higher.  The default is +Olimit.
+
+           +O[no]loop_transform
+                          Enables [disables] the following transformations:
+                          loop unroll and jam, loop distribution, loop
+                          interchange, loop blocking, loop fusion, and loop
+                          unroll. The default is +Oloop_transform.
+
+           +O[no]size     Suppress [do not suppress] optimizations that
+                          significantly increase code size.  This option can
+                          be used at level 2 and higher.  The default is
+                          +Onosize.
+
+    Fine-Tuning Optimization Options
+      The following options provide low-level control over the optimization
+      process, allowing the user to enable or disable specific optimization
+      techniques:
+
+           +O[no]cache_pad_common
+                          Pad [do not pad] common blocks to avoid cache
+                          collisions.  This option can be used at
+                          optimization level 3 and higher.  The default is
+                          +Onocache_pad_common.
+
+                          If any files are compiled with +Ocache_pad_common,
+                          all other program files that reference the same
+                          common blocks must also be compiled with this
+                          option.  Also, each common block compiled with
+                          +Ocache_pad_common should have the same layout in
+                          all program units in which it is declared.
+
+           +O[no]cxlimitedrange
+                          Enable [disable] the use of floating point math in
+                          the compilation unit. The default is
+                          +Onocxlimitedrange.
+
+           +O[no]cross_region_addressing
+                          Enable [disable] the use of cross-region
+
+
+
+                                   - 23 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          addressing.  Cross-region addressing is required
+                          if a pointer (such as an array base) points to a
+                          different region than the data being addressed.
+                          This is usually due to an offset which results in
+                          a cross-over into another region.  Standard-
+                          conforming applications do not require the use of
+                          cross-region addressing.  The default is
+                          +Onocross_region_addressing.
+
+           +O[no]dataprefetch
+                          Insert [do not insert] instructions within
+                          innermost loops to explicitly prefetch data from
+                          memory into the data cache.  Data prefetch
+                          instructions can improve cache performance.  This
+                          option can be used at optimization level 2 or
+                          higher.  On HP-UX version 11i and later,
+                          +Odataprefetch is the same as
+                          +Odataprefetch=indirect and +Onodataprefetch is
+                          the same as +Odataprefetch=none.  At +O2 and
+                          higher, the default is +Odataprefetch.
+
+           +O[no]dataprefetch=[direct|indirect|none]
+                          Control generation of data prefetch instructions
+                          for data structures referenced within inner most
+                          loops.  The defined values for kind are:
+
+                               direct    Enable generation of data prefetch
+                                         instructions for the benefit of
+                                         direct memory accesses, but not
+                                         indirect memory accesses.
+
+                               indirect  Enable generation of data prefetch
+                                         instructions for the benefit of
+                                         both direct and indirect memory
+                                         accesses.  This is the default at
+                                         optimization levels +O2 and above.
+
+                               none      Disable generation of data prefetch
+                                         instructions.  This is the default
+                                         at optimization levels +O1 and
+                                         below.
+
+           +O[no]entrysched
+                          Perform [do not perform] instruction scheduling on
+                          a subprogram's entry and exit code sequences.
+                          This option can be used at optimization level 1
+                          and higher.  The default is +Onoentrysched.
+
+           +O[no]failsafe Enable [disable] failsafe optimization. When a
+                          compilation fails at the current optimization
+                          level, +Ofailsafe will automatically restart the
+
+
+
+                                   - 24 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          compilation at +O2 (for specific high level
+                          optimizer errors +O3/+O4) or
+                           +O1 for Itanium(R) processor family architecture
+                          and +O0 for PA-RISC architecture. The default is
+                          +Onofailsafe.
+
+           +Ofast         Select a combination of compilation options for
+                          optimum execution speed at build times.
+                          Currently: +O2, +Olibcalls, +Onolimit,
+                          +Ofltacc=relaxed, +FPD, and +DSnative (on the
+                          Itanium(R) processor family). In addition, the
+                          following options will be passed to the linker:
+                          +pi 4M +pd 4M +mergeseg
+
+           +O[no]fastaccess
+                          Enable [disable] fast access to global data.  This
+                          option can be used at optimization level 1 and
+                          higher.  The default is +Onofastaccess.
+
+           +Ofaster       Selects the +Ofast option at optimization level
+                          +O4.  Must be used with +P or else the
+                          optimization level will drop to +O3.
+
+           +O[no]fenvaccess
+                          Inform the compiler that the program accesses
+                          [does not access] the floating point environment
+                          to test flags or run under non-default modes.  If
+                          it knows that a program does not access the
+                          floating point environment, the compiler is
+                          allowed to perform certain optimizations that it
+                          otherwise may not perform, such as global common
+                          subexpression elimination, code motion, or
+                          constant folding.  The default is +Onofenvaccess.
+
+           +O[no]fltacc   Disable [enable] floating-point optimizations that
+                          can result in numerical differences. +Ofltacc is
+                          the same as +Ofltacc=strict.  +Onofltacc is the
+                          same as +Ofltacc=relaxed.  +Onofltacc also
+                          generates Fused Multiply-Add (FMA) instructions,
+                          as does compiling your program at optimization
+                          level 2 or higher.  FMA instructions can improve
+                          performance of floating-point applications and are
+                          available only on PA-RISC 2.0 systems or later.
+
+                          If you do not specify either +Ofltacc or
+                          +Onofltacc at optimization level 2 or higher, the
+                          optimizer will generate FMA instructions but will
+                          not perform any expression-reordering
+                          optimizations.
+
+
+
+
+
+                                   - 25 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           +Ofltacc=[strict|default|limited|relaxed]
+                          Control the level of floating point optimizations
+                          that the compiler may perform.  The defined values
+                          for optlevel are:
+
+                               default
+                                    Allow contractions, such as fused
+                                    multiply-add (FMA), but disallows any
+                                    other floating point optimization that
+                                    can result in numerical differences.
+
+                               limited
+                                    Like default, but also allows floating
+                                    point optimizations which may affect the
+                                    generation and propagation of
+                                    infinities, NaNs, and the sign of zero.
+                                    Also implies +Ocxlimitedrange.
+
+                               relaxed
+                                    In addition to the optimizations allowed
+                                    by limited, permits optimizations, such
+                                    as reordering of expressions, even if
+                                    parenthesized, that may affect a
+                                    rounding error. This is the same as
+                                    +Onofltacc.  Also implies
+                                    +Ocxlimitedrange.
+
+                               strict
+                                    Disallow any floating point optimization
+                                    that can result in numerical
+                                    differences.  This is the same as
+                                    +Ofltacc.
+
+                               The default is +Ofltacc=default.
+
+           +Ofrequently_called=function1[,function2...]
+                          The named functions, are assumed to be frequently
+                          called.  This option overrides any information in
+                          a profile database.
+
+           +Ofrequently_called:filename
+                          The file indicated by filename contains a list of
+                          function names, separated by spaces or newlines.
+                          These functions are assumed to be frequently
+                          called.  This option overrides any information in
+                          a profile database.
+
+           +O[no]info     Provide [do not provide] feedback information
+                          about the optimization process.  This option is
+                          most useful at optimization level 3 and higher.
+                          The default is +Onoinfo.
+
+
+
+                                   - 26 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           +O[no]initcheck
+                          Enable [disable] initialization of any local,
+                          scalar, automatic variable that is found to be
+                          uninitialized.  This option can be used at
+                          optimization level 2 and higher.  The default is
+                          to enable initialization if the variable is
+                          uninitialized with respect to every path leading
+                          to its use.
+
+           +O[no]inline   Request [disable] inlining.  This option can be
+                          used at optimization level 3 and higher.  The
+                          default is +Oinline.
+
+           +O[no]inline:filename
+                          The file indicated by filename contains a list of
+                          function names, separated by spaces or newlines.
+                          This option enables [disables] optimizer inlining
+                          for the named functions.  This optimization can
+                          occur at optimization levels 3 and 4.  The default
+                          is +Oinline.
+
+           +O[no]inline=function1[,function2...]
+                          Enable [disable] optimizer inlining for the named
+                          functions.  This optimization can occur at
+                          optimization levels 3 and 4. The default is
+                          +Oinline.
+
+           +Oinline_budget=n
+                          Perform more aggressive inlining, where n
+                          specifies the degree of aggressiveness, as
+                          follows:
+
+                               100    Default level of inlining.
+
+                               > 100  More aggressive inlining at the
+                                      expense of compilation time and code
+                                      size.  The maximum for n is 1000000.
+
+                               2 - 99 Less aggressive inlining.  The
+                                      optimizer gives more weight to
+                                      compilation time and code size when
+                                      determining whether to inline.
+
+                               1      Inline only if it reduces code size.
+
+                          This option can be used at optimization level 3 or
+                          higher.
+
+           +O[no]libcalls Use [do not use] low-call-overhead versions of
+                          select library routines.  This option can be used
+                          at any level.  At optimization level 0 or 1, the
+
+
+
+                                   - 27 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          default is +Onolibcalls; at optimization level 2
+                          or higher, the default is +Olibcalls.
+
+           +O[no]libmerrno
+                          Enable [disable] support for errno in libm
+                          functions.  The default is +Onolibmerrno.
+
+           +O[no]loop_block
+                          Enable [disable] loopblocking for data cache
+                          optimizations. Available at optimization level 3
+                          and above.
+
+
+           +O[no]loop_unroll[=n]
+                          Unroll [do not unroll] program loops by a factor
+                          of n.  For example, specifying +Oloop_unroll=4
+                          requests the optimizer to replicate the loop body
+                          four times.  This option can be used at
+                          optimization level 2 or higher.
+
+           +O[no]loop_unroll_jam
+                          Allows [prevents] both automatic and directive-
+                          specified unroll and jam optimizations. This
+                          option can be used at optimization level 3. The
+                          default is +Oloop_unroll_jam.
+
+           +O[no]moveflops
+                          Enable [disable] moving conditional floating-point
+                          instructions out of loops.  This option can be
+                          used at optimization level 2 and higher.  The
+                          default is +Omoveflops.
+
+           +O[no]multiprocessor
+                          Prevent instruction cache prefetching following
+                          subroutine returns.  This benefits applications
+                          run on multiprocessor machines.  The default is
+                          +Onomultiprocessorat+O0and+O1.At +Omultiprocessor.
+
+           +O[no]openmp   Enable [disable] Openmp Directives.
+
+           +O[no]parallel Transform [do not transform] eligible loops for
+                          parallel execution on multiprocessor machines.
+                          This option can be used at optimization level 3.
+                          The default is +Onoparallel.  +Oparallel produces
+                          object files which can only be linked on systems
+                          running HP-UX version 11.0 or later. +O4 used with
+                          +Oparallel inhibits +Oparallel ; it is dropped.
+                          +O3 +Oparallel suppresses math inlining.
+
+           +O[no]parmsoverlap
+                          Optimize with the assumption that subprogram
+
+
+
+                                   - 28 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          arguments may [do not] refer to the same memory.
+                          This option can be used at optimization level 2
+                          and higher.  The default is +Onoparmsoverlap.
+
+           +O[no]pipeline Enable [disable] software pipelining.  The default
+                          is +Opipeline.
+
+           +Oprefetch_latency=num option
+                          Applies to loops for which the compiler generates
+                          data prefetch instructions.  the compiler divides
+                          'cycles' by the estimated loop length to arrive at
+                          the number of loop iterations for which to
+                          generate advance prefetches.  the compiler to use
+                          the default value, which is 480 cycles for loops
+                          containing floating-point accesses and 150 cycles
+                          for loops that do not contain any floating-point
+                          accesses.  For tuning purposes, it is recommended
+                          that users measure their application's performance
+                          using a few different prefetch latency settings to
+                          determine the optimal value.  Some floating-point
+                          codes may benefit by increasing the distance to
+                          960. Parallel applications frequently benefit from
+                          a shorter prefetch distance of 150.
+
+           +O[no]procelim Remove [do not remove] any unreferenced procedures
+                          from the output executable file. This option can
+                          be used at any optimization level. The default is
+                          +Onoprocelim.
+
+           +Oprofile=use:filename
+                          Specify filename as the name of the profile
+                          database file.  This option is a synonym for the
+                          +P, +dffilename options.  The :filename argument
+                          is optional (the default filename is flow.data).
+                          See ld (1), +P, and +df for more details.  This
+                          option is only valid on Itanium(R) processor
+                          family architecture.
+
+           +Oprofile=collect[:<qualifiers>]
+                          Instrument the application for profile based
+                          optimization.  In the absence of qualifiers,
+                          +Oprofile=collect is the same as +I. <qualifiers>
+                          are a comma-separated list of profile collection
+                          qualifiers.  Supported profile collection
+                          qualifiers: arc--collect arc counts (synonym to
+                          +Oprofile=collect); stride--collect stride data;
+                          all--collect all types of profile data (synonym
+                          for +Oprofile=collect:arc,stride). The default
+                          value is arc. Interactions and dependencies are
+                          not changed with respect to +Oprofile=collect.
+                          This option is only valid on Itanium(R) processor
+
+
+
+                                   - 29 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          family architecture.
+
+           +O[no]promote_indirect_calls
+                          Enable [disable] the promotion of indirect calls
+                          to direct calls.  (Indirect calls occur with
+                          pointers to functions.) This option can be used at
+                          optimization levels 3 and 4.  The default is
+                          +Onopromote_indirect_calls.
+
+           +O[no]ptrs_to_globals[=name1,name2,...,nameN]
+                          Tell the optimizer whether global variables are
+                          modified [are not modified] through pointers.
+                          This optimization can occur at levels 2, 3, 4. The
+                          default is +Optrs_to_globals
+
+           +Orarely_called=function1[,function2...]
+                          The named functions, are assumed to be
+                          infrequently called. This option overrides any
+                          information in a profile database.
+
+           +Orarely_called:filename
+                          The file indicated by filename contains a list of
+                          function names, separated by spaces or newlines.
+                          These functions are assumed to be infrequently
+                          called.  This option overrides any information in
+                          a profile database.
+
+           +O[no]recovery Generate [do not generate] recovery code for
+                          control speculation.  The default is +Onorecovery.
+
+           +O[no]regreassoc
+                          Enable [disable] register reassociation.  This
+                          option can be used at optimization level 2 and
+                          higher.  The default is +Oregreassoc.
+
+           +O[no]report[=report_type]
+                          Causes the compiler to display various
+                          optimization reports. +Onoreport is the default.
+                          The value of report_type determines which report
+                          is displayed, as described below.
+
+                          +Oreport=loop produces the Loop Report.  This
+                          report gives information on optimizations
+                          performed on loops and calls. Using +Oreport
+                          (without = report_type ) also produces the Loop
+                          Report.  +Oreport=private produces the Loop Report
+                          and the Privatization Report, which provides
+                          information on loop variables that are privatized
+                          by the compiler.
+
+                          +Oreport=all produces all reports.
+
+
+
+                                   - 30 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          The +Oreport[=report_type] option is active only
+                          at optimization levels 3 and above. See the
+                          Exemplar Programming Guide for more information on
+                          the optimization reports.
+
+                          The option +Oinfo can be used to display
+                          additional information on the various
+                          optimizations being performed by the compilers.
+                          +Oinfo can be used at any optimization level but
+                          is most useful at +O3 and above. The default, at
+                          all optimization levels, is +Onoinfo.
+
+
+           +Oshortdata[=size]
+                          All objects of size size bytes or smaller will be
+                          placed in the short data area, and references to
+                          such data will assume it resides in the short data
+                          area.  Valid values of n are 0, or a decimal
+                          number between 8 and 4,194,304 (4MB).  If no size
+                          is specified, all data is placed in the short data
+                          area.  If size is 0, no data will be placed in the
+                          short data area, and all data references will use
+                          long offsets.  The default is +Oshortdata=8.
+
+                          NOTE: Using a value that is too big or without the
+                          optional size, possibly through +Ofast, may give
+                          various linker "fixup" errors, if there is more
+                          than 4Mb of short data.
+
+                          NOTE: All object files participating in a link
+                          need to be consistently compiled with respect to
+                          +Oshortdata.  Since the +Ofaster and +Ofast
+                          options imply +Oshortdata, other Fortran object
+                          files which reference common blocks should also be
+                          explicitly compiled with +Oshortdata.
+                          Alternatively, the +Ofaster and +Ofast
+                          compilations can be compiled with an additional
+                          +Oshortdata=8 appended to the command line.
+
+
+
+           +O[no]sideeffects=name1, name2,...,nameN
+                          Optimize with the assumption that the specified
+                          subprograms do [do not] modify global variables.
+                          This option can be used at optimization level 2 or
+                          higher.  The default is to assume that all
+                          subprograms have side effects unless the optimizer
+                          can determine that there are none.  Available at
+                          optimization level 2 and above.
+
+
+
+
+
+                                   - 31 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           +O[no]static_prediction
+                          Enables [disables] the use of static branch
+                          prediction for decision on conditional branchs.
+                          More applicable to large programs with poor
+                          locality. Available at optimization level 3 and
+                          above.
+
+           +O[no]store_ordering
+                          Preserve [do not preserve] the original program
+                          order for stores to memory that is potentially
+                          visible to multiple threads.  This does not imply
+                          strong ordering.  The default is
+                          +Onostoreordering.
+
+           +O[no]vectorize
+                          Replace [do not replace] eligible loops with calls
+                          to the vector library.  Any files that were
+                          compiled with +Ovectorize must also be linked with
+                          +Ovectorize.  This option can be used at
+                          optimization level 3 and higher.  The default is
+                          +Onovectorize.
+
+           +O[no]whole_program_mode
+                          Assert [do not assert] that only files compiled
+                          with this option directly reference any global
+                          variables and procedures that are defined in these
+                          files.  This option enables optimizations that
+                          assume that there are no unseen accesses to the
+                          globals.  This option can be used at optimization
+                          level 4.  The default is +Onowhole_program_mode.
+
+ EXAMPLES
+      Example 1
+
+      The following command compiles and links the source file prog.f90,
+      producing the linked executable file a.out.
+
+           f90 prog.f90
+
+      Example 2
+
+      The next command compiles, optimizes, and links the source files
+      t.f90, r.f90, and s.f90, producing the linked executable file sample.
+
+           f90 -O -o sample t.f90 r.f90 s.f90
+
+      Example 3
+
+      When compiling a program that defines and uses modules in different
+      source files, f90 creates a .mod file for each module in the source
+      files, in addition to the .o files.  The compiler must have created
+
+
+
+                                   - 32 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+      any .mod files before compiling the files that use the modules.
+
+      Consider, for example, a program that consists of two files: the first
+      (file1.f90) defines the module module1 and the second (file2.f90) uses
+      it.  The following command lines will compile and link the program
+      correctly:
+
+           f90 -c file1.f90
+           f90 -c file2.f90
+           f90 -o my_program file1.o file2.o
+
+      The crucial commands are the first two, which must be specified in
+      order.  The first command creates two files: file1.o and MODULE1.mod.
+      The second command requires MODULE1.mod to compile file2.f90.
+
+      The same effect can be produced with one command line, so long as the
+      defining file is specified before the using file, as in the following:
+
+           f90 -o my_program file1.f90 file2.f90
+
+      See the +moddir= and -I options for related information about .mod
+      files.
+
+ AUTHOR
+      f90 was developed by HP and EPC.
+
+ FILES
+      Input and output files:
+
+
+      file.f90          input file (free-format source file)
+      file.f            input file (fixed-format source file)
+      file.F            input file (fixed-format source with cpp directives)
+      file.o            object file
+      file.i90          preprocessed file (free-format output from cpp)
+      file.i            preprocessed file (fixed-format output from cpp)
+      file.mod          intermediate file with module definitions
+      file.s            input file (assembly source file)
+      a.out             linked executable output file
+
+      Executable programs, libraries, and other files:
+
+      /opt/fortran90/bin/f90
+                          compiler driver
+      /opt/fortran90/lbin/f90com32
+                          compiler, 32-bit
+      /opt/fortran90/lbin/f90com64
+                          compiler, 64-bit
+      /opt/fortran90/lib/ielf/math/hpux[32,64]/*.o
+                          object files generated at optimization level 4,
+                          called intermediate object files. (Itanium(R)
+
+
+
+                                   - 33 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+                          processor family only)
+      /opt/fortran90/lib/libU77.a
+                          library containing +U77 routines. (PA-RISC only)
+      /opt/fortran90/lib/pa20_64/libU77.a
+                          library containing PA-RISC 2.0 64-bit. (PA-RISC
+                          only) +U77 routines. (HP-UX 11.0 or later)
+      /opt/fortran90/lib/libp/libU77.a
+                          profiling library containing +U77 routines. (PA-
+                          RISC only)
+      /opt/fortran90/lib/nls/C/libU77.cat
+                          libU77 message catalog
+      /opt/fortran90/lib/libU77.alias
+                          alias directives for libU77 functions
+      /opt/fortran90/lib/libblas.a
+                          BLAS library. (PA-RISC only)
+      /opt/fortran90/lib/pa2.0/libblas.a
+                          PA-RISC 2.0 BLAS library. (PA-RISC only)
+      /opt/fortran90/lib/libF90.a
+      /opt/fortran90/lib/libF90_parallel.a
+                          Fortran intrinsics. (PA-RISC only)
+      /opt/fortran90/lib/pa2.0/libF90.a
+      /opt/fortran90/lib/pa2.0/libF90_parallel.a
+                          PA-RISC 2.0 Fortran intrinsics. (PA-RISC only)
+      /opt/fortran90/lib/pa20_64/libF90.a
+      /opt/fortran90/lib/pa20_64/libF90_parallel.a
+                          PA-RISC 2.0 64-bit Fortran intrinsics (HP-UX 11.0
+                          or later)
+      /opt/fortran90/share/man/man3.Z/*.3f
+                          man pages for libU77 routines
+      /opt/fortran90/share/man/man3.Z/*.3x
+                          man pages for libblas routines
+      /opt/fortran90/lib/nls/msg/$LANG/f90.cat
+                          driver error message file
+      /opt/fortran90/lib/nls/msg/$LANG/f90com.cat
+                          compiler error message file
+      /opt/langtools/lib/end.o
+                          symbolic debugger string buffer
+
+      /usr/ccs/bin/as     assembler
+      /usr/ccs/lbin/cpp   C preprocessor
+      /opt/langtools/lib/crt0.o
+                          runtime startup code
+      /opt/langtools/lib/gcrt0.o
+                          startup code for profiling with gprof
+      /opt/langtools/lib/mcrt0.o
+                          startup code for profiling with prof
+
+      /usr/lib/hpux[32,64]/libcps.sl
+                          runtime support for parallel-executing programs
+                          (Itanium(R) processor family only)
+
+
+
+
+                                   - 34 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+      /usr/lib/hpux[32,64]/libpthread.a
+                          kernel threads library for parallel-executing
+                          programs (Itanium(R) processor family only)
+      /usr/lib/hpux[32,64]/libpthread_tr.a
+                          instrumented version of kernel threads library
+                          (Itanium(R) processor family only)
+      /usr/lib/hpux[32,64]/libm.a
+                          math library (Itanium(R) processor family only)
+      /usr/lib/hpux[32,64]/libcl.a
+                          Fortran math and I/O libraries (Itanium(R)
+                          processor family only)
+      /usr/lib/hpux[32,64]/libIO77.[a,so]
+                          Fortran runtime I/O support libraries. Itanium(R)
+                          processor family only.
+      /var/tmp/fcp*       temporary file for cpp output
+
+      NOTE:
+      On HP-UX version 11i and later, object files generated by the compiler
+      at optimization level 4, called intermediate object files, are
+      intended to be temporary files. These object files contain an
+      intermediate representation of the user code in a format that is
+      designed for advanced optimizations. Therefore, Hewlett-Packard may be
+      required to change the format of these intermediate files in any
+      compiler release or patch. Use of intermediate object files should be
+      limited to the compiler which created them.  For the same reason,
+      intermediate object files should not be included into archived
+      libraries that may be used by different versions of the compiler. The
+      compiler will issue an error message and terminate when an
+      incompatible intermediate object file is detected.
+
+
+ SEE ALSO
+      Additional HP Fortran information:
+
+           HP Fortran Programmer's Reference
+                          Contains a complete description of the HP Fortran
+                          programming language.
+
+           HP Fortran Programmer's Guide
+                          Describes HP Fortran features and requirements,
+                          including how to compile, link, run, debug, and
+                          optimize HP Frotran programs.
+
+           To order copies of printed documentation, call 1-800-227-8164
+           between 6 a.m. and 5 p.m. PST. To place an order from outside the
+           United States call 415-857-2384. Please have the Customer Order
+           Number (xxxxx-9xxxx) and the exact title of the document when
+           ordering.
+
+           See manuals(5) for a list of additional books available for
+           ordering.
+
+
+
+                                   - 35 -      Formatted:  December 12, 2003
+
+
+
+
+
+
+ f90(1)                                                               f90(1)
+
+
+
+
+           The Release Notice for HP Fortran is in the directory
+           /opt/fortran90/newconfig/RelNotes.
+
+           The HP PA-RISC Compiler Optimization Technology White Paper is
+           online as the following PostScript file:
+
+                /opt/langtools/newconfig/white_papers/optimize.ps
+
+           For current information about HP Fortran, refer to
+           http://www.hp.com/go/hpfortran.
+
+      Debugging, analysis, and program management tools:
+
+           fsplit(1)      split fixed-format source files
+           dde(1)         invoke Distributed Debugging Environment (HP/DDE)
+                          debugger (PA-RISC only)
+           caliper(1)     invoke the performance analysis tool for
+                          Itanium(R) processor family compiler-generated
+                          applications.
+           cxperf(1)      invoke the dynamic performance analysis tool (HP-
+                          UX 11.0 and later only)
+           gprof(1)       display call graph profile data
+           prof(1)        display profile data
+           puma(1)        invoke the performance analysis tool
+           xps(1)         invoke the system monitoring tool
+
+      System tools:
+
+           ar(1)          create archived libraries
+           as(1)          translate assembly code to machine code
+           asa(1)         interpret ASA carriage-control characters
+           cpp(1)         invoke the C language preprocessor
+           ld(1)          invoke the link editor
+
+      Miscellaneous utilities:
+
+           fid(1)         detect incompatibilities in FORTRAN77 source code
+           strip(1)       strip symbol and line number information from an
+                          object file
+
+ STANDARDS CONFORMANCE
+      ANSI X3.198-199x (Fortran)
+
+
+
+
+
+
+
+
+
+
+
+
+                                   - 36 -      Formatted:  December 12, 2003
+
+
+

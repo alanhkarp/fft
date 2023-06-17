@@ -1,0 +1,695 @@
+BABYL OPTIONS: -*- rmail -*-
+Version: 5
+Labels:
+Note:   This is the header of an rmail file.
+Note:   If you are seeing it in rmail,
+Note:    it means the file has no messages in it.
+
+1,,
+Mail-from: From karp Tue Jan 10 12:52:16 PST 1995
+Date: Tue, 10 Jan 95 12:52:16 PST
+From: karp
+To: marcus@nimbus.anu.edu.au
+Reply-to: "Alan Karp" <karp@hpl.hp.com>
+Subject: Tech reports
+
+*** EOOH ***
+Date: Tue, 10 Jan 95 12:52:16 PST
+From: karp
+To: marcus@nimbus.anu.edu.au
+Reply-to: "Alan Karp" <karp@hpl.hp.com>
+Subject: Tech reports
+
+Please send me copies of your FFT Tech reportsCMA-MR51-93 and MRR
+012-94.  PostScript is OK (preferred).
+
+Alan Karp
+HP Labs 3U-7
+Hewlett-Packard Company
+1501 Page Mill Road
+Palo Alto, CA 94304
+karp@hpl.hp.com
+
+
+1,,
+Mail-from: From marcus@discus.anu.edu.au Tue Jan 10 16:53:04 1995
+Return-Path: <marcus@discus.anu.edu.au>
+From: marcus@discus.anu.edu.au (Markus HEGLAND)
+Subject: Re: CMR-MR51-93
+To: karp@hplms26.hpl.hp.com
+Date: Wed, 11 Jan 1995 09:56:00 +1100 (EST)
+In-Reply-To: <9501102052.AA00590@hplahk2.hpl.hp.com> from "Alan Karp" at Jan 10, 95 12:52:17 pm
+X-Mailer: ELM [version 2.4 PL24]
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Length: 349251    
+
+*** EOOH ***
+Return-Path: <marcus@discus.anu.edu.au>
+From: marcus@discus.anu.edu.au (Markus HEGLAND)
+Subject: Re: CMR-MR51-93
+To: karp@hplms26.hpl.hp.com
+Date: Wed, 11 Jan 1995 09:56:00 +1100 (EST)
+In-Reply-To: <9501102052.AA00590@hplahk2.hpl.hp.com> from "Alan Karp" at Jan 10, 95 12:52:17 pm
+X-Mailer: ELM [version 2.4 PL24]
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Length: 349251    
+
+Here is the .ps file for CMA-MR51-93. (Note that the URLs in my first
+mail are not the ones used in the anonymous ftp directory. Please
+consult the file
+
+file://thrain.anu.edu.au:/pub/Area4_Working_Notes/working_notes.html
+
+Markus
+
+	Removed, saved in ~/ibm/paix/fft/tex/hegland2.ps
+  
+
+
+1,,
+Mail-from: From marcus@discus.anu.edu.au Tue Jan 10 16:53:42 1995
+Return-Path: <marcus@discus.anu.edu.au>
+From: marcus@discus.anu.edu.au (Markus HEGLAND)
+Subject: Re: Tech reports
+To: karp@hplms26.hpl.hp.com
+Date: Wed, 11 Jan 1995 09:48:42 +1100 (EST)
+In-Reply-To: <9501102052.AA00590@hplahk2.hpl.hp.com> from "Alan Karp" at Jan 10, 95 12:52:17 pm
+X-Mailer: ELM [version 2.4 PL24]
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Length: 335353    
+
+*** EOOH ***
+Return-Path: <marcus@discus.anu.edu.au>
+From: marcus@discus.anu.edu.au (Markus HEGLAND)
+Subject: Re: Tech reports
+To: karp@hplms26.hpl.hp.com
+Date: Wed, 11 Jan 1995 09:48:42 +1100 (EST)
+In-Reply-To: <9501102052.AA00590@hplahk2.hpl.hp.com> from "Alan Karp" at Jan 10, 95 12:52:17 pm
+X-Mailer: ELM [version 2.4 PL24]
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Length: 335353    
+
+Here is mrr012-94.ps. Please also send me (p)reprints of your own work
+on FFTs if available.
+Thanks, Markus
+
+
+	Removed, saved in ~/ibm/paix/fft/tex/hegland1.ps
+
+
+1,,
+Mail-from: From marcus@discus.anu.edu.au Tue Jan 10 17:06:20 1995
+Return-Path: <marcus@discus.anu.edu.au>
+From: marcus@discus.anu.edu.au (Markus HEGLAND)
+Subject: Re: Tech reports
+To: karp@hplms26.hpl.hp.com
+Date: Wed, 11 Jan 1995 09:41:30 +1100 (EST)
+In-Reply-To: <9501102052.AA00590@hplahk2.hpl.hp.com> from "Alan Karp" at Jan 10, 95 12:52:17 pm
+X-Mailer: ELM [version 2.4 PL24]
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Length: 2579      
+
+*** EOOH ***
+Return-Path: <marcus@discus.anu.edu.au>
+From: marcus@discus.anu.edu.au (Markus HEGLAND)
+Subject: Re: Tech reports
+To: karp@hplms26.hpl.hp.com
+Date: Wed, 11 Jan 1995 09:41:30 +1100 (EST)
+In-Reply-To: <9501102052.AA00590@hplahk2.hpl.hp.com> from "Alan Karp" at Jan 10, 95 12:52:17 pm
+X-Mailer: ELM [version 2.4 PL24]
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Length: 2579      
+
+> 
+> Please send me copies of your FFT Tech reportsCMA-MR51-93 and MRR
+> 012-94.  PostScript is OK (preferred).
+> 
+> Alan Karp
+> HP Labs 3U-7
+> Hewlett-Packard Company
+> 1501 Page Mill Road
+> Palo Alto, CA 94304
+> karp@hpl.hp.com
+> 
+
+Dear Alan,
+
+thank you for your interest in my work. Following is a list of my
+pre- and reprints on FFTs. Most of these can be accessed with
+anonymous ftp from thrain.anu.edu.au, directory
+pub/Area4_Working_Notes.
+
+I will mail you the required two .ps files. Please tell me if I should
+mail you the others too.
+
+Yours sincerely,
+Markus Hegland
+
+<LI> M.H., 1992, "<a href="Heg92a/algornew.dvi.Z"> A self-sorting 
+    in-place fast {Fourier} transform algorithm suitable for vector 
+     and parallel processing</a>", Numerische Mathematik, 68 (4),
+pp. 507-547,
+     1994, preprint as Mathematics Research Report MRR 012-94, ANU.
+
+<LI> M.H., 1993, "<a href="Heg93a/fftftp.dvi.Z"> On Some Block 
+    Algorithms for Fast Fourier Transforms</a>", 
+    in Proceedings of the Computational Techniques and
+    Applications Conference CTAC93 Canberra, pp. 286-284,
+    preprint as CMA report CMA-MR51-93. <p>
+
+<LI> M.H., 1993, "<a href="Heg93d/parcopaper.dvi.Z"> Block Algorithms 
+    for FFTs on Vector and Parallel Computers</a>",
+    in "Parallel Computing: Trends and Applications", 1994 Elsevier.
+    pp. 129-136.
+    (Figure is <a href="Heg93d/parco.ps.Z"> here</a>.) <p>
+
+<LI> M.H., 1994, "<a href="Heg92d/tensprod.dvi.Z"> An Implementation 
+    of Multiple and Multi-Variate Fourier Transforms on Vector 
+    Processors</a>", to appear in SIAM J. Sci. Comp. 1995,
+    preprint as CMA report MRR 016-94. ANU. <p>
+
+<LI> M.H., 1994, 
+    "<a href="Heg94c/fft_on_vpp.dvi.Z"> Real and Complex Fast Fourier
+     Transforms on the Fujitsu VPP 500" </a>
+     Area4 Working Note 14, and preprint as CMA report MRR 034-94 and
+as 
+     Joint DCS/CSL report TR-CS-94-07, ANU. <p>
+
+<LI> M.H. and Wayne Wheeler, 1994, 
+    "<a href="HegW94/markus1.dvi.Z"> Linear Bijections and the Fast
+     Fourier Transform </a>",
+     Mathematics Research Report MRR 064-94, 1994, CMA, ANU. <p>
+
+
+-- 
+  
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *   
+*
+* Markus Hegland
+* CSL, Res. Sch. Inf. Sci. Eng.           Phone:  + 61 (0)6 249 3011
+* and CMA, Sch. of Math. Sci.             Phone:  + 61 (0)6 249 4405
+* Australian National University          Fax:    + 61 (0)6 249 4812
+* CANBERRA  ACT 0200                  Email:    Markus.Hegland@anu.edu.au
+* Australia
+*
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+
+
+
+1,,
+Mail-from: From marcus@discus.anu.edu.au Wed Jan 11 08:19:37 1995
+Return-Path: <marcus@discus.anu.edu.au>
+From: marcus@discus.anu.edu.au (Markus HEGLAND)
+Subject: Re: Tech reports
+To: karp@hplms26.hpl.hp.com
+Date: Wed, 11 Jan 1995 12:59:16 +1100 (EST)
+In-Reply-To: <9501110042.AA00736@hplahk2.hpl.hp.com> from "Alan Karp" at Jan 10, 95 04:42:55 pm
+X-Mailer: ELM [version 2.4 PL24]
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Length: 234511    
+
+*** EOOH ***
+Return-Path: <marcus@discus.anu.edu.au>
+From: marcus@discus.anu.edu.au (Markus HEGLAND)
+Subject: Re: Tech reports
+To: karp@hplms26.hpl.hp.com
+Date: Wed, 11 Jan 1995 12:59:16 +1100 (EST)
+In-Reply-To: <9501110042.AA00736@hplahk2.hpl.hp.com> from "Alan Karp" at Jan 10, 95 04:42:55 pm
+X-Mailer: ELM [version 2.4 PL24]
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Length: 234511    
+
+Thanks, Alan for your preprint. You might actually be interested in an
+algebraically oriented manuscript which I did send to Applicable
+Algebra.
+Markus
+-- 
+  
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *   
+*
+* Markus Hegland
+* CSL, Res. Sch. Inf. Sci. Eng.           Phone:  + 61 (0)6 249 3011
+* and CMA, Sch. of Math. Sci.             Phone:  + 61 (0)6 249 4405
+* Australian National University          Fax:    + 61 (0)6 249 4812
+* CANBERRA  ACT 0200                  Email:    Markus.Hegland@anu.edu.au
+* Australia
+*
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+	Removed, saved in ~/ibm/paix/fft/tex/hegland3.ps
+
+
+1, answered,,
+Summary-line: 16-May   sivan@theory.lcs.mit.edu  #Out of core methods
+Mail-from: From sivan@theory.lcs.mit.edu Tue May 16 06:22 PDT 1995
+Received: from hplms26.hpl.hp.com by hplahk2.hpl.hp.com with SMTP
+	(1.37.109.8/15.5+ECS 3.3+HPL1.1) id AA17646; Tue, 16 May 1995 06:22:26 -0700
+Return-Path: <sivan@theory.lcs.mit.edu>
+Received: from theory.lcs.mit.edu by hplms26.hpl.hp.com with SMTP
+	($Revision: 1.36.108.11 $/15.5+ECS 3.3+HPL1.1S) id AA165210757; Tue, 16 May 1995 06:25:58 -0700
+Received: from sparrow.lcs.mit.edu by theory.lcs.mit.edu (5.65c/TOC-1.2S) 
+	id AA16686; Tue, 16 May 95 09:25:48 EDT
+From: sivan@theory.lcs.mit.edu (Sivan Toledo)
+Received: by sparrow.lcs.mit.edu (4.1/TOC-1.2C) 
+	id AA01490; Tue, 16 May 95 09:25:50 EDT
+Date: Tue, 16 May 95 09:25:50 EDT
+Message-Id: <9505161325.AA01490@sparrow.lcs.mit.edu>
+To: karp@hplms26.hpl.hp.com
+In-Reply-To: Alan Karp's message of Mon, 15 May 1995 16:20:32 -0700 <9505152320.AA17132@hplahk2.hpl.hp.com>
+Subject: Out of core methods
+
+*** EOOH ***
+Return-Path: <sivan@theory.lcs.mit.edu>
+From: sivan@theory.lcs.mit.edu (Sivan Toledo)
+Date: Tue, 16 May 95 09:25:50 EDT
+To: karp@hplms26.hpl.hp.com
+In-Reply-To: Alan Karp's message of Mon, 15 May 1995 16:20:32 -0700 <9505152320.AA17132@hplahk2.hpl.hp.com>
+Subject: Out of core methods
+
+
+We are looking at the same paper, and we are both right.
+The journal page does say C-27. All the pages in that issue say C-27.
+But it's a typo. On the cover of the issue it says C-28, and the next
+issue from that year (Feb 1979) says C-28 on all the pages.
+
+Also if you consider that 1976 was C-25, then 1979 must be C-28.
+It's just a funny typo.
+
+Sivan
+
+From karp Thu May 25 10:31:01 -0700 1995
+To: lyang@saiph.hpl.hp.com
+In-reply-to: <199505161733.AA283925627@saiph.hpl.hp.com> (message from Long Yang on Tue, 16 May 95 10:33:46 -0700)
+Reply-to: "Alan Karp" <karp@hpl.hp.com>
+Subject: Re: GRASS-ROOT BASIC RESEARCH PROGRAM needs your love and care!
+
+
+		 Application Form for Grass-Root Basic Research Fund
+
+   Project title: Fast Multidimensional FFT__________  Date: May 25, 1995______
+
+   Name:_Alan Karp_____________ Telnet: 857-6766___  Location Code:  ___________
+
+   Supervisor: Rajiv Gupta_________________________ Telnet: 857-8507____________
+
+
+   Did you inform your immediate manager of your intention to work on this 
+   research topic? (It is ok if you didn't.)
+
+   (  ) Yes   ( x ) No.
+
+   Type of the project: mark the most appropriate ones
+
+   (   ) Physical science (   ) Computer Science   (    ) System 
+
+   ( ) medical         ( ) software             (x) signal processing 
+   ( ) material         ( ) hardware             ( ) measurement system
+   ( ) device         ( ) circuit              ( ) manufacturing system
+   ( ) physics
+
+   (   ) Other, please state: ________________________
+
+
+   How long the project will take?
+
+     Should be doable in a summer since the basic coding is done.
+     Might even have time to parallelize on our cluster.
+
+   If successful, which business should the investigation impact? (N.A., if not
+   applicable)
+
+     Improvements to HP's non-existent scientific subroutine library.
+
+   Do you need to purchase any additional equipment or accessories for this 
+   project? If yes, how much money is needed?
+
+     Student should have a workstation with the largest possible
+     memory.  If one is available for off-hours use, no new equipment
+     will be needed.
+
+   Note: Every research project should conclude with a seminar opened to the
+	 general public.
+
+     I'd be delighted.
+
+   I've never seen a grant proposal that didn't ask for some details,
+   so here it is.
+
+     Multidimensional FFTs are done by taking one dimensional FFTs
+     along each coordinate direction.  This process involves either long
+     stride access along all but one of the dimensions or a transpose of
+     the data.  I have developed a method that avoids an explicit
+     transpose step yet still works at low stride.  Work done over 3
+     years ago before I joined HP showed the method to be effective on
+     Cray and IBM vector machines.  I'd like to do the same for
+     workstations and, time permitting, in parallel on a cluster.
+
+
+1,,
+Mail-from: From lyang@saiph.hpl.hp.com Wed Jun  7 17:36 PDT 1995
+Received: from hplms2.hpl.hp.com by hplahk2.hpl.hp.com with SMTP
+	(1.37.109.8/15.5+ECS 3.3+HPL1.1) id AA05887; Wed, 7 Jun 1995 17:36:39 -0700
+Return-Path: <lyang@saiph.hpl.hp.com>
+Received: from saiph.hpl.hp.com by hplms2.hpl.hp.com with ESMTP
+	(1.37.109.15/15.5+ECS 3.3+HPL1.1I) id AA002142054; Wed, 7 Jun 1995 17:40:55 -0700
+Received: from localhost by saiph.hpl.hp.com with SMTP
+	(1.37.109.15/15.5+ECS 3.3+HPL1.1) id AA058162054; Wed, 7 Jun 1995 17:40:54 -0700
+Message-Id: <199506080040.AA058162054@saiph.hpl.hp.com>
+To: karp@hplms2.hpl.hp.com
+Cc: Long Yang <lyang@hplabsz.hpl.hp.com>
+Subject: GBRP
+Date: Wed, 07 Jun 95 17:40:53 -0700
+From: Long Yang <lyang@saiph.hpl.hp.com>
+
+*** EOOH ***
+Return-Path: <lyang@saiph.hpl.hp.com>
+To: karp@hplms2.hpl.hp.com
+Cc: Long Yang <lyang@hplabsz.hpl.hp.com>
+Subject: GBRP
+Date: Wed, 07 Jun 95 17:40:53 -0700
+From: Long Yang <lyang@saiph.hpl.hp.com>
+
+Dear GBRPer:
+
+Thank you for your support of Grass-Root Basic Reserach Program by your active
+particition. Attached is the comment on your proposal from your reviewer.
+Being the review organizer, I would like to explain to you how the review of 
+your proposal was carried out. This is not only to show you that your
+proposals were carefully reviewed, but also to solicit your input to see
+anything you feel inapropriate. Your input is very important in order to 
+further improve the process. Please send me your comments.
+
+(1) As suggested by one of the applicants to GBRP, I decided to make the
+    review process anonymous. In doing this, I covered up all the names
+    and the organization. 
+
+(2) We have 17 proposals this year. Eight of them came from CRC, eight from
+    MRC and one from SPC. The diversity of topics was a challenge to me to
+    find appropriate reviewers because of my limited aquaintance specially in 
+    CRC. Due to the nature of the proposals, 5 out 8 reviewers came from
+    MRC and 3 from CRC. These reviewers were recommended by others (lab. 
+    directors, department heads, and others). They had to show their
+    comfortness in reviewing some spectific proposals.
+
+(3) Each reviewer were asked to review two or three proposals. But, they were
+    encouraged to look over other proposals so that some sort of calibration
+    could be achieved. For each proposal, the reviewer gave the score for
+    the research content and the quality.
+
+(4) The review meeting was held. Each reviewer gave his/her opinion toward
+    the assigned proposals. If the reviewer favored the proposal, he/she
+    try to convince the rest of the committee. Ocasually, when a reviewer
+    disfavor one proposal, he/she was also challenged by others. It was the
+    way to rule out the personal preference.
+
+(5) Finally, each reviewer selected 6 favorite proposals. The review organizer
+    only have one vote to break the tie if it happened. The proposals recieved
+    more votes were selected by GBRP.
+
+(6) After the meeting, the reviewers sent the written comments to the review
+    organizer. In this comments, they were asked to provide two suggestions
+    to the proposal.
+
+    (i)  Suggest something to improve the proposal
+    (ii) The suggested outcome from the work if selected.
+
+    The first suggestion is to provide the authors how to improve their proposal
+    so that it will fit the scope of GBRP better.
+
+    The second suggestion is to provide the authors a goal to accomplish
+    during the summer if the proposal is selected. You don't need to follow
+    this suggestion. 
+
+Sincerely,
+
+Long
+
+--------------------------------Attachment 1------------------------
+The proposal entitled "Fast Multi-Dimensional FFTs " 
+
+     is __________  
+     is not __X___
+
+selected by 1995 GBRP because the amount of the research content is not clear.
+
+The comment of this project is as follows:
+
+------------------------------------------
+Can you suggest something to improve the proposal?
+
+Should this proposal selected, what is the outcome you would like to see?
+
+
+Proposal indicates that algorithms were developed and implemented on vector
+machines, and hints that the algorithms are novel and elegantly conceived.
+It proposes re-implementation of the algorithm on HP machines, followed by
+implementation on a parallel cluster of machines.
+
+As described, the emphasis of the work appears to be re-implementation on a
+HP machine, and the research content and/or contribution was not clear.
+
+It might be inferred that re-implementation on a HP machine
+may help the algorithm to run significantly faster than anything else
+available, and if so, then research contribution might lie in the general
+area of attempting to identifying the factors preventing a sequential machine
+running as fast as a more expensive vector machine.
+
+Suggested enhancements to this proposal would be to identify the
+potential research questions that might be answered.
+
+
+
+1,,
+Mail-from: From lyang@saiph.hpl.hp.com Mon Aug 14 09:13 PDT 1995
+Received: from hplms2.hpl.hp.com by hplahk2.hpl.hp.com with SMTP
+	(1.37.109.8/15.5+ECS 3.3+HPL1.1) id AA12634; Mon, 14 Aug 1995 09:13:33 -0700
+Return-Path: <lyang@saiph.hpl.hp.com>
+Received: from saiph.hpl.hp.com by hplms2.hpl.hp.com with ESMTP
+	(1.37.109.16/15.5+ECS 3.3+HPL1.1I) id AA227716848; Mon, 14 Aug 1995 09:14:08 -0700
+Received: from localhost by saiph.hpl.hp.com with SMTP
+	(1.37.109.15/15.5+ECS 3.3+HPL1.1) id AA034896842; Mon, 14 Aug 1995 09:14:02 -0700
+Message-Id: <199508141614.AA034896842@saiph.hpl.hp.com>
+To: Hong Lin <hlin@hplabsz.hpl.hp.com>, Huan Ren <ren@hplms2.hpl.hp.com>
+Cc: Long Yang <lyang@hplabsz.hpl.hp.com>, karp@hplms2.hpl.hp.com
+Subject: FFT
+Date: Mon, 14 Aug 95 09:14:01 -0700
+From: Long Yang <lyang@saiph.hpl.hp.com>
+
+*** EOOH ***
+Return-Path: <lyang@saiph.hpl.hp.com>
+To: Hong Lin <hlin@hplabsz.hpl.hp.com>, Huan Ren <ren@hplms2.hpl.hp.com>
+Cc: Long Yang <lyang@hplabsz.hpl.hp.com>, karp@hplms2.hpl.hp.com
+Subject: FFT
+Date: Mon, 14 Aug 95 09:14:01 -0700
+From: Long Yang <lyang@saiph.hpl.hp.com>
+
+Huan and Hong:
+
+I called Alan Karp this morning regarding your FFT problem. He is very willing
+to help. Would you please call him (7-6766) and make an arrangement to
+get together? If my time is allowed, I would like to join you.
+
+Regards,
+
+Long
+
+
+1, answered,,
+Mail-from: From goedeck@prr.mpi-stuttgart.mpg.de Tue Jul  9 07:07 PDT 1996
+Received: from hplms2.hpl.hp.com by hplahk2.hpl.hp.com with SMTP
+	(1.37.109.8/15.5+ECS 3.3+HPL1.1) id AA03522; Tue, 9 Jul 1996 07:07:36 -0700
+Return-Path: <goedeck@prr.mpi-stuttgart.mpg.de>
+Received: from hplms26.hpl.hp.com by hplms2.hpl.hp.com with ESMTP
+	(1.37.109.16/15.5+ECS 3.3+HPL1.1I) id AA009681262; Tue, 9 Jul 1996 07:07:42 -0700
+Received: from parrix18.mpi-stuttgart.mpg.de ([134.105.17.128]) by hplms26.hpl.hp.com with SMTP
+	(1.37.109.16/15.5+ECS 3.3+HPL1.1S) id AA021250959; Tue, 9 Jul 1996 07:02:39 -0700
+Received: by parrix18.mpi-stuttgart.mpg.de (AIX 4.1/UCB 5.64/BelWue-2.0RSbeta)
+          id AA17220; Tue, 9 Jul 1996 15:59:23 +0200
+Date: Tue, 9 Jul 1996 15:59:23 +0200
+From: goedeck@prr.mpi-stuttgart.mpg.de (Stefan Goedecker)
+Message-Id: <9607091359.AA17220@parrix18.mpi-stuttgart.mpg.de>
+To: karp@hplms2.hpl.hp.com
+
+*** EOOH ***
+Return-Path: <goedeck@prr.mpi-stuttgart.mpg.de>
+Date: Tue, 9 Jul 1996 15:59:23 +0200
+From: goedeck@prr.mpi-stuttgart.mpg.de (Stefan Goedecker)
+To: karp@hplms2.hpl.hp.com
+
+
+	Dear Dr Karp,
+
+	When I looked at SIAM a few days ago, I saw an article of yours about 
+	bit reversal in FFT's. (I liked very much your approach to discuss these 
+	things in close connection with modern computer architectures)
+	This article suggest that you have some interest in FFT's in general.
+	As I have mentioned in our entry to the GB competition I have devolopped
+	3-dim FFT packages. I have an all purpose (not processor optimized) FFT
+	that gives very good performance on a wide range of computer architectures
+	ranging from RISC microprocessors to vector supercomputers. The tuning 
+	for all these architectures is done by setting one single parameter, 
+	namely the cache size (on vector machines it is set to 0). This routine 
+	can be up to 25 percent slower than vendor optimized routines 
+	but in some cases it is actually faster. My routines 
+	are significanly faster than the software that can be found in various 
+	public domain libraries. In addition 
+	to this all purpose version I still have 2 versions that are optimized 
+	for the IBM power2 and the MIPS R8000 architecture. My routines are 
+	used by several research groups in the field of electronic structure in the US 
+	and Europe and I also gave a nonexclusive license agreement to a commercial company.
+	
+	FFTs are used in many fields of science and engineering and I am wondering 
+	whether it might be useful to make these routines available to a 
+	wider public outside the field of electronic structure where people 
+	know about my FFT's. It seems to me that there is a certain gap in good 
+	standarized public software. With the BLAS and LAPACK standard there 
+	is now efficient public domain software available for these fields,
+	but for the field of FFT's nothing of comparable quality is available 
+	according to my knowledge.
+
+	My first question to you is whether you think that introducing a
+	standard software for both one and higher dimensionsl FFTs in the 
+	same way as it was done for basic and linear algebra problems would 
+	really be useful to a wide community of users and feasible.
+
+	If this was the case I think a highly respected person in the field 
+	of scientific computing would be needed to coordinate the efforts. 
+	(Since this is a major project it will certainly involve several people,
+	I could for instance contribute higher dimensional FFT's) 
+	Would you be interested (and have time) to coordinate such a project?
+	
+
+Best regards
+
+	Stefan  
+
+
+**********************************************
+* Dr Stefan Goedecker                        *
+* Max-Planck Institut fuer Festkoerperphysik *
+* Heisenbergstr. 1                           *
+* D-70569 Stuttgart                          *
+* Germany                                    *
+*                                            *
+* E-mail: goedeck@prr.mpi-stuttgart.mpg.de   *
+* Tel. (0711) 689-1648                       *
+* FAX  (0711) 689-1702                       *
+**********************************************
+
+
+
+
+1,,
+Mail-from: From karp@hplahk2.hpl.hp.com Fri Jul 12 08:02 PDT 1996
+Received: by hplahk2.hpl.hp.com
+	(1.37.109.8/15.5+ECS 3.3+HPL1.1) id AA09592; Fri, 12 Jul 1996 08:02:15 -0700
+Date: Fri, 12 Jul 1996 08:02:15 -0700
+From: Alan Karp <karp@hplahk2.hpl.hp.com>
+Return-Path: <karp@hplahk2.hpl.hp.com>
+Message-Id: <9607121502.AA09592@hplahk2.hpl.hp.com>
+To: goedeck@prr.mpi-stuttgart.mpg.de
+In-Reply-To: <9607091359.AA17220@parrix18.mpi-stuttgart.mpg.de> (goedeck@prr.mpi-stuttgart.mpg.de)
+Reply-To: "Alan Karp" <karp@hpl.hp.com>
+Subject: FFT packages
+
+*** EOOH ***
+Date: Fri, 12 Jul 1996 08:02:15 -0700
+From: Alan Karp <karp@hplahk2.hpl.hp.com>
+Return-Path: <karp@hplahk2.hpl.hp.com>
+To: goedeck@prr.mpi-stuttgart.mpg.de
+In-Reply-To: <9607091359.AA17220@parrix18.mpi-stuttgart.mpg.de> (goedeck@prr.mpi-stuttgart.mpg.de)
+Reply-To: "Alan Karp" <karp@hpl.hp.com>
+Subject: FFT packages
+
+You should talk to David Bailey at NASA Ames (dbailey@nas.nasa.gov)
+who is the real expert on FFTs.  I think he'll be interested.
+
+
+1, edited,,
+Mail-from: From na-digest-bounces@netlib2.cs.utk.edu Sun Sep 14 18:07:48 EDT 1997
+Received: from hplms26.hpl.hp.com (root@hplms26.hpl.hp.com [15.255.168.31]) by hplahk2.hpl.hp.com with ESMTP (8.7.1/8.7.1) id PAA21671 for <karp@hplahk2.hpl.hp.com>; Sun, 14 Sep 1997 15:07:48 -0700 (PDT)
+Received: from netlib2.cs.utk.edu (NETLIB2.CS.UTK.EDU [128.169.92.17])
+	by hplms26.hpl.hp.com (8.8.6/8.8.6 HPLabs Relay) with SMTP id PAA19008;
+	Sun, 14 Sep 1997 15:06:47 -0700 (PDT)
+Received: from na-net.ornl.gov by netlib2.cs.utk.edu with SMTP (cf v2.9t-netlib)
+	id RAA24746; Sun, 14 Sep 1997 17:52:52 -0400
+Received: from turing.mathworks.com by netlib2.cs.utk.edu with ESMTP (cf v2.9t-netlib)
+	id RAA23827; Sun, 14 Sep 1997 17:30:01 -0400
+Received: from acoma.mathworks.com (acoma [144.212.12.24]) by turing.mathworks.com (8.8.5/8.7.3) with ESMTP id RAA10393 for <na.send2list@na-net.ornl.gov>; Sun, 14 Sep 1997 17:35:50 -0400 (EDT)
+From: Cleve Moler <moler@mathworks.com>
+Received: (moler@localhost) by acoma.mathworks.com (8.7.1/8.6.12-mathworks-client) id RAA05514 for na.send2list@na-net.ornl.gov; Sun, 14 Sep 1997 17:35:49 -0400 (EDT)
+Date: Sun, 14 Sep 1997 17:35:49 -0400 (EDT)
+Message-Id: <199709142135.RAA05514@acoma.mathworks.com>
+To: na-digest list:;
+Subject: NA Digest, V. 97, # 37
+Reply-to: na.digest@na-net.ornl.gov
+
+*** EOOH ***
+From: Cleve Moler <moler@mathworks.com>
+Date: Sun, 14 Sep 1997 17:35:49 -0400 (EDT)
+To: na-digest list:;
+Subject: NA Digest, V. 97, # 37
+Reply-to: na.digest@na-net.ornl.gov
+
+
+NA Digest   Sunday, September 14, 1997   Volume 97 : Issue 37
+
+------------------------------
+
+From: Frigo and Johnson <fftw@theory.lcs.mit.edu>
+Date: Mon, 08 Sep 1997 21:26:42 -0400
+Subject: FFTW, Fastest Fourier Transform in the West
+
+We are pleased to announce release 1.2 of FFTW, a C library for performing
+the Fast Fourier Transform (FFT) in one or more dimensions.  FFTW 1.2
+incorporates a number of improvements over version 1.1, including
+distributed-memory transforms for MPI and the ability to save plans.
+
+Download FFTW or find out more information at the web page:
+
+                   http://theory.lcs.mit.edu/~fftw
+
+Some features of FFTW:
+
+* Portable performance competitive with vendor-optimized FFTs, as
+  demonstrated by our extensive benchmarks of available FFT software
+  (results available on our web page).
+
+* Not limited to sizes that are powers of two.
+
+* Real-complex transforms.
+
+* Parallel transforms for Cilk, threads (POSIX & others), and MPI.
+
+* Free for non-commercial use.
+
+Cordially,
+
+Matteo Frigo
+Steven G. Johnson
+
+
+------------------------------
+
+End of NA Digest
+**************************
+-------
+
+

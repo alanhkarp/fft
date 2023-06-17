@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0037)http://cap-lore.com/code/ExpPerm.html -->
+<HTML><HEAD><TITLE>Exponential Permutations</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META content="MSHTML 6.00.2800.1264" name=GENERATOR></HEAD>
+<BODY>"Exponential Permutations" is a strange title but I have seen several 
+applications where it was necessary to permute an array of 2<SUP>n</SUP> 
+elements where each element was to move to a new index whose bits were a fixed 
+permutation of the bits of the old index. Thus a permutation on n address bits 
+was to define a permutation of 2<SUP>n</SUP> array elements. Thus the name 
+"Exponential Permutations". 
+<P>Just as permutation can always be decomposed into elementary permutations (by 
+various definitions of "elementary"), the corresponding exponential permutations 
+can likewise be decomposed. Such a pattern may not always lead to the most 
+efficient plan for the large permutation, but it may lead to a general and easy 
+to understand program. Sometimes it will be more efficient than algorithms with 
+fewer steps and usually the large permutation can be done in place. 
+<P>I first recall this pattern in a program for the <A 
+href="http://cap-lore.com/Hardware/HarvestMB.html">Harvest computer</A>. The 
+task was to transpose an array of 2<SUP>10</SUP> by 2<SUP>10</SUP> bits. 
+(Addressing on Harvest was to the bit.) A 20 bit integer served as index into 
+the array. The elementary permutation we chose rotated the 20 bits of the array 
+index left by one, and repeated that permutation 10 times. This swapped the left 
+10 bits of the index with the right 10 bits, thus performing the transposition. 
+Each rotation of the index by one was accomplished by passing over the array of 
+2<SUP>20</SUP> bits. This transformation on the 2<SUP>20</SUP> bits was fast for 
+the Harvest because the Harvest had special table driven stream processing which 
+could merge two bit streams into one with alternate bits from the two inputs. 
+<BR><TT>for(j=0; j&lt;(1&lt;&lt;16); ++j) b[j] = 
+table[c[j]][c[j+(1&lt;&lt;16)];</TT><BR>could be performed without the 
+instruction counter. b and table are arrays of 16 bit values and c is a previous 
+generation of the data viewed as an array of 8 bit bytes. After 10 identical 
+generations the permutation was done. 
+<P>While each bit traveled to and from from the processor 10 times, it traveled 
+each time with 63 other bits that were each on a profitable trip. The naïve 
+programs would have required 2<SUP>20</SUP> fetches or stores of isolated bits. 
+The optimized program required 10*2*2<SUP>20</SUP>/64 fetches and stores. 
+<P>Peter Deutch selected a different base operation to transpose a square array 
+of pixels. His elementary permutations swapped the bits of the array index, left 
+and right, one at a time. The intermediate images were amusing. The nature of 
+BitBlt made this efficient for the SmallTalk world. 
+<P>Yet another instance of this pattern is the index bit reversal portion of the 
+<A href="http://cap-lore.com/MathPhys/fft/" name=fft>Fast Fourier Transform</A>. 
+The required permutation of array indexes, is to reverse the order of the bits. 
+I suspect that the fastest way to do this does not fit in the exponential 
+pattern, but it much easier to understand. Again the exponential version may be 
+more efficient of the caches than the fancy schemes that execute fewer 
+instructions. 
+<H3>Connections with other fields</H3>Transposing the bits on the Harvest moved 
+the data in the same pattern as vonNeumann's binary merge version of sort. It 
+achieves the same cache efficiency as the sort did with magnetic tapes. There 
+are "block algorithms" for manipulating matricies that pass over the matricies 
+by sub-blocks instead of the naïve row and column order. This is a related idea 
+which achieves related memory bandwidth benefits. 
+<P>Data base query optimization resorts to such patterns. </P></BODY></HTML>

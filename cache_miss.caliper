@@ -1,0 +1,778 @@
+ Enter number of dimensions and power of 2 for each
+Version  CPU sec   Mflops  Error     Comments
+fourn      0.000  ********  0.00E+00  Numerical Recipes
+fftbb      0.155   678.531  0.00E+00  Combine fftz and fftaa
+================================================================================
+HP Caliper Data Cache Misses Report
+================================================================================
+
+Target Application
+  Program:                    /nis.home/karp/fft/profilefft
+  Invocation:                 ./profilefft 
+  Process ID:                 10579 (started by Caliper)
+  Start time:                 11:01:47 AM
+  End time:                   11:01:57 AM
+  Last modified:              March 19, 2004 at 11:17 AM
+  Memory model:               ILP32
+  Main module text page size: default
+
+Processor Information
+  Machine name:         bessel
+  Number of processors: 4
+  Processor type:       Itanium2
+  Processor speed:      1000 MHz
+
+Run Information
+  Date:    March 19, 2004
+  Version: HP Caliper - HP-UX Itanium Version A.3.5.6 (12/28/2003) *stable*
+  OS:      HP-UX B.11.23 U ia64
+
+Target Execution Time
+  Real time:   10.358 seconds
+  User time:    8.158 seconds
+  System time:  0.600 seconds
+
+Sampling Specification
+  Sampling event:             DATA_EAR_EVENTS
+  Sampling rate:              10000 events
+  Sampling rate variation:    500 (5.00% of sampling rate)
+  Sampling counter privilege: user_priv_level (user-space sampling)
+  Data granularity:           16 bytes
+  Number of samples:          10571
+  Data sampled:               Data cache miss
+
+Load Modules Included
+--------------------------------------------------------------------------
+  Load Module          Start Address        End Address          Full Path
+--------------------------------------------------------------------------
+  profilefft           0x0000000004000000   0x0000000004116c10   /nis.home/karp/fft/profilefft
+  libm.so.1            0x200000006f62c000   0x200000006f7912c0   /usr/lib/hpux32//libm.so.1
+  libc.so.1            0x200000006f3ac000   0x200000006f6289e0   /usr/lib/hpux32//libc.so.1
+  libunwind.so.1       0x200000006f34a000   0x200000006f38f7d0   /usr/lib/hpux32//libunwind.so.1
+  libuca.so.1          0x200000006f342000   0x200000006f349af0   /usr/lib/hpux32//libuca.so.1
+  libdl.so.1           0x200000006f3a2000   0x200000006f3a4660   /usr/lib/hpux32/libdl.so.1
+--------------------------------------------------------------------------
+
+Load Modules Excluded
+--------------------------------------------------------------------------
+  Load Module          Start Address        End Address          Full Path
+--------------------------------------------------------------------------
+  *kernel gateway*     0xe000000111000000   0xe0000001110026b0   [pseudo-load-module]
+  uld.so               0x60000000c0001000   0x60000000c00174b0   /usr/lib/hpux32/uld.so
+  dld.so               0x200000006f79b000   0x200000006f7fad00   /usr/lib/hpux32/dld.so
+--------------------------------------------------------------------------
+
+Report Help
+  See help section at the end of this report,
+  or see /opt/caliper/doc/text/dcache_miss.help.
+
+Data Cache Metrics Summed for Entire Run
+----------------------------------------------
+Counter               Priv. Mask         Count
+----------------------------------------------
+L1D_READS              8 (USER)      121416822
+L1D_READ_MISSES_ALL    8 (USER)         378554
+DATA_REFERENCES        8 (USER)     3242464275
+----------------------------------------------
+L1 data cache miss percentage:
+   0.31 = 100 * (L1D_READ_MISSES_ALL / L1D_READS)
+
+Percent of data references accessing L1 data cache:
+   3.74 = 100 * (L1D_READS / DATA_REFERENCES)
+----------------------------------------------
+
+Load Module Summary
+------------------------------------------------------------------
+% Total  Cumulat                               Avg.    
+Latency    % of         Sampled      Latency  Laten.   
+ Cycles    Total         Misses       Cycles  Cycles   Load Module
+------------------------------------------------------------------
+ 99.94    99.94           10563        62453     5.9   profilefft
+  0.06   100.00               8           40     5.0   libm.so.1
+------------------------------------------------------------------
+100.00   100.00           10571        62493     5.9   Total
+------------------------------------------------------------------
+
+Function Summary 
+--------------------------------------------------------------------------------------------
+% Total  Cumulat                               Avg.                                     
+Latency    % of         Sampled      Latency  Laten.                                    
+ Cycles    Total         Misses       Cycles  Cycles  Function                          File
+--------------------------------------------------------------------------------------------
+ 92.40    92.40            9802        57744     5.9  profilefft::fftbb_                fftbb.f
+  7.32    99.72             734         4574     6.2  profilefft::_start                profilefft.f
+  0.21    99.93              26          130     5.0  profilefft::ran2_                 ran2.f
+  0.06    99.99               8           40     5.0  libm.so.1::_Trigfstart_v2         trig.imp
+  0.01   100.00               1            5     5.0  profilefft::reorder2_             reorder2.f
+--------------------------------------------------------------------------------------------
+[Minimum function entries: 5, percent cutoff: 0.10, cumulative percent cutoff: 100.00]
+
+Function Details 
+-----------------------------------------------------------------------
+% Total                                Avg.          Line|  
+Latency        Sampled      Latency   Laten.         Slot|  >Statement|
+ Cycles         Misses       Cycles   Cycles    Col,Offset  Instruction
+-----------------------------------------------------------------------
+ 92.40     [profilefft::fftbb_, 0x404bb00, fftbb.f]
+                 9802        57744      5.9             ~4  Function Totals
+         --------------------------------------------------------------
+        [/nis.home/karp/fft/fftbb.f]
+                                                       ~57   >         do i = 0, lentot - 1
+                                                  0x04f0:0    M       adds          r20=0,r95
+                                                        :1    I       mov.i         ar.lc=r17
+                                                        :2    I_      nop.i         0 ;;
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                  166          965      5.8       0x0500:0    M       ldfs          f11=[r14],4
+                  164          928      5.7             :1    M       ldfs.a        f9=[r9],8
+                    0            0                      :2    I       and           r15=r20,r24
+                   (2)         (14)    (7.0)           ~58  *>           iseg = iand(i,mask2)
+                                                  0x0510:0    M       and           r23=r20,r22
+                                                        :1    M       adds          r17=1,r20
+                                                        :2    I_      adds          r19=2,r20 ;;
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                  128          727      5.7       0x0520:0    M       ldfs          f32=[r14],4
+                    0            0                      :1    M       shladdp4      r15=r15,2,r36
+                    0            0                      :2    I       and           r16=r17,r24
+                   (2)         (14)    (7.0)           ~58  *>           iseg = iand(i,mask2)
+                                                  0x0530:0    M       and           r26=r17,r22
+                                                        :1    M       and           r17=r19,r24
+                                                        :2    I_      and           r21=r19,r22 ;;
+                 (216)       (1610)    (7.5)           ~59  *>           ir = irev(iand(i,mask1)) + iseg
+                    2           14      7.0       0x0540:0    M       ld4           r15=[r15]
+                  103          779      7.6             :1    M       ldfs.a        f15=[r14],4
+                    0            0                      :2    I       shladdp4      r16=r16,2,r36
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                  113          643      5.7       0x0550:0    M       ldfs.a        f8=[r9],12
+                    0            0                      :1    M       shladdp4      r17=r17,2,r36
+                    0            0                      :2    I_      adds          r19=3,r20 ;;
+                   56          410      7.3       0x0560:0    M       ldfs.a        f10=[r14],4
+                    0            0                      :1    M       ld4           r16=[r16]
+                    0            0                      :2    I       add           r27=r15,r23
+                 (216)       (1610)    (7.5)           ~59  *>           ir = irev(iand(i,mask1)) + iseg
+                    1            5      5.0       0x0570:0    M       ld4           r15=[r17]
+                    0            0                      :1    M       and           r17=r19,r24
+                    0            0                      :2    I_      and           r23=r19,r22 ;;
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                  106          757      7.1       0x0580:0    M       ldfs.a        f14=[r14],8
+                    0            0                      :1    M       add           r19=r27,r61
+                    0            0                      :2    I       add           r16=r16,r26
+                 (216)       (1610)    (7.5)           ~59  *>           ir = irev(iand(i,mask1)) + iseg
+                                                  0x0590:0    M       add           r21=r15,r21
+                                                        :1    M       shladdp4      r17=r17,2,r36
+                                                        :2    I_      adds          r15=4,r20 ;;
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                   97          524      5.4       0x05a0:0    M       ldfs.a        f13=[r14],8
+                    0            0                      :1    M       ld4           r28=[r17]
+                    0            0                      :2    I       shladdp4      r27=r19,3,r32
+                                                  0x05b0:0    M       add           r17=r16,r61
+                                                        :1    M       add           r21=r21,r61
+                                                        :2    I_      and           r16=r15,r24 ;;
+                  115          828      7.2       0x05c0:0    M       ldfs.a        f12=[r14],4
+                    0            0                      :1    M       adds          r19=4,r27
+                    0            0                      :2    I       shladdp4      r26=r17,3,r32
+                                                  0x05d0:0    M       shladdp4      r21=r21,3,r32
+                                                        :1    M       add           r28=r28,r23
+                                                        :2    I_      shladdp4      r16=r16,2,r36 ;;
+                  110          614      5.6       0x05e0:0    M       ldfs.a        f7=[r14],8
+                    0            0                      :1    M       ld4           r23=[r16]
+                    0            0                      :2    I       adds          r17=4,r26
+                                                  0x05f0:0    M       adds          r16=4,r21
+                                                        :1    M       add           r28=r28,r61
+                                                        :2    I_      and           r15=r15,r22 ;;
+                   89          646      7.3       0x0600:0    M       ldfs.a        f6=[r14],-36
+                    0            0                      :1    M       stfs          [r27]=f11
+                    0            0                      :2    I       shladdp4      r27=r28,3,r32
+                 (216)       (1610)    (7.5)           ~59  *>           ir = irev(iand(i,mask1)) + iseg
+                                                  0x0610:0    M       add           r29=r23,r15
+                                                        :1    M       adds          r23=5,r20
+                                                        :2    I_      adds          r15=6,r20 ;;
+                  (89)        (518)    (5.8)           ~61   >         enddo
+                    1            7      7.0       0x0620:0    M       ldfs.c.clr    f15=[r14],4
+                   88          511      5.8             :1    M       ldfs.a        f11=[r9],12
+                    0            0                      :2    I       adds          r28=4,r27
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                                                  0x0630:0    M       stfs          [r19]=f32
+                                                        :1    M       add           r19=r29,r61
+                                                        :2    I_      and           r29=r23,r24 ;;
+                 (216)       (1610)    (7.5)           ~59  *>           ir = irev(iand(i,mask1)) + iseg
+                    1           11     11.0       0x0640:0    M       ldfs.c.clr    f10=[r14],4
+                  109          801      7.3             :1    M       ldfs.a        f32=[r9],-4
+                    0            0                      :2    I       shladdp4      r19=r19,3,r32
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                                                  0x0650:0    M       stfs          [r26]=f15
+                                                        :1    M       shladdp4      r26=r29,2,r36
+                                                        :2    I_      and           r29=r23,r22 ;;
+                   (2)         (14)    (7.0)           ~58  *>           iseg = iand(i,mask2)
+                                                  0x0660:0    M       ldfs.c.clr    f14=[r14],4
+                                                        :1    M       ld4           r23=[r26]
+                                                        :2    I       adds          r26=4,r19
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                   97          555      5.7       0x0670:0    M       ldfs.a        f15=[r9],-24
+                    0            0                      :1    M       stfs          [r17]=f10
+                    0            0                      :2    I_      and           r17=r15,r24 ;;
+                 (216)       (1610)    (7.5)           ~59  *>           ir = irev(iand(i,mask1)) + iseg
+                                                  0x0680:0    M       ldfs.c.clr    f9=[r14],8
+                                                        :1    M       stfs          [r21]=f14
+                                                        :2    I       add           r21=r23,r29
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                                                  0x0690:0    M       stfs          [r16]=f9
+                                                        :1    M       shladdp4      r16=r17,2,r36
+                                                        :2    I_      and           r17=r15,r22 ;;
+                   (2)         (14)    (7.0)           ~58  *>           iseg = iand(i,mask2)
+                    2           14      7.0       0x06a0:0    M       ldfs.c.clr    f8=[r14],4
+                    0            0                      :1    M       ldfs.c.clr    f13=[r9],12
+                    0            0                      :2    I       add           r15=r21,r61
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                                                  0x06b0:0    M       stfs          [r28]=f8
+                                                        :1    M       stfs          [r27]=f13
+                                                        :2    I_      adds          r21=7,r20 ;;
+                  (89)        (518)    (5.8)           ~61   >         enddo
+                                                  0x06c0:0    M       ldfs.c.clr    f12=[r14],8
+                                                        :1    M       ldfs.c.clr    f7=[r9],20
+                                                        :2    I       shladdp4      r23=r15,3,r32
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                  122          908      7.4       0x06d0:0    M       ldfs.a        f8=[r8],64
+                    0            0                      :1    M       stfs          [r19]=f12
+                    0            0                      :2    I_      and           r19=r21,r24 ;;
+                 (216)       (1610)    (7.5)           ~59  *>           ir = irev(iand(i,mask1)) + iseg
+                                                  0x06e0:0    M       ldfs.c.clr    f11=[r14],4
+                                                        :1    M       ld4           r16=[r16]
+                                                        :2    I       adds          r15=4,r23
+                (1531)      (10043)    (6.6)           ~60  *>           d(ir+lip) = d(i+lop)
+                  168         1538      9.2       0x06f0:0    M       ldfs.a        f9=[r9],-4
+                    0            0                      :1    M       stfs          [r26]=f7
+                    0            0                      :2    I_      shladdp4      r19=r19,2,r36 ;;
+                 (216)       (1610)    (7.5)           ~59  *>           ir = irev(iand(i,mask1)) + iseg
+                                                  0x0700:0    M       ldfs.c.clr    f6=[r14],r11
+                                                        :1    M       ld4           r19=[r19]
+                                                        :2    I       add           r16=r16,r17
+                                                      ~143   >                  do j = 0, if2e - 1
+                                                  0x0cd0:0    M       adds          r16=28,r71
+                                                        :1    I       adds          r15=60,r71
+                                                        :2    I_      adds          r14=0,r70 ;;
+                (1643)       (8395)    (5.1)          ~159  *>                     t0 = d(k+1)*cc1
+                  475         2432      5.1       0x0ce0:0    M (p16) ldfs.a        f44=[r79],-4
+                  515         2632      5.1             :1    M (p16) ldfs.a        f45=[r73],-4
+                    0            0                      :2    F (p17) fma.s         f72=f67,f1,f66
+                (1383)       (7030)    (5.1)          ~161  *>                     t2 = d(k+3)*cc3
+                  269         1357      5.0       0x0cf0:0    M (p16) ldfs.a        f46=[r16],-4
+                  433         2189      5.1             :1    M (p16) ldfs.a        f47=[r15],-4
+                    0            0                      :2    F_(p17) fma.s         f73=f70,f1,f69 ;;
+                (1643)       (8395)    (5.1)          ~159  *>                     t0 = d(k+1)*cc1
+                  279         1419      5.1       0x0d00:0    M (p16) ldfs.a        f43=[r79],12
+                  374         1912      5.1             :1    M (p16) ldfs.a        f40=[r73],12
+                    0            0                      :2    F (p17) fma.s         f54=f58,f1,f63
+                (1383)       (7030)    (5.1)          ~161  *>                     t2 = d(k+3)*cc3
+                  288         1491      5.2       0x0d10:0    M (p16) ldfs.a        f41=[r16],12
+                  392         1988      5.1             :1    M (p16) ldfs.a        f42=[r15],-56
+                    0            0                      :2    F_(p17) fma.s         f55=f57,f1,f61 ;;
+                (1037)       (5245)    (5.1)          ~147  *>                     t2 = d(k+2)*cc2
+                  292         1472      5.0       0x0d20:0    M (p16) ldfs.a        f36=[r79],r77
+                  380         1922      5.1             :1    M (p16) ldfs.a        f37=[r73],-36
+                    0            0                      :2    F (p17) fma.s         f52=f59,f1,f60
+                 (704)       (3566)    (5.1)          ~146  *>                     t1 = d(k+4)*cc4
+                  303         1531      5.1       0x0d30:0    M (p16) ldfs.a        f38=[r16],12
+                  401         2035      5.1             :1    M (p16) ldfs.a        f39=[r15],32
+                    0            0                      :2    F_(p17) fma.s         f53=f56,f1,f68 ;;
+                (1037)       (5245)    (5.1)          ~147  *>                     t2 = d(k+2)*cc2
+                    0            0                0x0d40:0    M (p16) lfetch.nt1    [r79],r75
+                  365         1851      5.1             :1    M (p16) ldfs.a        f33=[r73],-8
+                    0            0                      :2    F (p17) fma.s         f50=f64,f1,f62
+                 (772)       (3916)    (5.1)          ~148  *>                     t3 = d(k+6)*cc6
+                  338         1720      5.1       0x0d50:0    M (p16) ldfs.a        f34=[r16],44
+                  434         2196      5.1             :1    M (p16) ldfs.a        f35=[r15],92
+                    0            0                      :2    F_(p17) fma.s         f51=f65,f1,f71 ;;
+                 (461)       (2360)    (5.1)          ~186   >                     d(i+j+lip+7*lopfac) = d6 - d7
+                    0            0                0x0d60:0    M (p16) lfetch.nt1    [r40]
+                  461         2360      5.1             :1    M (p16) ldfs.a        f32=[r79],-4
+                    0            0                      :2    F (p17) fms.s         f48=f67,f1,f66
+                                                      ~179  *>                     d(i+j+lip         ) = d0 + d1
+                                                  0x0d70:0    M (p17) stfs          [r85]=f72,4
+                                                        :1    M (p16) adds          r32=64,r40
+                                                        :2    F_(p17) fms.s         f49=f70,f1,f69 ;;
+                (1643)       (8395)    (5.1)          ~159  *>                     t0 = d(k+1)*cc1
+                                                  0x0e50:0    M       nop.m         0
+                                                        :1    M       nop.m         0
+                                                        :2    F_(p16) fma           f71=f45,f9,f0 ;;
+                   (4)         (35)    (8.8)          ~160  *>                     t1 = d(k+5)*cc5
+                    1           11     11.0       0x0e60:0    M (p16) ldfs.c.clr    f39=[r79],24
+                    2           19      9.5             :1    M (p16) ldfs.c.clr    f43=[r73],8
+                    0            0                      :2    F (p16) fma.s         f66=f43,f18,f50
+                 (461)       (2360)    (5.1)          ~186   >                     d(i+j+lip+7*lopfac) = d6 - d7
+                                                  0x0e70:0    M (p17) stfs          [r82]=f73,4
+                                                        :1    M       nop.m         0
+                                                        :2    F_(p16) fma.s         f72=f40,f9,f69 ;;
+                (1383)       (7030)    (5.1)          ~161  *>                     t2 = d(k+3)*cc3
+                                                  0x0e90:0    M       nop.m         0
+                                                        :1    M       nop.m         0
+                                                        :2    F_(p16) fma.s         f73=f41,f13,f65 ;;
+                    1            5      5.0       0x0ea0:0    M (p16) ldfs.c.clr    f42=[r79],-8
+                    0            0                      :1    M (p16) ldfs.c.clr    f33=[r73],16
+                    0            0                      :2    F (p16) fms.s         f60=f42,f6,f62
+                   (1)          (5)    (5.0)          ~162  *>                     t3 = d(k+7)*cc7
+                                                  0x0eb0:0    M       nop.m         0
+                                                        :1    M       nop.m         0
+                                                        :2    F_(p16) fma.s         f59=f42,f21,f68 ;;
+                    0            0                0x0ec0:0    M (p16) ldfs.c.clr    f34=[r79],-44
+                    1            5      5.0             :1    M (p16) ldfs.c.clr    f35=[r73],4
+                    0            0                      :2    F (p16) fms.s         f56=f43,f19,f67
+                (1643)       (8395)    (5.1)          ~159  *>                     t0 = d(k+1)*cc1
+                                                  0x0ed0:0    M       nop.m         0
+                                                        :1    M       nop.m         0
+                                                        :2    F_(p16) fms.s         f58=f40,f10,f71 ;;
+                   (2)         (10)    (5.0)           ~88  *>		  cc = coeff(iw)
+                                                  0x1900:0    M (p10) adds          r75=4,r40
+                                                        :1    M (p10) adds          r74=4,r39
+                                                        :2    I_(p10) adds          r73=0,r38 ;;
+                    1            5      5.0       0x1910:0    M       ldfs          f18=[r25]
+                    0            0                      :1    M (p10) addl          r29=900,r0
+                    0            0                      :2    I (p10) addl          r28=-908,r0
+                                                  0x1920:0    M (p10) adds          r27=20,r38
+                                                        :1    M (p10) adds          r26=36,r38
+                                                        :2    I_(p10) adds          r25=52,r38 ;;
+                    1            5      5.0       0x1930:0    M       ldfs          f17=[r41]
+                    0            0                      :1    M       add           r17=r17,r71
+                    0            0                      :2    I       add           r14=r71,r14
+                                                       ~95  *>               enddo
+                                                  0x1940:0    M       shladdp4      r10=r71,4,r10
+                                                        :1    M       shladdp4      r9=r71,3,r9
+                                                        :2    B_(p9)  br.dpnt.many  {self}+0x29c0 ;;
+                                                       ~89  *>                  do j = 0, if2e - 1
+                                                  0x1950:0    M       shladdp4      r8=r71,3,r8
+                                                        :1    M       shladdp4      r24=r71,3,r24
+                                                        :2    B_(p7)  br.dpnt.many  {self}+0x1d70 ;;
+                 (797)       (6486)    (8.1)           ~91  *>                     temp = cc*d(2*i+lop+1)
+                  144         1070      7.4       0x1960:0    M       ldfs          f8=[r73],r29
+                  137         1116      8.1             :1    M       ldfs.a        f49=[r27],-16
+                    0            0                      :2    I       nop.i         0
+                  174         1276      7.3       0x1970:0    M       ldfs.a        f48=[r26],-4
+                  108          968      9.0             :1    M       ldfs.a        f46=[r25],-4
+                    0            0                      :2    I_      nop.i         0 ;;
+                    0            0                0x1980:0    M       lfetch.nt1    [r73],r28
+                  112          996      8.9             :1    M       ldfs          f7=[r27],12
+                    0            0                      :2    I       nop.i         0
+                 (863)       (6451)    (7.5)           ~93  *>                     d(i+lip+lopfac) = d(2*i+lop) - temp
+                  111          981      8.8       0x1990:0    M       ldfs.a        f52=[r26],8
+                   85          768      9.0             :1    M       ldfs.a        f50=[r25],-4
+                    0            0                      :2    I_      nop.i         0 ;;
+                    0            0                0x19a0:0    M       lfetch.nt1    [r34]
+                   76          703      9.2             :1    M       ldfs.a        f35=[r73],4
+                    0            0                      :2    I       adds          r32=64,r34
+                 (797)       (6486)    (8.1)           ~91  *>                     temp = cc*d(2*i+lop+1)
+                   55          469      8.5       0x19b0:0    M       ldfs.a        f55=[r27],-4
+                   67          591      8.8             :1    M       ldfs.a        f32=[r26],-12
+                    0            0                      :2    I_      nop.i         0 ;;
+                 (297)       (2060)    (6.9)           ~92  *>                     d(i+lip       ) = d(2*i+lop) + temp
+                   28          248      8.9       0x19c0:0    M       ldfs.a        f56=[r73],12
+                   34          300      8.8             :1    M       ldfs.a        f15=[r27],12
+                    0            0                      :2    I       nop.i         0
+                   17          135      7.9       0x19d0:0    M       ldfs.a        f14=[r26],12
+                   31          274      8.8             :1    M       ldfs.a        f13=[r25],72
+                    0            0                      :2    I_      nop.i         0 ;;
+                   15          125      8.3       0x19e0:0    M       ldfs.a        f34=[r73],4
+                   22          196      8.9             :1    M       ldfs.a        f33=[r27],4
+                    0            0                      :2    I_      nop.i         0 ;;
+                                                  0x19f0:0    M       nop.m         0
+                                                        :1    M       nop.m         0
+                                                        :2    F       fma           f9=f17,f8,f0
+                 (863)       (6451)    (7.5)           ~93  *>                     d(i+lip+lopfac) = d(2*i+lop) - temp
+                                                  0x1bb0:0    M       chk.a.clr     f35,{self}+0x32c0
+                                                        :1    M       chk.a.clr     f49,{self}+0x2f20
+                                                        :2    I       nop.i         0
+                  167         1189      7.1       0x1bc0:0    M       ldfs.a        f6=[r73],-4
+                    0            0                      :1    M       stfs          [r75]=f7,12
+                    0            0                      :2    I_      nop.i         0 ;;
+                                                  0x1bd0:0    M       chk.a.clr     f55,{self}+0x3190
+                                                        :1    M       chk.a.clr     f15,{self}+0x3230
+                                                        :2    I       nop.i         0
+                  168         1480      8.8       0x1be0:0    M       ldfs.a        f7=[r73],4
+                    0            0                      :1    M       stfs          [r74]=f51,-4
+                    0            0                      :2    I_      nop.i         0 ;;
+                 (297)       (2060)    (6.9)           ~92  *>                     d(i+lip       ) = d(2*i+lop) + temp
+                                                  0x1bf0:0    M       chk.a.clr     f34,{self}+0x3330
+                                                        :1    M       ldfs.c.clr    f6=[r73],-4
+                                                        :2    I       nop.i         0
+                 (863)       (6451)    (7.5)           ~93  *>                     d(i+lip+lopfac) = d(2*i+lop) - temp
+                  141          741      5.3       0x1c00:0    M       ldfs.a        f15=[r27],-4
+                    0            0                      :1    M       stfs          [r74]=f12,12
+                    0            0                      :2    I_      nop.i         0 ;;
+                 (297)       (2060)    (6.9)           ~92  *>                     d(i+lip       ) = d(2*i+lop) + temp
+                    0            0                0x1c10:0    M       ldfs.c.clr    f7=[r73],56
+                  150          782      5.2             :1    M       ldfs.a        f35=[r27],60
+                    0            0                      :2    I       nop.i         0
+                 (863)       (6451)    (7.5)           ~93  *>                     d(i+lip+lopfac) = d(2*i+lop) - temp
+                  113          577      5.1       0x1c20:0    M_      ldfs.a        f12=[r26],60 ;;
+                    0            0                      :1    M       nop.m         0
+                    0            0                      :2    I       nop.i         0
+                                                  0x1c30:0    M       nop.m         0
+                                                        :1    M       nop.m         0
+                                                        :2    F_      fms.s         f38=f6,f1,f38 ;;
+                 (297)       (2060)    (6.9)           ~92  *>                     d(i+lip       ) = d(2*i+lop) + temp
+                                                  0x3070:0    M       nop.m         0
+                                                        :1    F       fms.s         f6=f12,f1,f43
+                                                        :2    B_      br.sptk       {self}+0x1ce0 ;;
+                 (863)       (6451)    (7.5)           ~93  *>                     d(i+lip+lopfac) = d(2*i+lop) - temp
+                    0            0                0x3080:0    M_      adds          r35=-32,r73 ;;
+                    1            5      5.0             :1    M       ldfs          f52=[r35]
+                    0            0                      :2    I_      nop.i         0 ;;
+                 (797)       (6486)    (8.1)           ~91  *>                     temp = cc*d(2*i+lop+1)
+                                                  0x3090:0    M       nop.m         0
+                                                        :1    M       nop.m         0
+                                                        :2    F       fma           f41=f17,f52,f0
+                 (863)       (6451)    (7.5)           ~93  *>                     d(i+lip+lopfac) = d(2*i+lop) - temp
+                                                  0x32e0:0    M       chk.a.clr     f49,{self}+0x2f20
+                                                        :1    M       nop.m         0
+                                                        :2    B_      br.sptk       {self}+0x1bc0 ;;
+                    0            0                0x32f0:0    M_      adds          r35=-16,r73 ;;
+                    1            7      7.0             :1    M       ldfs          f56=[r35]
+                    0            0                      :2    I       nop.i         0
+                 (297)       (2060)    (6.9)           ~92  *>                     d(i+lip       ) = d(2*i+lop) + temp
+                                                  0x3300:0    M       stfs          [r74]=f58,12
+                                                        :1    I       nop.i         0
+                                                        :2    B_      nop.b         0 ;;
+                                                      ~166  *>                     r3 = t2 - t3
+                                                  0x3560:0    M       adds          r96=-32,r79
+                                                        :1    M       nop.m         0
+                                                        :2    F_(p16) fms.s         f49=f61,f1,f60 ;;
+                   (4)         (35)    (8.8)          ~160  *>                     t1 = d(k+5)*cc5
+                    1            5      5.0       0x3570:0    M       ldfs          f45=[r96]
+                    0            0                      :1    I       nop.i         0
+                    0            0                      :2    I_      nop.i         0 ;;
+                                                  0x3580:0    M       nop.m         0
+                                                        :1    M       nop.m         0
+                                                        :2    F       fma           f69=f45,f10,f0
+-----------------------------------------------------------------------
+  7.32     [profilefft::_start, 0x401a8a0, profilefft.f]
+                  734         4574      6.2             ~5  Function Totals
+         --------------------------------------------------------------
+        [/nis.home/karp/fft/profilefft.f]
+                 (734)       (4574)    (6.2)           ~82   >	    data(i) = datasave(i)
+                                                  0x0cd0:0    M       lfetch.nt1    [r33],128
+                                                        :1    I_      mov.i         ar.lc=r21 ;;
+                                                        :2    I_      mov.i         ar.ec=1 ;;
+                   70          472      6.7       0x0ce0:0    M       ldfs          f36=[r16],4
+                   73          465      6.4             :1    M       ldfs          f34=[r11],4
+                    0            0                      :2    I       adds          r32=128,r34
+                   76          471      6.2       0x0cf0:0    M       ldfs          f32=[r10],4
+                   91          594      6.5             :1    M       ldfs          f14=[r9],4
+                    0            0                      :2    I_      nop.i         0 ;;
+                   48          316      6.6       0x0d00:0    M       ldfs          f12=[r16],4
+                   42          268      6.4             :1    M       ldfs          f10=[r11],4
+                    0            0                      :2    I       nop.i         0
+                   43          261      6.1       0x0d10:0    M       ldfs          f8=[r10],4
+                   50          322      6.4             :1    M       ldfs          f6=[r9],4
+                    0            0                      :2    I_      nop.i         0 ;;
+                   16          100      6.2       0x0d20:0    M       ldfs          f35=[r16],4
+                   26          168      6.5             :1    M       ldfs          f33=[r11],4
+                    0            0                      :2    I       nop.i         0
+                   20          140      7.0       0x0d30:0    M       ldfs          f15=[r10],4
+                   23          154      6.7             :1    M       ldfs          f13=[r9],4
+                    0            0                      :2    I_      nop.i         0 ;;
+                   32          160      5.0       0x0d40:0    M       ldfs          f11=[r16],r15
+                   47          249      5.3             :1    M       ldfs          f9=[r11],r15
+                    0            0                      :2    I       nop.i         0
+                   32          176      5.5       0x0d50:0    M       ldfs          f7=[r10],52
+                   45          258      5.7             :1    M       ldfs          f37=[r9],52
+                    0            0                      :2    I_      nop.i         0 ;;
+                                                  0x0d60:0    M_      lfetch.nt1    [r34] ;;
+                                                        :1    M       stfs          [r16]=f36,4
+                                                        :2    I       nop.i         0
+-----------------------------------------------------------------------
+[Minimum function entries: 0, percent cutoff: 1.00, cumulative percent cutoff: 100.00]
+
+
+=============================
+Data Cache Misses Report Help
+=============================
+
+HP Caliper's data cache misses report contains two levels of information: exact
+counts of data cache metrics summed across an entire run of a measured
+application, and sampled data cache metrics that are associated with particular
+locations in the measured application. The report breaks down sampled data
+by thread, load module, function, statement, and instruction.
+
+Using HP caliper command-line options, you can control the amount of data
+reported, how the data is sorted, and the number of statements and instructions
+reported for each sampled program location. See the caliper man page for
+details.
+
+
+Data Cache Metrics Summed for Entire Run
+----------------------------------------
+
+The following list describes metrics summed over the entire run of your
+application under HP Caliper, as well as some data HP Caliper derives from
+those metrics:
+
+  Metrics for Itanium Systems
+
+    L1D_READS_RETIRED
+        Total number of commited L1 Data Cache reads (integer and RSE
+        references) made by your application. Excluded from the count are VHPT
+        loads, check loads, L1 hinted loads, semaphores, uncacheable, and FP
+        loads. Predicated-off loads are also excluded, but wrong-path operations
+        are included in the count.
+  
+    L1D_READ_MISSES_RETIRED
+        Total number of commited L1 data cache read misses incurred by your
+        application. The count includes any read reference that could have been
+        serviced by the L1 data cache (see L1D_READS_RETIRED event for a
+        detailed list) but missed the cache. False misses are included in the
+        event count. Since the L1 data cache is write-through, write misses are
+        NOT counted.
+  
+    L2_MISSES
+        Number of L2 cache misses (requests fo uncacheable pages are excluded)
+        incurred by your application. The count includes references by
+        instruction fetch and prefetch, and data reads and writes. The maximum
+        per-cycle increment is three: one instruction fetch and two data
+        references.
+  
+        The report includes L2_MISSES because of the affect of floating-point
+        loads on data cache miss sampling (see above for details). Note that
+        there is no direct way to ascertain what portion of L2_MISSES are
+        attributable to floating-point loads.
+  
+    L1 Data Cache Read Miss Percentage
+        Percentage of Data Cache Reads that result in misses.
+  
+    L1 Data Cache Misses per Second
+        Average number of data cache read misses per second of user CPU time.
+  
+    Percent Total Misses Accounted for by Sampling
+        This metric gives some indication of the influence of floating-point
+        load misses on dcache miss sampling. If the value is well below 100
+        percent, then it is likely that most data cache miss samples were the
+        result of L1 data cache misses. Larger values (approaching or exceeding
+        100 percent) indicate that many of the dcache miss samples occured
+        because of floating-point load misses.
+
+
+  Metrics for Itanium2 Systems
+
+    L1D_READS
+        The number of data memory read references issued into memory pipeline
+        which are serviced by the L1 data cache (only integer loads), RSE loads,
+        L1-hinted loads (L1 data cache returns data if it hits in L1 data cache
+        but does not do a fill) and check loads (ld.c). Uncacheable reads, VHPT
+        loads, semaphores, floating-point loads, and lfetch instructions are
+        not counted here because the L1 data cache does not handle these. The
+        count includes wrong path operations but excludes predicated off
+        operations.
+
+    L1D_READ_MISSES_ALL
+        Number of L1 data cache read misses. L1 data cache is write through;
+        therefore, write misses are not counted. The count only includes misses
+        caused by references counted by an L1D_READS event. It will include
+        L1 data cache misses which missed the ALAT, but not those which hit in
+        the ALAT. Semaphores are not handled by the L1 data cache and are not
+        included in this count.
+
+    DATA_REFERENCES
+        The number of data memory references inssued into memory pipeline
+        (inludes check loads, uncacheable accesses, RSE operations, semephores,
+        and floating-point memory references). The count includes wrong path
+        operations but excludes predicated off operations. This event does not
+        include VHPT memory references.
+
+    L1 Data Cache Miss Percentage
+        Percentage of L1 data cache reads that are misses.
+
+    Percent of Data References Accessing L1 Data Cache
+        Percentage of data references that access the L1 data cache.
+
+
+Sampled Data Cache Metrics
+--------------------------
+
+This section describes column headers in report tables that list sampled metrics
+by program object, where "program object" refers to any of the following:
+thread, load module, function, statement, or instruction.
+
+   Column      Description
+  ------------------------------------------------
+  % Total      Percent of the total for <metric> attributible to a given program
+  <metric>     object. The <metric> is the same as the <metric> HP Caliper uses
+               for sorting (except when the sort metric is "avg-latency" or
+               "address", in which case sampled misses is used).
+
+   Cumulat     A running sum of the percent of total for <metric> acounted for
+     % of      by the given program object and those listed above it.
+    Total      
+
+  Sampled      Total number of sampled data cache misses attributed to the given
+   Misses      program object.
+
+  Latency      Number of cycles expended on data cache misses summed across
+   Cycles      samples for the given program object.
+
+    Avg.       Average number of cycles expended on data cache misses across
+   Laten       samples for the given program object.
+   Cycles
+
+   Thread      User thread identification number.
+     ID
+
+    Load       A shared library or the main executable.
+   Module
+
+   Function    A routine from your application.
+
+     File      Source file associated with a function.
+
+    Line|      The column contains one of the following: a source-code line
+    Slot|      number (for rows showing statements), an instruction slot (for
+  Col,Offset   rows showing instructions not on a bundle boundry), or a source-
+               code column number followed by an offset from the beginning
+               address of a function (for rows showing instructions on a bundle
+               boundry). Column and line numbers are preceeded by "~" when
+               they are approximated due to optimization.
+
+  >Statement|  The column contains either a source statement (preceeded by ">")
+  Instruction  or a disassembled instruction. Statements that are out of order
+               due to optimization are preceeded by "*>".
+
+
+Function Details
+----------------
+
+Data cache miss reports show data per instruction and, at a minimum, report
+all instructions in each instruction bundle with associated data. Non-
+contiguous instruction bundles are separated by a row of tildes ("~ ~ ~ ~").
+
+
+Disassembly
+-----------
+
+By default, the symbols shown for branch targets in disassembly are limited
+to 30 characters. You can change the limit by setting the following variable
+in your .caliperinit file:
+
+  disasm_target_name_limit = <limit>
+
+You can also have caliper mark branch targets in disassembly to make them
+easier to locate. To enable this feature, add the following setting to
+your .caliperinit file:
+
+  disasm_mark_branch_targets = TRUE
+
+When disasm_mark_branch_targets is set to TRUE, a colon is placed to the left
+of instructions that are the targets of branch instructions. Note, however,
+that if your application is compiled with +Oprofile=use:<filename>, some
+procedures may be split into hot and cold sections. Targets of branches
+between hot and cold sections will not be marked.
+
+
+Source Line Data
+----------------
+
+Performance data shown for source lines is, by default, enclosed in parentheses
+to help differentiate it from bundle-level and instruction-level data. To have
+reports show source line data without parentheses, set the following variable
+in your .caliperinit file:
+
+  use_parens_for_statement_data = FALSE
+
+Alternatively, you can turn off reporting of source line data altogether by
+setting the following variable in .caliperinit:
+
+  suppress_statement_data = TRUE
+
+Data attributed to a source line is data aggregated across all bundles whose
+first instruction is associated with the source line. This occurs even though
+the instruction bundle may cross source line boundries. Therefore, data
+attributed to source statements will not always be completely accurate.
+
+Column numbers emitted by the FORTRAN, C, and C++ compilers and shown in reports
+are not generally accurate (exception: legacy HP C). However, they are
+guaranteed to correctly reflect relative positions in the source line. For
+example, column 4 represents a location in the source line that is guaranteed
+to occur before column 5, though neither column 4 nor 5 necessarily refer
+to the correct columns in the source line.
+
+
+Address Types Shown
+-------------------
+
+HP Caliper reports the following address types in the following situations:
+
+  - In the list of included and excluded load modules near the top of reports,
+    HP Caliper reports the run-time address range of each load module.
+
+  - For function start addresses, HP Caliper reports link-time addresses
+    (the offset from the text base of the containing load module).
+
+  - HP Caliper reports each disassembled instruction address as an offset from
+    a function start address.
+
+  - HP Caliper reports addresses with no known function name and no known load
+    module as run-time addresses.
+
+
+Unnamed Functions
+-----------------
+
+When caliper cannot ascertain the name of a function (for example, because
+the executable is stripped), caliper assigns the function a name using the
+following format: *unnamed@0xXX(YY-ZZ)*, where XX is some number of hexadecimal
+digits that are shared by the start and end addresses of the unnamed function,
+YY consists of the remaining hexadecimal digits for the start address, and ZZ
+consists of the remaining hexadecimal digits for the end address.
+
+For example, the function name *unnamed@0x400000000004c(ae0-ed0)* represents
+an unnamed function starting at address 0x400000000004cae0 and ending at
+address 0x400000000004ced0.
+
+
+Notes
+-----
+
+HP Caliper obtains data cache miss metrics from the hardware's Performance
+Monitoring Unit (PMU). Exact counts are obtained from the PMU's PMC/PMD
+registers; sampled data cache metrics are obtained from the PMU's data EAR.
+Both sets of metrics focus on the L1 cache, with notable exceptions.
+
+HP Caliper takes samples every Nth data cache miss, where N is user-configurable
+(refer to the dcache_miss configuration file in /opt/caliper/config). At each
+sample point, HP Caliper records both the instruction that resulted in a data
+cache miss and the latency (number of clock cycles) incurred by the miss.
+
+For data cache miss sampling, the PMU can monitor only one data cache load at a
+time. Since there are likely to be multiple loads in progress at any given
+moment, the PMU can process only a subset of data cache misses. (Note that the
+PMU randomizes which loads it monitors.)
+
+This means that the number of data cache misses observed through sampling (that
+is, number of sampled misses multiplied by sampling rate) is only a subset of
+the total number of actual data cache misses. Therefore, it is best to interpret
+sampling data not as an indication of how many data cache misses a particular
+instruction incurred, but, instead, as an indication of which instructions incur
+the most data cache misses.
+
+Of course, you can potentially get a rough estimate of the total number of
+data cache misses incurred by, for example, a particular instruction by
+doing the following:
+
+  1. Determine a scaling factor based on total misses and number of misses
+     acounted for by sampling:
+
+       scale = total L1 misses / (total sampled misses * sampling rate)
+
+  2. Multiply the number of sampled misses associated with an instruction
+     by the scaling factor:
+
+       total misses for instruction = scale * sampled misses for instruction
+
+However, depending on the density of floating-point load misses incurred by your
+application, such estimates could be very misleading.
+
+Floating-point loads are serviced directly from the L2 cache. The PMU treats
+both L1 data cache misses and L2 floating-point load misses as data cache miss
+events for sampling purposes. Therefore, if your application makes frequent
+floating-point loads, then multiplying total samples by sampling rate may yield
+a data cache miss count that exceeds the total number of L1 data cache misses.
+
+Note that more frequent sampling increases HP Caliper's perturbation of your
+application. In the extreme case of taking one sample for each cache miss event,
+the kernel will trap on every event, making the resulting data of limited (if
+any) value.
